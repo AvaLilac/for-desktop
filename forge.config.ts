@@ -10,8 +10,6 @@ import { PublisherGithub } from "@electron-forge/publisher-github";
 import type { ForgeConfig } from "@electron-forge/shared-types";
 import { FuseV1Options, FuseVersion } from "@electron/fuses";
 
-// import { globSync } from "node:fs";
-
 const STRINGS = {
   author: "Revolt Platforms LTD",
   name: "Stoat",
@@ -21,16 +19,11 @@ const STRINGS = {
 
 const ASSET_DIR = "assets/desktop";
 
-/**
- * Build targets for the desktop app
- */
 const makers: ForgeConfig["makers"] = [
   new MakerSquirrel({
     name: STRINGS.name,
     authors: STRINGS.author,
-    // todo: hoist this
     iconUrl: `https://stoat.chat/app/assets/icon-DUSNE-Pb.ico`,
-    // todo: loadingGif
     setupIcon: `${ASSET_DIR}/icon.ico`,
     description: STRINGS.description,
     exe: `${STRINGS.execName}.exe`,
@@ -40,18 +33,13 @@ const makers: ForgeConfig["makers"] = [
   new MakerZIP({}),
 ];
 
-// skip these makers in CI/CD
 if (!process.env.PLATFORM) {
   makers.push(
-    // must be manually built (freezes CI process)
-    // not much use in being published anyhow
     new MakerAppX({
       certPass: "",
       packageExecutable: `app\\${STRINGS.execName}.exe`,
       publisher: "CN=B040CC7E-0016-4AF5-957F-F8977A6CFA3B",
     }),
-    // flatpak publishing should occur through flathub repos.
-    // this is just for testing purposes
     new MakerFlatpak({
       options: {
         id: "chat.stoat.stoat-desktop",
@@ -69,7 +57,6 @@ if (!process.env.PLATFORM) {
         } as unknown,
         categories: ["Network"],
         modules: [
-          // use the latest zypak -- Electron sandboxing for Flatpak
           {
             name: "zypak",
             sources: [
@@ -82,8 +69,6 @@ if (!process.env.PLATFORM) {
           },
         ],
         finishArgs: [
-          // default arguments found by running
-          // DEBUG=electron-installer-flatpak* pnpm make
           "--socket=fallback-x11",
           "--socket=wayland",
           "--share=ipc",
@@ -98,9 +83,12 @@ if (!process.env.PLATFORM) {
           "--filesystem=xdg-run/speech-dispatcher",
           "--talk-name=org.freedesktop.ScreenSaver",
           "--talk-name=org.freedesktop.Notifications",
+<<<<<<< HEAD
           "--talk-name=org.kde.StatusNotifierWatcher",
           "--talk-name=com.canonical.AppMenu.Registrar",
           "--talk-name=com.canonical.indicator.application",
+=======
+>>>>>>> d32fd3b (Put inject.js into the same folder as main.js)
           "--talk-name=com.canonical.Unity",
           "--env=XCURSOR_PATH=/run/host/user-share/icons:/run/host/share/icons",
           "--env=ELECTRON_TRASH=gio",
@@ -109,7 +97,6 @@ if (!process.env.PLATFORM) {
         files: [],
       } as MakerFlatpakOptionsConfig,
     }),
-    // testing purposes
     new MakerDeb({
       options: {
         productName: STRINGS.name,
@@ -127,20 +114,13 @@ const config: ForgeConfig = {
     name: STRINGS.name,
     executableName: STRINGS.execName,
     icon: `${ASSET_DIR}/icon`,
-    // extraResource: [
-    //   // include all the asset files
-    //   ...globSync(ASSET_DIR + "/**/*"),
-    // ],
   },
   rebuildConfig: {},
   makers,
   plugins: [
     new VitePlugin({
-      // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.
-      // If you are familiar with Vite configuration, it will look really familiar.
       build: [
         {
-          // `entry` is just an alias for `build.lib.entry` in the corresponding file of `config`.
           entry: "src/main.ts",
           config: "vite.main.config.ts",
           target: "main",
@@ -150,11 +130,14 @@ const config: ForgeConfig = {
           config: "vite.preload.config.ts",
           target: "preload",
         },
+        {
+          entry: "src/inject.js",
+          config: "vite.main.config.ts",
+          target: "main",
+        },
       ],
       renderer: [],
     }),
-    // Fuses are used to enable/disable various Electron functionality
-    // at package time, before code signing the application
     new FusesPlugin({
       version: FuseVersion.V1,
       [FuseV1Options.RunAsNode]: false,
