@@ -32,7 +32,7 @@ Then proceed to setup:
 ```bash
 # clone the repository
 git clone --recursive https://github.com/stoatchat/for-desktop stoat-for-desktop
-cd stoat-for-desktop
+cd for-desktop
 
 # install all packages
 pnpm i --frozen-lockfile
