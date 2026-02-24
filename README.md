@@ -31,7 +31,7 @@ Then proceed to setup:
 
 ```bash
 # clone the repository
-git clone --recursive https://github.com/stoatchat/for-desktop stoat-for-desktop
+git clone --recursive https://github.com/AvaLilac/for-desktop
 cd for-desktop
 
 # install all packages
