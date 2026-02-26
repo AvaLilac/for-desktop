@@ -37,8 +37,11 @@ const loadInject = () => {
   mainWindow.webContents.on("dom-ready", async () => {
     try {
       const injectPath = path.join(__dirname, "inject.js");
-      const code = fs.readFileSync(injectPath, "utf8");
-      await mainWindow.webContents.executeJavaScript(code, true);
+      const injectCode = fs.readFileSync(injectPath, "utf8");
+      await mainWindow.webContents.executeJavaScript(injectCode, true);
+      const favPath = path.join(__dirname, "aviafavsystem.js");
+      const favCode = fs.readFileSync(favPath, "utf8");
+      await mainWindow.webContents.executeJavaScript(favCode, true);
     } catch {}
   });
 };
