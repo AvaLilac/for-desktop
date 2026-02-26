@@ -165,6 +165,18 @@ function toggleFavoritesPanel() {
         }, 2000);
     }
 
+    function fallbackCopy(text) {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        try { document.execCommand("copy"); } catch {}
+        document.body.removeChild(textarea);
+    }
+
     function render() {
 
         grid.innerHTML = "";
@@ -274,9 +286,19 @@ function toggleFavoritesPanel() {
                 card.appendChild(titleOverlay);
             }
 
-            card.onclick = async () => {
-                await navigator.clipboard.writeText(item.url);
-                showToast(card);
+            card.onclick = () => {
+                const doToast = () => showToast(card);
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(item.url)
+                        .then(doToast)
+                        .catch(() => {
+                            fallbackCopy(item.url);
+                            doToast();
+                        });
+                } else {
+                    fallbackCopy(item.url);
+                    doToast();
+                }
             };
 
             grid.appendChild(card);
