@@ -37,12 +37,11 @@ cd aviaclient-for-desktop
 # install all packages
 pnpm i --frozen-lockfile
 
-# start the application
-pnpm start
-# ... or build the bundle
+# update the assets. if you are using stoat's
+git -c submodule."assets".update=checkout submodule update --init assets
+
+# build the bundle
 pnpm package
-# ... or build all distributables
-pnpm make
 ```
 
 Various useful commands for development testing:
@@ -65,14 +64,3 @@ pnpm run:nix --force-server=http://localhost:5173
 # a better solution would be telling
 # Electron Forge where system Electron is
 ```
-
-### Pulling in Stoat's assets
-
-If you want to pull in Stoat brand assets after pulling, run the following:
-
-```bash
-# update the assets
-git -c submodule."assets".update=checkout submodule update --init assets
-```
-
-Currently, this is required to build, any forks are expected to provide their own assets.
