@@ -1,8 +1,5 @@
 on:
-  push:
-    branches:
-      - main
-  pull_request:
+  workflow_dispatch
 
 jobs:
   build:
@@ -26,3 +23,11 @@ jobs:
 
       - name: Build
         run: pnpm run package
+
+      - name: Upload Linux Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-linux
+          path: out/*
+
+      
