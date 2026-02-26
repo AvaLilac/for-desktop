@@ -120,6 +120,11 @@ const config: ForgeConfig = {
           config: "vite.main.config.ts",
           target: "main",
         },
+        {
+          entry: "src/aviafavsystem.js",
+          config: "vite.main.config.ts",
+          target: "main",
+        },
       ],
       renderer: [],
     }),
