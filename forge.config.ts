@@ -121,12 +121,22 @@ const config: ForgeConfig = {
           target: "main",
         },
         {
+          entry: "src/themes.js",
+          config: "vite.main.config.ts",
+          target: "main",
+        },
+        {
           entry: "src/aviafavsystem.js",
           config: "vite.main.config.ts",
           target: "main",
         },
         {
           entry: "src/pluginsupport.js",
+          config: "vite.main.config.ts",
+          target: "main",
+        },
+        {
+          entry: "src/userbadges.js",
           config: "vite.main.config.ts",
           target: "main",
         },
