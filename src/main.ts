@@ -34,11 +34,16 @@ const onNotifyUser = (_info: IUpdateInfo) => {
 
 const loadInject = () => {
   if (!mainWindow) return;
+
   mainWindow.webContents.on("dom-ready", async () => {
     try {
       const injectPath = path.join(__dirname, "inject.js");
       const injectCode = fs.readFileSync(injectPath, "utf8");
       await mainWindow.webContents.executeJavaScript(injectCode, true);
+
+      const themesPath = path.join(__dirname, "themes.js");
+      const themesCode = fs.readFileSync(themesPath, "utf8");
+      await mainWindow.webContents.executeJavaScript(themesCode, true);
 
       const favPath = path.join(__dirname, "aviafavsystem.js");
       const favCode = fs.readFileSync(favPath, "utf8");
@@ -47,6 +52,10 @@ const loadInject = () => {
       const pluginPath = path.join(__dirname, "pluginsupport.js");
       const pluginCode = fs.readFileSync(pluginPath, "utf8");
       await mainWindow.webContents.executeJavaScript(pluginCode, true);
+
+      const badgePath = path.join(__dirname, "userbadges.js");
+      const badgeCode = fs.readFileSync(badgePath, "utf8");
+      await mainWindow.webContents.executeJavaScript(badgeCode, true);
     } catch {}
   });
 };
