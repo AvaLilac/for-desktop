@@ -151,7 +151,7 @@ const config: ForgeConfig = {
           target: "main",
         },
         {
-          entry: "src/userbadges.js",
+          entry: "src/aviaversion.js",
           config: "vite.main.config.ts",
           target: "main",
         },
