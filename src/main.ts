@@ -53,7 +53,7 @@ const loadInject = () => {
       const pluginCode = fs.readFileSync(pluginPath, "utf8");
       await mainWindow.webContents.executeJavaScript(pluginCode, true);
 
-      const badgePath = path.join(__dirname, "userbadges.js");
+      const badgePath = path.join(__dirname, "aviaversion.js");
       const badgeCode = fs.readFileSync(badgePath, "utf8");
       await mainWindow.webContents.executeJavaScript(badgeCode, true);
     } catch {}
