@@ -243,10 +243,15 @@
         const appearanceBtn = Array.from(document.querySelectorAll('a')).find(a => a.textContent.trim() === 'Appearance');
         if (!appearanceBtn) return;
 
-        const targetBtn = document.querySelector(
-            'a.pos_relative.min-w_0.d_flex.ai_center.p_6px_8px.bdr_8px.fw_500.me_12px.fs_15px.us_none.trs_background-color_0\\.1s_ease-in-out.c_var\\(\\--md-sys-color-on-surface\\).fill_var\\(\\--md-sys-color-on-surface\\).bg_unset'
-        );
-        if (!targetBtn) return;
+const aviaHeader = [...document.querySelectorAll('span')]
+    .find(s => s.textContent.trim() === "AVIA CLIENT SETTINGS");
+if (!aviaHeader) return;
+
+const aviaContainer = aviaHeader.closest('.d_flex.flex-d_column');
+if (!aviaContainer) return;
+
+const targetParent = aviaContainer.querySelector('.d_flex.flex-d_column.gap_var\\(--gap-s\\)');
+if (!targetParent) return;
 
         if (!document.getElementById('stoat-fake-linktree')) {
             const linktreeBtn = appearanceBtn.cloneNode(true);
@@ -255,7 +260,7 @@
             if (textNode) textNode.textContent = "(Avia) Ava's Linktree";
             setIcon(linktreeBtn, "monitor");
             linktreeBtn.addEventListener('click', () => window.open(LINKTREE_URL, "_blank"));
-            targetBtn.parentElement.insertBefore(linktreeBtn, targetBtn);
+            targetParent.appendChild(linktreeBtn);
 
             const stoatBtn = appearanceBtn.cloneNode(true);
             stoatBtn.id = 'stoat-fake-stoatserver';
@@ -263,7 +268,7 @@
             if (stoatTextNode) stoatTextNode.textContent = "(Avia) Stoat Server";
             setIcon(stoatBtn, "monitor");
             stoatBtn.addEventListener('click', () => window.open(STOAT_SERVER_URL, "_blank"));
-            linktreeBtn.parentElement.insertBefore(stoatBtn, linktreeBtn.nextSibling);
+            targetParent.appendChild(stoatBtn);
         }
 
         if (!document.getElementById('stoat-fake-loadfont')) {
@@ -275,8 +280,7 @@
             newBtn.addEventListener('click', showFontLoaderPopup);
 
             const stoatBtn = document.getElementById('stoat-fake-stoatserver');
-            stoatBtn ? stoatBtn.parentElement.insertBefore(newBtn, stoatBtn.nextSibling) :
-                       document.getElementById('stoat-fake-linktree').parentElement.insertBefore(newBtn, document.getElementById('stoat-fake-linktree').nextSibling);
+            targetParent.appendChild(newBtn);
 
             if (!document.getElementById('stoat-fake-removefont')) {
                 const removeBtn = appearanceBtn.cloneNode(true);
@@ -285,7 +289,7 @@
                 if (removeTextNode) removeTextNode.textContent = "(Avia) Remove selected font";
                 setIcon(removeBtn, "refresh");
                 removeBtn.addEventListener('click', showRemoveFontPopup);
-                newBtn.parentElement.insertBefore(removeBtn, newBtn.nextSibling);
+                targetParent.appendChild(removeBtn);
             }
         }
 
@@ -297,12 +301,11 @@
             setIcon(quickCssBtn, "code");
             quickCssBtn.addEventListener('click', toggleQuickCSSPanel);
 
-            const lastBtn = document.getElementById('stoat-fake-removefont') || 
-                            document.getElementById('stoat-fake-loadfont') || 
-                            document.getElementById('stoat-fake-stoatserver') || 
+            const lastBtn = document.getElementById('stoat-fake-removefont') ||
+                            document.getElementById('stoat-fake-loadfont') ||
+                            document.getElementById('stoat-fake-stoatserver') ||
                             document.getElementById('stoat-fake-linktree');
-            lastBtn.parentElement.insertBefore(quickCssBtn, lastBtn.nextSibling);
-        }
+targetParent.appendChild(quickCssBtn);        }
     }
 
     function applyQuickCSS(css) {
