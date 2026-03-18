@@ -34,18 +34,16 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
           config-file: release-please-config.json
 
-      # Notify Stoat webhook immediately after release is created
+      # ✅ Notify Stoat webhook immediately after release is created
       - name: Notify Stoat
         if: steps.rp.outputs.release_created == 'true'
         run: |
-          RELEASE_TAG="${{ steps.rp.outputs.release_tag }}"
-          RELEASE_NAME="${{ steps.rp.outputs.release_name }}"
-          URL="https://github.com/${{ github.repository }}/releases/tag/${RELEASE_TAG}"
-          MSG="🚀 New release: $RELEASE_NAME ($RELEASE_TAG) - $URL"
+          RELEASE_URL="https://github.com/${{ github.repository }}/releases/tag/${{ steps.rp.outputs.release_tag }}"
+          MSG="🚀 New release: ${{ steps.rp.outputs.release_name }} (${{ steps.rp.outputs.release_tag }}) - $RELEASE_URL"
 
           curl -X POST "https://stoat.chat/api/webhooks/01KM0VR768BP5W0CAB54ASK2QP/ruEjyZDLwgOip8ClH_oURUPu3LehRz_7yEXb1VVdO5ZuX2d4Pd8-z7aN0aQWmbrj" \
-          -H "Content-Type: application/json" \
-          -d "{\"content\":\"$MSG\"}"
+            -H "Content-Type: application/json" \
+            -d "{\"content\":\"$MSG\"}"
 
   publish-release:
     name: Publish App
