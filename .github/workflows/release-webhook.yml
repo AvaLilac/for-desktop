@@ -7,17 +7,17 @@ on:
 
 jobs:
   release-webhook:
+    name: Send Release Webhook
     runs-on: ubuntu-latest
 
     steps:
       - name: Send release notification webhook
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+          REPOSITORY: ${{ github.repository }}
+          WEBHOOK_URL: ${{ secrets.STOAT_WEBHOOK_UPDATES_URL }}
         run: |
-          RELEASE_NAME="${{ github.event.release.name }}"
-          TAG_NAME="${{ github.event.release.tag_name }}"
-          URL="${{ github.event.release.html_url }}"
-
-          MSG="🚀 New release: $RELEASE_NAME ($TAG_NAME) - $URL"
-
-          curl -X POST "https://stoat.chat/api/webhooks/01KM0VR768BP5W0CAB54ASK2QP/ruEjyZDLwgOip8ClH_oURUPu3LehRz_7yEXb1VVdO5ZuX2d4Pd8-z7aN0aQWmbrj" \
-          -H "Content-Type: application/json" \
-          -d "{\"content\":\"$MSG\"}"
+          RELEASE_URL="https://github.com/${REPOSITORY}/releases/tag/${TAG_NAME}"
+          curl -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "{\"content\": \"$RELEASE_URL\"}"
