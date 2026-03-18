@@ -121,6 +121,11 @@ const config: ForgeConfig = {
           target: "main",
         },
         {
+          entry: "src/aviaclientcategory.js",
+          config: "vite.main.config.ts",
+          target: "main",
+        },
+        {
           entry: "src/themes.js",
           config: "vite.main.config.ts",
           target: "main",
