@@ -15,12 +15,10 @@
     async function processQueue() {
         if (processQueue.running) return;
         processQueue.running = true;
-
         while (injectionQueue.length) {
             const { plugin, force } = injectionQueue.shift();
             await loadPluginInternal(plugin, force);
         }
-
         processQueue.running = false;
     }
 
@@ -32,25 +30,19 @@
     async function loadPluginInternal(plugin, force = false) {
         if (runningPlugins[plugin.url] && !force) return;
         if (force) stopPlugin(plugin);
-
         try {
             const res = await fetch(plugin.url);
             if (!res.ok) throw new Error("Fetch failed");
             const code = await res.text();
-
             delete pluginErrors[plugin.url];
-
             const script = document.createElement("script");
             script.textContent = code;
             script.dataset.pluginUrl = plugin.url;
             document.body.appendChild(script);
-
             runningPlugins[plugin.url] = script;
-
         } catch {
             pluginErrors[plugin.url] = true;
         }
-
         renderPanel();
     }
 
@@ -69,7 +61,6 @@
             panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
             return;
         }
-
         panel = document.createElement('div');
         panel.id = 'avia-plugins-panel';
         panel.style.position = 'fixed';
@@ -87,7 +78,6 @@
         panel.style.overflow = 'hidden';
         panel.style.border = '1px solid rgba(255,255,255,0.08)';
         panel.style.backdropFilter = 'blur(12px)';
-
         const header = document.createElement('div');
         header.textContent = 'Plugins';
         header.style.padding = '14px 16px';
@@ -96,7 +86,6 @@
         header.style.background = 'var(--md-sys-color-surface-container, rgba(255,255,255,0.04))';
         header.style.borderBottom = '1px solid rgba(255,255,255,0.08)';
         header.style.cursor = 'move';
-
         const closeBtn = document.createElement('div');
         closeBtn.textContent = '✕';
         closeBtn.style.position = 'absolute';
@@ -105,7 +94,6 @@
         closeBtn.style.cursor = 'pointer';
         closeBtn.style.opacity = '0.7';
         closeBtn.onclick = () => panel.style.display = 'none';
-
         const controlsBar = document.createElement('div');
         controlsBar.style.padding = '12px 16px';
         controlsBar.style.display = 'flex';
@@ -113,23 +101,19 @@
         controlsBar.style.alignItems = 'center';
         controlsBar.style.borderBottom = '1px solid rgba(255,255,255,0.08)';
         controlsBar.style.flex = '0 0 auto';
-
         const content = document.createElement('div');
         content.id = 'avia-plugins-content';
         content.style.flex = '1';
         content.style.overflow = 'auto';
         content.style.padding = '16px';
-
         const nameInput = document.createElement('input');
         nameInput.placeholder = 'Name';
         styleInput(nameInput);
         nameInput.style.width = '110px';
-
         const urlInput = document.createElement('input');
         urlInput.placeholder = 'Plugin URL';
         styleInput(urlInput);
         urlInput.style.flex = '1';
-
         const addBtn = document.createElement('button');
         addBtn.textContent = 'Add';
         addBtn.onclick = () => {
@@ -143,7 +127,6 @@
             urlInput.value = '';
             renderPanel();
         };
-
         const refreshAll = document.createElement('button');
         refreshAll.textContent = 'Refresh';
         refreshAll.onclick = () => {
@@ -152,18 +135,15 @@
                 if (p.enabled) queuePlugin(p, true);
             });
         };
-
         controlsBar.appendChild(nameInput);
         controlsBar.appendChild(urlInput);
         controlsBar.appendChild(addBtn);
         controlsBar.appendChild(refreshAll);
-
         panel.appendChild(header);
         panel.appendChild(closeBtn);
         panel.appendChild(controlsBar);
         panel.appendChild(content);
         document.body.appendChild(panel);
-
         enableDrag(panel, header);
         renderPanel();
     }
@@ -171,34 +151,26 @@
     function renderPanel() {
         const content = document.getElementById('avia-plugins-content');
         if (!content) return;
-
         content.innerHTML = '';
-
         const plugins = getPlugins();
         const runningSnapshot = { ...runningPlugins };
         const errorSnapshot = { ...pluginErrors };
-
         plugins.forEach((plugin, index) => {
-
             const isRunning = !!runningSnapshot[plugin.url];
             const hasError = !!errorSnapshot[plugin.url];
-
             const row = document.createElement('div');
             row.style.display = 'flex';
             row.style.justifyContent = 'space-between';
             row.style.alignItems = 'center';
             row.style.marginBottom = '12px';
-
             const left = document.createElement('div');
             left.style.display = 'flex';
             left.style.alignItems = 'center';
             left.style.gap = '10px';
-
             const statusDot = document.createElement('div');
             statusDot.style.width = '10px';
             statusDot.style.height = '10px';
             statusDot.style.borderRadius = '50%';
-
             if (hasError) {
                 statusDot.style.background = '#ff4d4d';
                 statusDot.style.boxShadow = '0 0 6px #ff4d4d';
@@ -208,17 +180,13 @@
             } else {
                 statusDot.style.background = '#777';
             }
-
             const name = document.createElement('div');
             name.textContent = plugin.name;
-
             left.appendChild(statusDot);
             left.appendChild(name);
-
             const controls = document.createElement('div');
             controls.style.display = 'flex';
             controls.style.gap = '6px';
-
             const toggle = document.createElement('button');
             toggle.textContent = plugin.enabled ? 'Disable' : 'Enable';
             toggle.onclick = () => {
@@ -228,7 +196,6 @@
                 else stopPlugin(plugin);
                 renderPanel();
             };
-
             const remove = document.createElement('button');
             remove.textContent = '✕';
             remove.onclick = () => {
@@ -237,10 +204,8 @@
                 setPlugins(plugins);
                 renderPanel();
             };
-
             controls.appendChild(toggle);
             controls.appendChild(remove);
-
             row.appendChild(left);
             row.appendChild(controls);
             content.appendChild(row);
@@ -273,34 +238,20 @@
     }
 
     function injectButtons() {
-        const appearanceBtn = Array.from(document.querySelectorAll('a'))
+        if (document.getElementById('stoat-fake-plugins')) return;
+        const appearanceBtn = [...document.querySelectorAll('a')]
             .find(a => a.textContent.trim() === 'Appearance');
         if (!appearanceBtn) return;
-        if (document.getElementById('stoat-fake-plugins')) return;
-
+        const referenceNode = document.getElementById('stoat-fake-quickcss');
+        if (!referenceNode) return;
         const pluginsBtn = appearanceBtn.cloneNode(true);
         pluginsBtn.id = 'stoat-fake-plugins';
-
-        const textNode = Array.from(pluginsBtn.querySelectorAll('div'))
+        const textNode = [...pluginsBtn.querySelectorAll('div')]
             .find(d => d.children.length === 0 && d.textContent.trim() === 'Appearance');
         if (textNode) textNode.textContent = "(Avia) Plugins";
-
         if (typeof setIcon === "function") setIcon(pluginsBtn, "extension");
-
         pluginsBtn.addEventListener('click', togglePluginsPanel);
-
-        const lastBtn =
-            document.getElementById('stoat-fake-quickcss') ||
-            document.getElementById('stoat-fake-removefont') ||
-            document.getElementById('stoat-fake-loadfont') ||
-            document.getElementById('stoat-fake-stoatserver') ||
-            document.getElementById('stoat-fake-linktree');
-
-        if (lastBtn) {
-            lastBtn.parentElement.insertBefore(pluginsBtn, lastBtn.nextSibling);
-        } else {
-            appearanceBtn.parentElement.insertBefore(pluginsBtn, appearanceBtn.nextSibling);
-        }
+        referenceNode.parentElement.insertBefore(pluginsBtn, referenceNode.nextSibling);
     }
 
     function waitForBody(callback) {
