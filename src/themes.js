@@ -6,6 +6,15 @@ window.__AVIA_THEMES_LOADED__ = true;
 const STORAGE_KEY = "avia_themes";
 let editingTheme = null;
 
+const TEMPLATE = `/*
+@name Whatever name here
+@author Whatever Author Here
+@version 1.0
+@description Whatever description here
+*/
+
+`;
+
 const getThemes = () => JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
 const setThemes = (data) => localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 
@@ -13,7 +22,8 @@ function parseMeta(css){
     const name = css.match(/@name\s+(.+)/)?.[1] || "Unknown Theme";
     const author = css.match(/@author\s+(.+)/)?.[1] || "Unknown";
     const version = css.match(/@version\s+(.+)/)?.[1] || "1.0";
-    const description = css.match(/@description\s+(.+)/)?.[1] || "No description";
+    const rawDescription = css.match(/@description\s+(.+)/)?.[1] || "No Description Available";
+    const description = rawDescription.trim() === "*/" ? "No Description Available" : rawDescription;
     return {name,author,version,description};
 }
 
@@ -27,6 +37,22 @@ function applyThemes(){
         style.textContent=theme.css;
         document.head.appendChild(style);
     });
+}
+
+function styleBtn(btn, bg) {
+    Object.assign(btn.style, {
+        padding: "5px 12px",
+        borderRadius: "8px",
+        border: "none",
+        background: bg || "rgba(255,255,255,0.08)",
+        color: "#fff",
+        cursor: "pointer",
+        fontSize: "12px",
+        whiteSpace: "nowrap",
+        fontWeight: "500"
+    });
+    btn.onmouseenter = () => btn.style.opacity = "0.75";
+    btn.onmouseleave = () => btn.style.opacity = "1";
 }
 
 function makeDraggable(panel, handle){
@@ -71,7 +97,8 @@ function openThemeEditor(theme){
         display:"flex",
         flexDirection:"column",
         overflow:"hidden",
-        border:"1px solid rgba(255,255,255,0.08)"
+        border:"1px solid rgba(255,255,255,0.08)",
+        backdropFilter:"blur(12px)"
     });
     const header=document.createElement("div");
     header.textContent="Theme Editor";
@@ -79,14 +106,25 @@ function openThemeEditor(theme){
         padding:"14px 16px",
         fontWeight:"600",
         fontSize:"14px",
-        background:"rgba(255,255,255,0.04)",
+        background:"var(--md-sys-color-surface-container,rgba(255,255,255,0.04))",
         borderBottom:"1px solid rgba(255,255,255,0.08)",
         cursor:"move"
     });
     makeDraggable(panel,header);
     const close=document.createElement("div");
     close.textContent="✕";
-    Object.assign(close.style,{position:"absolute",right:"16px",top:"12px",cursor:"pointer"});
+    Object.assign(close.style,{
+        position:"absolute",
+        right:"16px",
+        top:"12px",
+        cursor:"pointer",
+        opacity:"0.6",
+        fontSize:"15px",
+        lineHeight:"1",
+        padding:"2px 4px"
+    });
+    close.onmouseenter=()=>close.style.opacity="1";
+    close.onmouseleave=()=>close.style.opacity="0.6";
     close.onclick=()=>panel.style.display="none";
     const textarea=document.createElement("textarea");
     Object.assign(textarea.style,{
@@ -129,104 +167,172 @@ function toggleThemesPanel(){
         bottom:"40px",
         right:"40px",
         width:"500px",
-        height:"380px",
-        background:"#1e1e1e",
-        color:"#fff",
+        height:"460px",
+        background:"var(--md-sys-color-surface,#1e1e1e)",
+        color:"var(--md-sys-color-on-surface,#fff)",
         borderRadius:"16px",
-        boxShadow:"0 12px 35px rgba(0,0,0,0.45)",
+        boxShadow:"0 8px 28px rgba(0,0,0,0.35)",
         zIndex:999999,
         display:"flex",
         flexDirection:"column",
         overflow:"hidden",
-        border:"1px solid rgba(255,255,255,0.08)"
+        border:"1px solid rgba(255,255,255,0.08)",
+        backdropFilter:"blur(12px)"
     });
+
     const header=document.createElement("div");
     header.textContent="Themes";
     Object.assign(header.style,{
         padding:"14px 16px",
         fontWeight:"600",
         fontSize:"14px",
-        background:"rgba(255,255,255,0.04)",
+        background:"var(--md-sys-color-surface-container,rgba(255,255,255,0.04))",
         borderBottom:"1px solid rgba(255,255,255,0.08)",
         cursor:"move"
     });
     makeDraggable(panel,header);
+
     const close=document.createElement("div");
     close.textContent="✕";
-    Object.assign(close.style,{position:"absolute",right:"16px",top:"12px",cursor:"pointer"});
+    Object.assign(close.style,{
+        position:"absolute",
+        right:"16px",
+        top:"12px",
+        cursor:"pointer",
+        opacity:"0.6",
+        fontSize:"15px",
+        lineHeight:"1",
+        padding:"2px 4px"
+    });
+    close.onmouseenter=()=>close.style.opacity="1";
+    close.onmouseleave=()=>close.style.opacity="0.6";
     close.onclick=()=>panel.style.display="none";
+
+    const btnRow=document.createElement("div");
+    Object.assign(btnRow.style,{
+        display:"flex",
+        gap:"8px",
+        padding:"12px 16px",
+        borderBottom:"1px solid rgba(255,255,255,0.08)",
+        flex:"0 0 auto"
+    });
+
     const importBtn=document.createElement("button");
     importBtn.textContent="Import Theme";
-    Object.assign(importBtn.style,{
-        margin:"10px",
-        padding:"10px",
-        borderRadius:"8px",
-        border:"1px solid rgba(255,255,255,0.1)",
-        background:"rgba(255,255,255,0.06)",
-        color:"#fff",
-        fontWeight:"500",
-        cursor:"pointer",
-        transition:"all .15s ease"
-    });
-    importBtn.onmouseenter=()=>{importBtn.style.background="rgba(255,255,255,0.12)";};
-    importBtn.onmouseleave=()=>{importBtn.style.background="rgba(255,255,255,0.06)";};
+    styleBtn(importBtn);
+    importBtn.style.flex="1";
+    importBtn.style.padding="8px 12px";
+
+    const newBtn=document.createElement("button");
+    newBtn.textContent="+ New";
+    styleBtn(newBtn);
+    newBtn.style.flex="1";
+    newBtn.style.padding="8px 12px";
+
+    btnRow.appendChild(importBtn);
+    btnRow.appendChild(newBtn);
+
     const list=document.createElement("div");
     Object.assign(list.style,{
         flex:"1",
         overflowY:"auto",
-        padding:"12px",
+        padding:"16px",
         display:"flex",
         flexDirection:"column",
         gap:"8px"
     });
+
     panel.appendChild(header);
     panel.appendChild(close);
-    panel.appendChild(importBtn);
+    panel.appendChild(btnRow);
     panel.appendChild(list);
     document.body.appendChild(panel);
+
     function render(){
         list.innerHTML="";
         const themes=getThemes();
+
+        if(themes.length === 0){
+            const empty=document.createElement("div");
+            empty.textContent="No themes yet. Import or create one above.";
+            Object.assign(empty.style,{opacity:"0.4",fontSize:"13px"});
+            list.appendChild(empty);
+            return;
+        }
+
         themes.forEach(theme=>{
             const meta=parseMeta(theme.css);
+
             const card=document.createElement("div");
             Object.assign(card.style,{
-                padding:"10px",
-                borderRadius:"10px",
-                background:"rgba(255,255,255,0.05)",
                 display:"flex",
                 justifyContent:"space-between",
-                alignItems:"center"
+                alignItems:"center",
+                padding:"10px 12px",
+                borderRadius:"10px",
+                background:"rgba(255,255,255,0.04)",
+                border:"1px solid rgba(255,255,255,0.06)",
+                marginBottom:"0"
             });
+
+            const left=document.createElement("div");
+            Object.assign(left.style,{display:"flex",alignItems:"center",gap:"10px"});
+
+            const dot=document.createElement("div");
+            Object.assign(dot.style,{
+                width:"10px",
+                height:"10px",
+                borderRadius:"50%",
+                flexShrink:"0",
+                background: theme.enabled ? "#4dff88" : "#777",
+                boxShadow: theme.enabled ? "0 0 6px #4dff88" : "none"
+            });
+
             const info=document.createElement("div");
-            info.innerHTML=`<div style="font-weight:600">${meta.name}</div><div style="font-size:11px;opacity:.7">${meta.author} • v${meta.version}</div><div style="font-size:11px;opacity:.6">${meta.description}</div>`;
+            info.innerHTML=`<div style="font-weight:600;font-size:13px">${meta.name}</div><div style="font-size:11px;opacity:.5">${meta.author} • v${meta.version}</div><div style="font-size:11px;opacity:.4">${meta.description}</div>`;
+
+            left.appendChild(dot);
+            left.appendChild(info);
+
             const controls=document.createElement("div");
+            Object.assign(controls.style,{display:"flex",gap:"6px"});
+
             const toggle=document.createElement("button");
             toggle.textContent=theme.enabled?"Disable":"Enable";
+            styleBtn(toggle);
             toggle.onclick=()=>{
                 theme.enabled=!theme.enabled;
                 setThemes(themes);
                 applyThemes();
                 render();
             };
+
             const edit=document.createElement("button");
             edit.textContent="Edit";
+            styleBtn(edit, "rgba(100,160,255,0.15)");
             edit.onclick=()=>openThemeEditor(theme);
+
             const del=document.createElement("button");
-            del.textContent="Delete";
+            del.textContent="✕";
+            styleBtn(del, "rgba(255,80,80,0.15)");
             del.onclick=()=>{
                 const updated=themes.filter(t=>t.id!==theme.id);
                 setThemes(updated);
                 applyThemes();
                 render();
             };
-            [toggle,edit,del].forEach(b=>{Object.assign(b.style,{marginLeft:"6px",padding:"4px 8px",borderRadius:"6px",border:"none",cursor:"pointer"});controls.appendChild(b);});
-            card.appendChild(info);
+
+            controls.appendChild(toggle);
+            controls.appendChild(edit);
+            controls.appendChild(del);
+            card.appendChild(left);
             card.appendChild(controls);
             list.appendChild(card);
         });
     }
+
     window.__avia_refresh_themes_panel = render;
+
     importBtn.onclick=()=>{
         const input=document.createElement("input");
         input.type="file";
@@ -243,6 +349,15 @@ function toggleThemesPanel(){
         };
         input.click();
     };
+
+    newBtn.onclick=()=>{
+        const themes=getThemes();
+        themes.push({id:crypto.randomUUID(),css:TEMPLATE,enabled:true});
+        setThemes(themes);
+        applyThemes();
+        render();
+    };
+
     render();
 }
 
