@@ -249,7 +249,19 @@
         const textNode = [...pluginsBtn.querySelectorAll('div')]
             .find(d => d.children.length === 0 && d.textContent.trim() === 'Appearance');
         if (textNode) textNode.textContent = "(Avia) Plugins";
-        if (typeof setIcon === "function") setIcon(pluginsBtn, "extension");
+const svgNS = "http://www.w3.org/2000/svg";
+const oldSvg = pluginsBtn.querySelector('svg');
+if (oldSvg) oldSvg.remove();
+const svg = document.createElementNS(svgNS, "svg");
+svg.setAttribute("viewBox", "0 0 24 24");
+svg.setAttribute("width", "20");
+svg.setAttribute("height", "20");
+svg.setAttribute("fill", "currentColor");
+svg.style.marginRight = "8px";
+const path = document.createElementNS(svgNS, "path");
+path.setAttribute("d", "M20.5 11H19V7a2 2 0 00-2-2h-4V3.5a2.5 2.5 0 00-5 0V5H4a2 2 0 00-2 2v3.8h1.5c1.5 0 2.7 1.2 2.7 2.7S5 16.2 3.5 16.2H2V20a2 2 0 002 2h3.8v-1.5c0-1.5 1.2-2.7 2.7-2.7s2.7 1.2 2.7 2.7V22H17a2 2 0 002-2v-4h1.5a2.5 2.5 0 000-5z");
+svg.appendChild(path);
+pluginsBtn.insertBefore(svg, pluginsBtn.firstChild);
         pluginsBtn.addEventListener('click', togglePluginsPanel);
         referenceNode.parentElement.insertBefore(pluginsBtn, referenceNode.nextSibling);
     }
