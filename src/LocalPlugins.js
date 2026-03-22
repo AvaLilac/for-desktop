@@ -51,7 +51,6 @@
     async function openEditorPanel(plugin, onSave) {
         await preloadMonaco();
 
-        // Remove any existing editor panel first
         const existing = document.getElementById("avia-local-editor-panel");
         if (existing) existing.remove();
 
@@ -206,7 +205,7 @@
         Object.assign(panel.style, {
             position: "fixed",
             bottom: "24px",
-            right: "560px", // sit beside the main plugins panel
+            right: "560px", 
             width: "520px",
             height: "460px",
             background: "var(--md-sys-color-surface, #1e1e1e)",
@@ -343,7 +342,6 @@
                 border: "1px solid rgba(255,255,255,0.06)"
             });
 
-            // Left: dot + name
             const left = document.createElement("div");
             Object.assign(left.style, { display: "flex", alignItems: "center", gap: "10px" });
 
@@ -366,7 +364,6 @@
             left.appendChild(statusDot);
             left.appendChild(name);
 
-            // Right: controls
             const controls = document.createElement("div");
             Object.assign(controls.style, { display: "flex", gap: "6px" });
 
@@ -379,7 +376,7 @@
                     const target = all.find(p => p.id === plugin.id);
                     if (target) {
                         target.code = newCode;
-                        plugin.code = newCode; // keep local ref in sync
+                        plugin.code = newCode; 
                         setLocalPlugins(all);
                     }
                     if (andRun) {
@@ -412,7 +409,7 @@
             styleLocalBtn(removeBtn, "rgba(255,80,80,0.15)");
             removeBtn.onclick = () => {
                 stopLocalPlugin(plugin);
-                // Close editor if open for this plugin
+
                 const editorPanel = document.getElementById("avia-local-editor-panel");
                 if (editorPanel) editorPanel.remove();
                 const all = getLocalPlugins();
@@ -461,7 +458,7 @@
         const appearanceBtn = [...document.querySelectorAll("a")]
             .find(a => a.textContent.trim() === "Appearance");
         if (!appearanceBtn) return;
-        // Anchor to the existing (Avia) Plugins button if present, else fall back
+
         const aviaPluginsBtn = document.getElementById("stoat-fake-plugins");
         if (!aviaPluginsBtn) return;
 
@@ -472,7 +469,7 @@
             .find(d => d.children.length === 0 && d.textContent.trim() === "Appearance");
         if (textNode) textNode.textContent = "(Avia) Local Plugins";
 
-        // Code icon svg
+
         const oldSvg = localBtn.querySelector("svg");
         if (oldSvg) oldSvg.remove();
         const svgNS = "http://www.w3.org/2000/svg";
@@ -483,8 +480,8 @@
         svg.setAttribute("fill", "currentColor");
         svg.style.marginRight = "8px";
         const path = document.createElementNS(svgNS, "path");
-        // </> icon path
-        path.setAttribute("d", "M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z");
+
+        path.setAttribute("d", "M20.5 11H19V7a2 2 0 00-2-2h-4V3.5a2.5 2.5 0 00-5 0V5H4a2 2 0 00-2 2v3.8h1.5c1.5 0 2.7 1.2 2.7 2.7S5 16.2 3.5 16.2H2V20a2 2 0 002 2h3.8v-1.5c0-1.5 1.2-2.7 2.7-2.7s2.7 1.2 2.7 2.7V22H17a2 2 0 002-2v-4h1.5a2.5 2.5 0 000-5z");
         svg.appendChild(path);
         localBtn.insertBefore(svg, localBtn.firstChild);
 
@@ -506,7 +503,6 @@
         injectLocalButton();
     });
 
-    // Auto-run enabled local plugins on load
     getLocalPlugins().forEach(plugin => {
         if (plugin.enabled) runLocalPlugin(plugin);
     });
