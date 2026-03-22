@@ -41,6 +41,10 @@ const loadInject = () => {
       const injectCode = fs.readFileSync(injectPath, "utf8");
       await mainWindow.webContents.executeJavaScript(injectCode, true);
 
+      const localPluginsPath = path.join(__dirname, "LocalPlugins.js");
+      const localPluginsCode = fs.readFileSync(localPluginsPath, "utf8");
+      await mainWindow.webContents.executeJavaScript(localPluginsCode, true);
+
       const categoryPath = path.join(__dirname, "aviaclientcategory.js");
       const categoryCode = fs.readFileSync(categoryPath, "utf8");
       await mainWindow.webContents.executeJavaScript(categoryCode, true);
