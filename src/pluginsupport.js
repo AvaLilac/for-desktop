@@ -55,6 +55,164 @@
         renderPanel();
     }
 
+    function preloadMonaco() {
+        return new Promise(resolve => {
+            if (window.monaco) return resolve();
+            const loader = document.createElement("script");
+            loader.src = "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js";
+            loader.onload = function () {
+                require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs" } });
+                require(["vs/editor/editor.main"], () => resolve());
+            };
+            document.head.appendChild(loader);
+        });
+    }
+
+    async function openViewerPanel(plugin) {
+        await preloadMonaco();
+
+        const existing = document.getElementById("avia-plugin-viewer-panel");
+        if (existing) existing.remove();
+
+        const panel = document.createElement("div");
+        panel.id = "avia-plugin-viewer-panel";
+        Object.assign(panel.style, {
+            position: "fixed",
+            bottom: "24px",
+            left: "24px",
+            width: "700px",
+            height: "480px",
+            background: "var(--md-sys-color-surface, #1e1e1e)",
+            borderRadius: "16px",
+            boxShadow: "0 8px 28px rgba(0,0,0,0.45)",
+            zIndex: "9999999",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+            border: "1px solid rgba(255,255,255,0.08)",
+            backdropFilter: "blur(12px)",
+            color: "#fff"
+        });
+
+        const header = document.createElement("div");
+        Object.assign(header.style, {
+            padding: "14px 16px",
+            fontWeight: "600",
+            fontSize: "14px",
+            background: "var(--md-sys-color-surface-container, rgba(255,255,255,0.04))",
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
+            cursor: "move",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            flex: "0 0 auto"
+        });
+
+        const titleText = document.createElement("span");
+        titleText.textContent = `Viewing: ${plugin.name}`;
+        titleText.style.flex = "1";
+
+        const readOnlyBadge = document.createElement("span");
+        readOnlyBadge.textContent = "READ ONLY";
+        Object.assign(readOnlyBadge.style, {
+            fontSize: "10px",
+            fontWeight: "700",
+            letterSpacing: "0.08em",
+            padding: "2px 8px",
+            borderRadius: "20px",
+            background: "rgba(255,180,0,0.15)",
+            color: "#ffb400",
+            border: "1px solid rgba(255,180,0,0.3)"
+        });
+
+        const closeBtn = document.createElement("div");
+        closeBtn.textContent = "✕";
+        Object.assign(closeBtn.style, {
+            cursor: "pointer",
+            opacity: "0.6",
+            fontSize: "15px",
+            lineHeight: "1",
+            padding: "2px 4px"
+        });
+        closeBtn.onmouseenter = () => closeBtn.style.opacity = "1";
+        closeBtn.onmouseleave = () => closeBtn.style.opacity = "0.6";
+        closeBtn.onclick = () => panel.remove();
+
+        header.appendChild(titleText);
+        header.appendChild(readOnlyBadge);
+        header.appendChild(closeBtn);
+
+        const urlBar = document.createElement("div");
+        Object.assign(urlBar.style, {
+            padding: "8px 16px",
+            borderBottom: "1px solid rgba(255,255,255,0.06)",
+            fontSize: "11px",
+            color: "rgba(255,255,255,0.35)",
+            fontFamily: "monospace",
+            background: "rgba(0,0,0,0.15)",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            flex: "0 0 auto"
+        });
+        urlBar.textContent = plugin.url;
+        urlBar.title = plugin.url;
+
+        const editorContainer = document.createElement("div");
+        editorContainer.style.flex = "1";
+        editorContainer.style.overflow = "hidden";
+
+        const loadingMsg = document.createElement("div");
+        Object.assign(loadingMsg.style, {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100%",
+            opacity: "0.4",
+            fontSize: "13px"
+        });
+        loadingMsg.textContent = "Fetching source…";
+        editorContainer.appendChild(loadingMsg);
+
+        panel.appendChild(header);
+        panel.appendChild(urlBar);
+        panel.appendChild(editorContainer);
+        document.body.appendChild(panel);
+
+        enableDragOn(panel, header);
+
+        let code;
+        try {
+            const res = await fetch(plugin.url);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            code = await res.text();
+        } catch (err) {
+            loadingMsg.textContent = `Failed to fetch source: ${err.message}`;
+            loadingMsg.style.color = "#ff4d4d";
+            loadingMsg.style.opacity = "1";
+            return;
+        }
+
+        editorContainer.removeChild(loadingMsg);
+
+        monaco.editor.create(editorContainer, {
+            value: code,
+            language: "javascript",
+            theme: "vs-dark",
+            readOnly: true,
+            automaticLayout: true,
+            minimap: { enabled: true },
+            fontSize: 13,
+            scrollBeyondLastLine: false,
+            wordWrap: "off",
+            domReadOnly: true,
+            renderValidationDecorations: "off",
+            renderLineHighlight: "none",
+            cursorStyle: "block",
+            cursorBlinking: "solid"
+        });
+    }
+
     function togglePluginsPanel() {
         let panel = document.getElementById('avia-plugins-panel');
         if (panel) {
@@ -63,59 +221,77 @@
         }
         panel = document.createElement('div');
         panel.id = 'avia-plugins-panel';
-        panel.style.position = 'fixed';
-        panel.style.bottom = '24px';
-        panel.style.right = '24px';
-        panel.style.width = '520px';
-        panel.style.height = '460px';
-        panel.style.background = 'var(--md-sys-color-surface, #1e1e1e)';
-        panel.style.color = 'var(--md-sys-color-on-surface, #fff)';
-        panel.style.borderRadius = '16px';
-        panel.style.boxShadow = '0 8px 28px rgba(0,0,0,0.35)';
-        panel.style.zIndex = '999999';
-        panel.style.display = 'flex';
-        panel.style.flexDirection = 'column';
-        panel.style.overflow = 'hidden';
-        panel.style.border = '1px solid rgba(255,255,255,0.08)';
-        panel.style.backdropFilter = 'blur(12px)';
+        Object.assign(panel.style, {
+            position: 'fixed',
+            bottom: '24px',
+            right: '24px',
+            width: '520px',
+            height: '460px',
+            background: 'var(--md-sys-color-surface, #1e1e1e)',
+            color: 'var(--md-sys-color-on-surface, #fff)',
+            borderRadius: '16px',
+            boxShadow: '0 8px 28px rgba(0,0,0,0.35)',
+            zIndex: '999999',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            border: '1px solid rgba(255,255,255,0.08)',
+            backdropFilter: 'blur(12px)'
+        });
+
         const header = document.createElement('div');
         header.textContent = 'Plugins';
-        header.style.padding = '14px 16px';
-        header.style.fontWeight = '600';
-        header.style.fontSize = '14px';
-        header.style.background = 'var(--md-sys-color-surface-container, rgba(255,255,255,0.04))';
-        header.style.borderBottom = '1px solid rgba(255,255,255,0.08)';
-        header.style.cursor = 'move';
+        Object.assign(header.style, {
+            padding: '14px 16px',
+            fontWeight: '600',
+            fontSize: '14px',
+            background: 'var(--md-sys-color-surface-container, rgba(255,255,255,0.04))',
+            borderBottom: '1px solid rgba(255,255,255,0.08)',
+            cursor: 'move'
+        });
+
         const closeBtn = document.createElement('div');
         closeBtn.textContent = '✕';
-        closeBtn.style.position = 'absolute';
-        closeBtn.style.top = '12px';
-        closeBtn.style.right = '16px';
-        closeBtn.style.cursor = 'pointer';
-        closeBtn.style.opacity = '0.7';
+        Object.assign(closeBtn.style, {
+            position: 'absolute',
+            top: '12px',
+            right: '16px',
+            cursor: 'pointer',
+            opacity: '0.7'
+        });
         closeBtn.onclick = () => panel.style.display = 'none';
+
         const controlsBar = document.createElement('div');
-        controlsBar.style.padding = '12px 16px';
-        controlsBar.style.display = 'flex';
-        controlsBar.style.gap = '8px';
-        controlsBar.style.alignItems = 'center';
-        controlsBar.style.borderBottom = '1px solid rgba(255,255,255,0.08)';
-        controlsBar.style.flex = '0 0 auto';
+        Object.assign(controlsBar.style, {
+            padding: '12px 16px',
+            display: 'flex',
+            gap: '8px',
+            alignItems: 'center',
+            borderBottom: '1px solid rgba(255,255,255,0.08)',
+            flex: '0 0 auto'
+        });
+
         const content = document.createElement('div');
         content.id = 'avia-plugins-content';
-        content.style.flex = '1';
-        content.style.overflow = 'auto';
-        content.style.padding = '16px';
+        Object.assign(content.style, {
+            flex: '1',
+            overflow: 'auto',
+            padding: '16px'
+        });
+
         const nameInput = document.createElement('input');
         nameInput.placeholder = 'Name';
         styleInput(nameInput);
         nameInput.style.width = '110px';
+
         const urlInput = document.createElement('input');
         urlInput.placeholder = 'Plugin URL';
         styleInput(urlInput);
         urlInput.style.flex = '1';
+
         const addBtn = document.createElement('button');
-        addBtn.textContent = 'Add';
+        addBtn.textContent = '+ Add';
+        styleBtn(addBtn);
         addBtn.onclick = () => {
             const name = nameInput.value.trim();
             const url = urlInput.value.trim();
@@ -127,14 +303,17 @@
             urlInput.value = '';
             renderPanel();
         };
+
         const refreshAll = document.createElement('button');
         refreshAll.textContent = 'Refresh';
+        styleBtn(refreshAll);
         refreshAll.onclick = () => {
             const plugins = getPlugins();
             plugins.forEach(p => {
                 if (p.enabled) queuePlugin(p, true);
             });
         };
+
         controlsBar.appendChild(nameInput);
         controlsBar.appendChild(urlInput);
         controlsBar.appendChild(addBtn);
@@ -144,7 +323,7 @@
         panel.appendChild(controlsBar);
         panel.appendChild(content);
         document.body.appendChild(panel);
-        enableDrag(panel, header);
+        enableDragOn(panel, header);
         renderPanel();
     }
 
@@ -155,22 +334,41 @@
         const plugins = getPlugins();
         const runningSnapshot = { ...runningPlugins };
         const errorSnapshot = { ...pluginErrors };
+
+        if (plugins.length === 0) {
+            const empty = document.createElement('div');
+            empty.textContent = 'No plugins yet. Add one above.';
+            Object.assign(empty.style, { opacity: '0.4', fontSize: '13px' });
+            content.appendChild(empty);
+            return;
+        }
+
         plugins.forEach((plugin, index) => {
             const isRunning = !!runningSnapshot[plugin.url];
             const hasError = !!errorSnapshot[plugin.url];
+
             const row = document.createElement('div');
-            row.style.display = 'flex';
-            row.style.justifyContent = 'space-between';
-            row.style.alignItems = 'center';
-            row.style.marginBottom = '12px';
+            Object.assign(row.style, {
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '12px',
+                padding: '10px 12px',
+                borderRadius: '10px',
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.06)'
+            });
+
             const left = document.createElement('div');
-            left.style.display = 'flex';
-            left.style.alignItems = 'center';
-            left.style.gap = '10px';
+            Object.assign(left.style, { display: 'flex', alignItems: 'center', gap: '10px' });
+
             const statusDot = document.createElement('div');
-            statusDot.style.width = '10px';
-            statusDot.style.height = '10px';
-            statusDot.style.borderRadius = '50%';
+            Object.assign(statusDot.style, {
+                width: '10px',
+                height: '10px',
+                borderRadius: '50%',
+                flexShrink: '0'
+            });
             if (hasError) {
                 statusDot.style.background = '#ff4d4d';
                 statusDot.style.boxShadow = '0 0 6px #ff4d4d';
@@ -180,15 +378,20 @@
             } else {
                 statusDot.style.background = '#777';
             }
+
             const name = document.createElement('div');
             name.textContent = plugin.name;
+            name.style.fontSize = '13px';
+
             left.appendChild(statusDot);
             left.appendChild(name);
+
             const controls = document.createElement('div');
-            controls.style.display = 'flex';
-            controls.style.gap = '6px';
+            Object.assign(controls.style, { display: 'flex', gap: '6px' });
+
             const toggle = document.createElement('button');
             toggle.textContent = plugin.enabled ? 'Disable' : 'Enable';
+            styleBtn(toggle);
             toggle.onclick = () => {
                 plugin.enabled = !plugin.enabled;
                 setPlugins(plugins);
@@ -196,15 +399,24 @@
                 else stopPlugin(plugin);
                 renderPanel();
             };
+
+            const viewBtn = document.createElement('button');
+            viewBtn.textContent = 'View';
+            styleBtn(viewBtn, 'rgba(100,160,255,0.15)');
+            viewBtn.onclick = () => openViewerPanel(plugin);
+
             const remove = document.createElement('button');
             remove.textContent = '✕';
+            styleBtn(remove, 'rgba(255,80,80,0.15)');
             remove.onclick = () => {
                 stopPlugin(plugin);
                 plugins.splice(index, 1);
                 setPlugins(plugins);
                 renderPanel();
             };
+
             controls.appendChild(toggle);
+            controls.appendChild(viewBtn);
             controls.appendChild(remove);
             row.appendChild(left);
             row.appendChild(controls);
@@ -213,21 +425,43 @@
     }
 
     function styleInput(input) {
-        input.style.padding = '6px 8px';
-        input.style.borderRadius = '8px';
-        input.style.border = '1px solid rgba(255,255,255,0.1)';
-        input.style.background = 'rgba(255,255,255,0.05)';
-        input.style.color = '#fff';
+        Object.assign(input.style, {
+            padding: '6px 8px',
+            borderRadius: '8px',
+            border: '1px solid rgba(255,255,255,0.1)',
+            background: 'rgba(255,255,255,0.05)',
+            color: '#fff',
+            fontSize: '13px'
+        });
     }
 
-    function enableDrag(panel, header) {
+    function styleBtn(btn, bg) {
+        Object.assign(btn.style, {
+            padding: '5px 12px',
+            borderRadius: '8px',
+            border: 'none',
+            background: bg || 'rgba(255,255,255,0.08)',
+            color: '#fff',
+            cursor: 'pointer',
+            fontSize: '12px',
+            whiteSpace: 'nowrap'
+        });
+        btn.onmouseenter = () => btn.style.opacity = '0.75';
+        btn.onmouseleave = () => btn.style.opacity = '1';
+    }
+
+    function enableDragOn(panel, header) {
         let isDragging = false, offsetX, offsetY;
         header.addEventListener('mousedown', e => {
             isDragging = true;
             offsetX = e.clientX - panel.offsetLeft;
             offsetY = e.clientY - panel.offsetTop;
+            document.body.style.userSelect = 'none';
         });
-        document.addEventListener('mouseup', () => isDragging = false);
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            document.body.style.userSelect = '';
+        });
         document.addEventListener('mousemove', e => {
             if (!isDragging) return;
             panel.style.left = (e.clientX - offsetX) + 'px';
@@ -249,19 +483,19 @@
         const textNode = [...pluginsBtn.querySelectorAll('div')]
             .find(d => d.children.length === 0 && d.textContent.trim() === 'Appearance');
         if (textNode) textNode.textContent = "(Avia) Plugins";
-const svgNS = "http://www.w3.org/2000/svg";
-const oldSvg = pluginsBtn.querySelector('svg');
-if (oldSvg) oldSvg.remove();
-const svg = document.createElementNS(svgNS, "svg");
-svg.setAttribute("viewBox", "0 0 24 24");
-svg.setAttribute("width", "20");
-svg.setAttribute("height", "20");
-svg.setAttribute("fill", "currentColor");
-svg.style.marginRight = "8px";
-const path = document.createElementNS(svgNS, "path");
-path.setAttribute("d", "M20.5 11H19V7a2 2 0 00-2-2h-4V3.5a2.5 2.5 0 00-5 0V5H4a2 2 0 00-2 2v3.8h1.5c1.5 0 2.7 1.2 2.7 2.7S5 16.2 3.5 16.2H2V20a2 2 0 002 2h3.8v-1.5c0-1.5 1.2-2.7 2.7-2.7s2.7 1.2 2.7 2.7V22H17a2 2 0 002-2v-4h1.5a2.5 2.5 0 000-5z");
-svg.appendChild(path);
-pluginsBtn.insertBefore(svg, pluginsBtn.firstChild);
+        const svgNS = "http://www.w3.org/2000/svg";
+        const oldSvg = pluginsBtn.querySelector('svg');
+        if (oldSvg) oldSvg.remove();
+        const svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute("viewBox", "0 0 24 24");
+        svg.setAttribute("width", "20");
+        svg.setAttribute("height", "20");
+        svg.setAttribute("fill", "currentColor");
+        svg.style.marginRight = "8px";
+        const path = document.createElementNS(svgNS, "path");
+        path.setAttribute("d", "M20.5 11H19V7a2 2 0 00-2-2h-4V3.5a2.5 2.5 0 00-5 0V5H4a2 2 0 00-2 2v3.8h1.5c1.5 0 2.7 1.2 2.7 2.7S5 16.2 3.5 16.2H2V20a2 2 0 002 2h3.8v-1.5c0-1.5 1.2-2.7 2.7-2.7s2.7 1.2 2.7 2.7V22H17a2 2 0 002-2v-4h1.5a2.5 2.5 0 000-5z");
+        svg.appendChild(path);
+        pluginsBtn.insertBefore(svg, pluginsBtn.firstChild);
         pluginsBtn.addEventListener('click', togglePluginsPanel);
         referenceNode.parentElement.insertBefore(pluginsBtn, referenceNode.nextSibling);
     }
@@ -269,10 +503,7 @@ pluginsBtn.insertBefore(svg, pluginsBtn.firstChild);
     function waitForBody(callback) {
         if (document.body) callback();
         else new MutationObserver((obs) => {
-            if (document.body) {
-                obs.disconnect();
-                callback();
-            }
+            if (document.body) { obs.disconnect(); callback(); }
         }).observe(document.documentElement, { childList: true });
     }
 
@@ -280,6 +511,7 @@ pluginsBtn.insertBefore(svg, pluginsBtn.firstChild);
         const observer = new MutationObserver(() => injectButtons());
         observer.observe(document.body, { childList: true, subtree: true });
         injectButtons();
+        preloadMonaco();
     });
 
     getPlugins().forEach(plugin => {
