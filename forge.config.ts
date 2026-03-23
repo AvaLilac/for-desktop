@@ -6,6 +6,7 @@ import { MakerSquirrel } from "@electron-forge/maker-squirrel";
 import { MakerZIP } from "@electron-forge/maker-zip";
 import { FusesPlugin } from "@electron-forge/plugin-fuses";
 import { VitePlugin } from "@electron-forge/plugin-vite";
+import { VitePluginBuildConfig } from "@electron-forge/plugin-vite/dist/Config";
 import { PublisherGithub } from "@electron-forge/publisher-github";
 import type { ForgeConfig } from "@electron-forge/shared-types";
 import { FuseV1Options, FuseVersion } from "@electron/fuses";
@@ -93,6 +94,37 @@ if (!process.env.PLATFORM) {
   );
 }
 
+var customVitePluginBuild: VitePluginBuildConfig[] = [
+  {
+    entry: "src/main.ts",
+    config: "vite.main.config.ts",
+    target: "main",
+  },
+  {
+    entry: "src/preload.ts",
+    config: "vite.preload.config.ts",
+    target: "preload",
+  },
+];
+
+const customPlugins: string[] = [
+  "src/inject.js",
+  "src/aviaclientcategory.js",
+  "src/themes.js",
+  "src/aviafavsystem.js",
+  "src/pluginsupport.js",
+  "src/aviaversion.js",
+  "src/LocalPlugins.js",
+];
+
+for (const plugin of customPlugins) {
+  customVitePluginBuild.push({
+    entry: plugin,
+    config: "vite.main.config.ts",
+    target: "main",
+  });
+}
+
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
@@ -104,53 +136,7 @@ const config: ForgeConfig = {
   makers,
   plugins: [
     new VitePlugin({
-      build: [
-        {
-          entry: "src/main.ts",
-          config: "vite.main.config.ts",
-          target: "main",
-        },
-        {
-          entry: "src/preload.ts",
-          config: "vite.preload.config.ts",
-          target: "preload",
-        },
-        {
-          entry: "src/inject.js",
-          config: "vite.main.config.ts",
-          target: "main",
-        },
-        {
-          entry: "src/aviaclientcategory.js",
-          config: "vite.main.config.ts",
-          target: "main",
-        },
-        {
-          entry: "src/themes.js",
-          config: "vite.main.config.ts",
-          target: "main",
-        },
-        {
-          entry: "src/aviafavsystem.js",
-          config: "vite.main.config.ts",
-          target: "main",
-        },
-        {
-          entry: "src/pluginsupport.js",
-          config: "vite.main.config.ts",
-          target: "main",
-        },
-        {
-          entry: "src/aviaversion.js",
-          config: "vite.main.config.ts",
-          target: "main",
-        },
-        {
-          entry: "src/LocalPlugins.js",
-          config: "vite.main.config.ts",
-          target: "main",
-        },
-      ],
+      build: customVitePluginBuild,
       renderer: [],
     }),
     new FusesPlugin({
