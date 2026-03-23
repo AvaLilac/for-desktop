@@ -37,33 +37,21 @@ const loadInject = () => {
 
   mainWindow.webContents.on("dom-ready", async () => {
     try {
-      const injectPath = path.join(__dirname, "inject.js");
-      const injectCode = fs.readFileSync(injectPath, "utf8");
-      await mainWindow.webContents.executeJavaScript(injectCode, true);
+      const plugins: string[] = [
+        "inject.js",
+        "LocalPlugins.js",
+        "aviaclientcategory.js",
+        "themes.js",
+        "aviafavsystem.js",
+        "pluginsupport.js",
+        "aviaversion.js"
+      ];
 
-      const localPluginsPath = path.join(__dirname, "LocalPlugins.js");
-      const localPluginsCode = fs.readFileSync(localPluginsPath, "utf8");
-      await mainWindow.webContents.executeJavaScript(localPluginsCode, true);
-
-      const categoryPath = path.join(__dirname, "aviaclientcategory.js");
-      const categoryCode = fs.readFileSync(categoryPath, "utf8");
-      await mainWindow.webContents.executeJavaScript(categoryCode, true);
-
-      const themesPath = path.join(__dirname, "themes.js");
-      const themesCode = fs.readFileSync(themesPath, "utf8");
-      await mainWindow.webContents.executeJavaScript(themesCode, true);
-
-      const favPath = path.join(__dirname, "aviafavsystem.js");
-      const favCode = fs.readFileSync(favPath, "utf8");
-      await mainWindow.webContents.executeJavaScript(favCode, true);
-
-      const pluginPath = path.join(__dirname, "pluginsupport.js");
-      const pluginCode = fs.readFileSync(pluginPath, "utf8");
-      await mainWindow.webContents.executeJavaScript(pluginCode, true);
-
-      const badgePath = path.join(__dirname, "aviaversion.js");
-      const badgeCode = fs.readFileSync(badgePath, "utf8");
-      await mainWindow.webContents.executeJavaScript(badgeCode, true);
+      for (const plugin of plugins) {
+        const pluginPath: string = path.join(__dirname, plugin);
+        const pluginCode: string = fs.readFileSync(pluginPath, "utf8");
+        await mainWindow.webContents.executeJavaScript(pluginCode, true);
+      }
     } catch {}
   });
 };
