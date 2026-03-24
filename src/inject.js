@@ -243,15 +243,15 @@
         const appearanceBtn = Array.from(document.querySelectorAll('a')).find(a => a.textContent.trim() === 'Appearance');
         if (!appearanceBtn) return;
 
-const aviaHeader = [...document.querySelectorAll('span')]
-    .find(s => s.textContent.trim() === "AVIA CLIENT SETTINGS");
-if (!aviaHeader) return;
+        const aviaHeader = [...document.querySelectorAll('span')]
+            .find(s => s.textContent.trim() === "AVIA CLIENT SETTINGS");
+        if (!aviaHeader) return;
 
-const aviaContainer = aviaHeader.closest('.d_flex.flex-d_column');
-if (!aviaContainer) return;
+        const aviaContainer = aviaHeader.closest('.d_flex.flex-d_column');
+        if (!aviaContainer) return;
 
-const targetParent = aviaContainer.querySelector('.d_flex.flex-d_column.gap_var\\(--gap-s\\)');
-if (!targetParent) return;
+        const targetParent = aviaContainer.querySelector('.d_flex.flex-d_column.gap_var\\(--gap-s\\)');
+        if (!targetParent) return;
 
         if (!document.getElementById('stoat-fake-linktree')) {
             const linktreeBtn = appearanceBtn.cloneNode(true);
@@ -305,7 +305,8 @@ if (!targetParent) return;
                             document.getElementById('stoat-fake-loadfont') ||
                             document.getElementById('stoat-fake-stoatserver') ||
                             document.getElementById('stoat-fake-linktree');
-targetParent.appendChild(quickCssBtn);        }
+            targetParent.appendChild(quickCssBtn);
+        }
     }
 
     function applyQuickCSS(css) {
