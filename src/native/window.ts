@@ -9,7 +9,7 @@ import {
   nativeImage,
 } from "electron";
 
-import windowIconAsset from "../../aviaicon/icon.png?asset";
+import windowIconAsset from "../../avia_assets/icon.png?asset";
 
 import { config } from "./config";
 import { updateTrayMenu } from "./tray";
