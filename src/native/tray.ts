@@ -1,6 +1,6 @@
 import { Menu, Tray, nativeImage } from "electron";
 
-import trayIconAsset from "../../assets/desktop/icon.png?asset";
+import trayIconAsset from "../../aviaicon/icon.png?asset";
 import macOsTrayIconAsset from "../../assets/desktop/iconTemplate.png?asset";
 import { version } from "../../package.json";
 
