@@ -12,6 +12,16 @@ import { BUILD_URL, createMainWindow, mainWindow } from "./native/window";
 import * as fs from "fs";
 import * as path from "path";
 
+const applyAppName = () => {
+  try {
+    app.setName("AviaClient");
+    (app as any).name = "AviaClient";
+    if (process.platform === "win32") {
+      app.setAppUserModelId("AviaClient");
+    }
+  } catch {}
+};
+
 if (started) {
   app.quit();
 }
@@ -60,7 +70,15 @@ if (acquiredLock) {
   updateElectronApp({ onNotifyUser });
 
   app.on("ready", () => {
+    applyAppName();
     createMainWindow();
+    if (mainWindow) {
+      mainWindow.setTitle("AviaClient");
+      mainWindow.on("page-title-updated", (e) => {
+        e.preventDefault();
+        mainWindow.setTitle("AviaClient");
+      });
+    }
     loadInject();
 
     if (config.firstLaunch) {
@@ -74,7 +92,7 @@ if (acquiredLock) {
     initDiscordRpc();
 
     if (process.platform === "win32") {
-      app.setAppUserModelId("chat.stoat.notifications");
+      app.setAppUserModelId("AviaClient");
     }
   });
 
@@ -93,6 +111,13 @@ if (acquiredLock) {
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createMainWindow();
+      if (mainWindow) {
+        mainWindow.setTitle("AviaClient");
+        mainWindow.on("page-title-updated", (e) => {
+          e.preventDefault();
+          mainWindow.setTitle("AviaClient");
+        });
+      }
       loadInject();
     } else {
       mainWindow.show();
