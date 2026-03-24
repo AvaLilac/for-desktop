@@ -108,13 +108,13 @@ var customVitePluginBuild: VitePluginBuildConfig[] = [
 ];
 
 const customPlugins: string[] = [
-  "src/inject.js",
-  "src/aviaclientcategory.js",
-  "src/themes.js",
-  "src/aviafavsystem.js",
-  "src/pluginsupport.js",
-  "src/aviaversion.js",
-  "src/LocalPlugins.js",
+  "avia_core/inject.js",
+  "avia_core/aviaclientcategory.js",
+  "avia_core/themes.js",
+  "avia_core/aviafavsystem.js",
+  "avia_core/pluginsupport.js",
+  "avia_core/aviaversion.js",
+  "avia_core/LocalPlugins.js",
 ];
 
 for (const plugin of customPlugins) {
