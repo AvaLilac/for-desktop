@@ -19,13 +19,14 @@ const STRINGS = {
 };
 
 const ASSET_DIR = "assets/desktop";
+const AVIA_ASSET_DIR = "avia_assets";
 
 const makers: ForgeConfig["makers"] = [
   new MakerSquirrel({
     name: STRINGS.name,
     authors: STRINGS.author,
     iconUrl: `https://stoat.chat/app/assets/icon-DUSNE-Pb.ico`,
-    setupIcon: `${ASSET_DIR}/icon.ico`,
+    setupIcon: `${AVIA_ASSET_DIR}/icon.ico`,
     description: STRINGS.description,
     exe: `${STRINGS.execName}.exe`,
     setupExe: `${STRINGS.execName}-setup.exe`,
@@ -88,7 +89,7 @@ if (!process.env.PLATFORM) {
         productName: STRINGS.name,
         productDescription: STRINGS.description,
         categories: ["Network"],
-        icon: `${ASSET_DIR}/icon.png`,
+        icon: `${AVIA_ASSET_DIR}/icon.png`,
       },
     }),
   );
@@ -130,7 +131,7 @@ const config: ForgeConfig = {
     asar: true,
     name: STRINGS.name,
     executableName: STRINGS.execName,
-    icon: `${ASSET_DIR}/icon`,
+    icon: `${AVIA_ASSET_DIR}/icon`,
   },
   rebuildConfig: {},
   makers,
