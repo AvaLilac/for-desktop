@@ -31,7 +31,7 @@ Then proceed to setup:
 
 ```bash
 # clone the repository
-git clone --recursive https://github.com/AvaLilac/for-desktop aviaclient-for-desktop
+git clone --recursive https://github.com/AvaLilac/for-desktop/tree/dev aviaclient-for-desktop
 cd aviaclient-for-desktop
 
 # install all packages
