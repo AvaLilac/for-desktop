@@ -143,7 +143,6 @@
 
         saveBtn.onclick = () => {
             onSave(editor.getValue(), false);
-
             saveBtn.textContent = "✓ Saved";
             setTimeout(() => saveBtn.textContent = "💾 Save", 1200);
         };
@@ -205,7 +204,7 @@
         Object.assign(panel.style, {
             position: "fixed",
             bottom: "24px",
-            right: "560px", 
+            right: "560px",
             width: "520px",
             height: "460px",
             background: "var(--md-sys-color-surface, #1e1e1e)",
@@ -276,8 +275,46 @@
             renderLocalPanel();
         };
 
+        const importBtn = document.createElement("button");
+        importBtn.textContent = "Import";
+        styleLocalBtn(importBtn, "#2d6a4f");
+        importBtn.onmouseenter = () => importBtn.style.opacity = "0.75";
+        importBtn.onmouseleave = () => importBtn.style.opacity = "1";
+
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = ".js";
+        fileInput.multiple = true;
+        fileInput.style.display = "none";
+
+        importBtn.onclick = () => fileInput.click();
+
+        fileInput.onchange = async () => {
+            const files = [...fileInput.files];
+            if (!files.length) return;
+
+            const plugins = getLocalPlugins();
+
+            for (const file of files) {
+                const text = await file.text();
+                const name = file.name.replace(/\.js$/i, "");
+                plugins.push({
+                    id: "local_" + Date.now() + "_" + Math.random(),
+                    name,
+                    code: text,
+                    enabled: false
+                });
+            }
+
+            setLocalPlugins(plugins);
+            fileInput.value = "";
+            renderLocalPanel();
+        };
+
         controlsBar.appendChild(nameInput);
         controlsBar.appendChild(addBtn);
+        controlsBar.appendChild(importBtn);
+        controlsBar.appendChild(fileInput);
 
         const content = document.createElement("div");
         content.id = "avia-local-plugins-content";
@@ -292,6 +329,79 @@
         panel.appendChild(controlsBar);
         panel.appendChild(content);
         document.body.appendChild(panel);
+
+        const dropOverlay = document.createElement("div");
+        dropOverlay.textContent = "Import JS files";
+        Object.assign(dropOverlay.style, {
+            position: "absolute",
+            inset: "0",
+            background: "rgba(0,0,0,0.6)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "18px",
+            fontWeight: "600",
+            color: "#fff",
+            opacity: "0",
+            pointerEvents: "none",
+            transition: "opacity 0.15s ease",
+            borderRadius: "16px"
+        });
+        panel.appendChild(dropOverlay);
+
+        let dragDepth = 0;
+
+        panel.addEventListener("dragenter", e => {
+            e.preventDefault();
+            e.stopPropagation();
+            dragDepth++;
+            dropOverlay.style.opacity = "1";
+            panel.style.border = "1px dashed rgba(255,255,255,0.4)";
+        });
+
+        panel.addEventListener("dragover", e => {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        panel.addEventListener("dragleave", e => {
+            e.preventDefault();
+            e.stopPropagation();
+            dragDepth--;
+            if (dragDepth <= 0) {
+                dropOverlay.style.opacity = "0";
+                panel.style.border = "1px solid rgba(255,255,255,0.08)";
+                dragDepth = 0;
+            }
+        });
+
+        panel.addEventListener("drop", async e => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            dropOverlay.style.opacity = "0";
+            panel.style.border = "1px solid rgba(255,255,255,0.08)";
+            dragDepth = 0;
+
+            const files = [...e.dataTransfer.files].filter(f => f.name.endsWith(".js"));
+            if (!files.length) return;
+
+            const plugins = getLocalPlugins();
+
+            for (const file of files) {
+                const text = await file.text();
+                const name = file.name.replace(/\.js$/i, "");
+                plugins.push({
+                    id: "local_" + Date.now() + "_" + Math.random(),
+                    name,
+                    code: text,
+                    enabled: false
+                });
+            }
+
+            setLocalPlugins(plugins);
+            renderLocalPanel();
+        });
 
         let isDragging = false, offsetX, offsetY;
         header.addEventListener("mousedown", e => {
@@ -376,7 +486,7 @@
                     const target = all.find(p => p.id === plugin.id);
                     if (target) {
                         target.code = newCode;
-                        plugin.code = newCode; 
+                        plugin.code = newCode;
                         setLocalPlugins(all);
                     }
                     if (andRun) {
@@ -409,7 +519,6 @@
             styleLocalBtn(removeBtn, "rgba(255,80,80,0.15)");
             removeBtn.onclick = () => {
                 stopLocalPlugin(plugin);
-
                 const editorPanel = document.getElementById("avia-local-editor-panel");
                 if (editorPanel) editorPanel.remove();
                 const all = getLocalPlugins();
@@ -469,7 +578,6 @@
             .find(d => d.children.length === 0 && d.textContent.trim() === "Appearance");
         if (textNode) textNode.textContent = "(Avia) Local Plugins";
 
-
         const oldSvg = localBtn.querySelector("svg");
         if (oldSvg) oldSvg.remove();
         const svgNS = "http://www.w3.org/2000/svg";
@@ -488,7 +596,6 @@
         localBtn.addEventListener("click", toggleLocalPanel);
         aviaPluginsBtn.parentElement.insertBefore(localBtn, aviaPluginsBtn.nextSibling);
     }
-
 
     function waitForBody(callback) {
         if (document.body) callback();
