@@ -11,6 +11,8 @@ import { PublisherGithub } from "@electron-forge/publisher-github";
 import type { ForgeConfig } from "@electron-forge/shared-types";
 import { FuseV1Options, FuseVersion } from "@electron/fuses";
 
+import * as fs from "fs"
+
 const STRINGS = {
   author: "Revolt Platforms LTD",
   name: "AviaClient",
@@ -108,24 +110,17 @@ var customVitePluginBuild: VitePluginBuildConfig[] = [
   },
 ];
 
-const customPlugins: string[] = [
-  "avia_core/inject.js",
-  "avia_core/aviaclientcategory.js",
-  "avia_core/themes.js",
-  "avia_core/aviafavsystem.js",
-  "avia_core/pluginsupport.js",
-  "avia_core/aviaversion.js",
-  "avia_core/LocalPlugins.js",
-  "avia_core/repofrontend.js",
-];
+fs.readdir("avia_core", (err: NodeJS.ErrnoException, files: string[]) => {
+  if (err) return;
 
-for (const plugin of customPlugins) {
-  customVitePluginBuild.push({
-    entry: plugin,
-    config: "vite.main.config.ts",
-    target: "main",
-  });
-}
+  for (const file of files) {
+    customVitePluginBuild.push({
+      entry: `avia_core/${file}`,
+      config: "vite.main.config.ts",
+      target: "main",
+    });
+  }
+});
 
 const config: ForgeConfig = {
   packagerConfig: {
