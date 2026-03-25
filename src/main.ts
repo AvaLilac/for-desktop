@@ -54,7 +54,8 @@ const loadInject = () => {
         "themes.js",
         "aviafavsystem.js",
         "pluginsupport.js",
-        "aviaversion.js"
+        "aviaversion.js",
+        "repofrontend.js"
       ];
 
       for (const plugin of plugins) {
