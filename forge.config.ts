@@ -116,6 +116,7 @@ const customPlugins: string[] = [
   "avia_core/pluginsupport.js",
   "avia_core/aviaversion.js",
   "avia_core/LocalPlugins.js",
+  "avia_core/repofrontend.js",
 ];
 
 for (const plugin of customPlugins) {
