@@ -27,6 +27,26 @@
         return {name,author,version,description};
     }
 
+    function sanitizeFilename(name) {
+        return name
+            .replace(/[<>:"/\\|?*\x00-\x1f]/g, "")
+            .replace(/\s+/g, "_")
+            .replace(/\.+$/, "")
+            .trim() || "theme";
+    }
+
+    function downloadTheme(theme) {
+        const name = parseMeta(theme.css).name;
+        const filename = sanitizeFilename(name) + ".css";
+        const blob = new Blob([theme.css], { type: "text/css" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
     function applyThemes(){
         document.querySelectorAll(".avia-theme-style").forEach(e=>e.remove());
         const themes = getThemes();
@@ -242,11 +262,76 @@
             gap:"8px"
         });
 
+        const dropOverlay=document.createElement("div");
+        dropOverlay.textContent="Drop .css or .txt files here";
+        Object.assign(dropOverlay.style,{
+            position:"absolute",
+            inset:"0",
+            background:"rgba(0,0,0,0.6)",
+            display:"flex",
+            alignItems:"center",
+            justifyContent:"center",
+            fontSize:"18px",
+            fontWeight:"600",
+            color:"#fff",
+            opacity:"0",
+            pointerEvents:"none",
+            transition:"opacity 0.15s ease",
+            borderRadius:"16px"
+        });
+
         panel.appendChild(header);
         panel.appendChild(close);
         panel.appendChild(btnRow);
         panel.appendChild(list);
+        panel.appendChild(dropOverlay);
         document.body.appendChild(panel);
+
+        let dragDepth = 0;
+
+        panel.addEventListener("dragenter", e => {
+            e.preventDefault();
+            e.stopPropagation();
+            dragDepth++;
+            dropOverlay.style.opacity = "1";
+            panel.style.border = "1px dashed rgba(255,255,255,0.4)";
+        });
+
+        panel.addEventListener("dragover", e => {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        panel.addEventListener("dragleave", e => {
+            e.preventDefault();
+            e.stopPropagation();
+            dragDepth--;
+            if (dragDepth <= 0) {
+                dropOverlay.style.opacity = "0";
+                panel.style.border = "1px solid rgba(255,255,255,0.08)";
+                dragDepth = 0;
+            }
+        });
+
+        panel.addEventListener("drop", async e => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropOverlay.style.opacity = "0";
+            panel.style.border = "1px solid rgba(255,255,255,0.08)";
+            dragDepth = 0;
+
+            const files = [...e.dataTransfer.files].filter(f => f.name.endsWith(".css") || f.name.endsWith(".txt"));
+            if (!files.length) return;
+
+            const themes = getThemes();
+            for (const file of files) {
+                const css = await file.text();
+                themes.push({ id: crypto.randomUUID(), css, enabled: true });
+            }
+            setThemes(themes);
+            applyThemes();
+            render();
+        });
 
         function render(){
             list.innerHTML="";
@@ -312,6 +397,15 @@
                 styleBtn(edit, "rgba(100,160,255,0.15)");
                 edit.onclick=()=>openThemeEditor(theme);
 
+                const dlBtn=document.createElement("button");
+                dlBtn.textContent="Export";
+                styleBtn(dlBtn, "rgba(80,200,120,0.15)");
+                dlBtn.title="Download theme as .css";
+                dlBtn.onclick=(e)=>{
+                    e.stopPropagation();
+                    downloadTheme(theme);
+                };
+
                 const del=document.createElement("button");
                 del.textContent="✕";
                 styleBtn(del, "rgba(255,80,80,0.15)");
@@ -324,6 +418,7 @@
 
                 controls.appendChild(toggle);
                 controls.appendChild(edit);
+                controls.appendChild(dlBtn);
                 controls.appendChild(del);
                 card.appendChild(left);
                 card.appendChild(controls);
@@ -337,12 +432,15 @@
             const input=document.createElement("input");
             input.type="file";
             input.accept=".css,.txt";
+            input.multiple=true;
             input.onchange=async()=>{
-                const file=input.files[0];
-                if(!file) return;
-                const css=await file.text();
+                const files=[...input.files];
+                if(!files.length) return;
                 const themes=getThemes();
-                themes.push({id:crypto.randomUUID(),css,enabled:true});
+                for(const file of files){
+                    const css=await file.text();
+                    themes.push({id:crypto.randomUUID(),css,enabled:true});
+                }
                 setThemes(themes);
                 applyThemes();
                 render();
