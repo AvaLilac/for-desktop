@@ -14,6 +14,8 @@ Application for Windows, macOS, and Linux. now with avia client injected
 </a>
 
 - All downloads and instructions for Stoat can be found on our [Website](https://stoat.chat/download).
+- If you use the Browser you can find FireFox/Chrome/Userscript Builds at [BrowserBuilds](https://github.com/AvaLilac/Ava-Client).
+- Though I reccomend you use Userscript if on Chrome Based Browsers. As Plugins do not exist due to browser limits in Extensions. Userscript fine though
 
 ## Development Guide
 
