@@ -9,7 +9,7 @@
   const STYLE_ID    = "headliner-style";
 
   const defaults = {
-    content:    "Stoat V 1.5.0 - Avia Client",
+    content:    "Stoat V 1.6.0 - Avia Client",
     left:       "32",
     top:        "56",
     fontSize:   "15",
