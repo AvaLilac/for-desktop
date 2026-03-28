@@ -55,7 +55,7 @@ const loadInject = () => {
         "aviafavsystem.js",
         "pluginsupport.js",
         "aviaversion.js",
-        "repofrontend.js"
+        "repofrontend.js",
         "ButtonFix.js"
       ];
 
