@@ -57,6 +57,7 @@ const loadInject = () => {
         "aviaversion.js",
         "repofrontend.js",
         "ButtonFix.js"
+        "headliner.js"
       ];
 
       for (const plugin of plugins) {
