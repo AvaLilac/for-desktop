@@ -60,7 +60,8 @@ const loadInject = () => {
         "headliner.js",
         "aviadesktopversion.js",
         "customFrameNativeMenu.js",
-        "disableTrayIcon.js"
+        "disableTrayIcon.js",
+        "clientBackup.js"
       ];
 
       for (const plugin of plugins) {
