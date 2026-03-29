@@ -16,13 +16,13 @@
   }
 
   function initCFNM() {
-    let elem = document.querySelector("#floating div:not(:empty) div.will-change_transform.flex_1_1_800px div:has(> a) > a:last-child")
+    let elem = document.querySelector("#floating div:not(:empty) div.will-change_transform.flex_1_1_800px div:has(> a) > a:last-child");
     if (!elem) { return; }
 
-    let title = elem.querySelector("div.flex-g_1 > div")
+    let title = elem.querySelector("div.flex-g_1 > div");
     if (!title || title.textContent.trim() !== "Custom window frame") { return; }
 
-    let desc = elem.querySelector("div.flex-g_1 > span")
+    let desc = elem.querySelector("div.flex-g_1 > span");
     if (!desc || desc.textContent.trim() !== "Let Stoat use its own custom titlebar.") { return; }
 
     var newElem = elem.cloneNode(true);
