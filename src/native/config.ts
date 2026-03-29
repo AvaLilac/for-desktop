@@ -13,6 +13,9 @@ const schema = {
   customFrame: {
     type: "boolean",
   } as JSONSchema.Boolean,
+  customFrameNativeMenu: {
+    type: "boolean",
+  } as JSONSchema.Boolean,
   minimiseToTray: {
     type: "boolean",
   } as JSONSchema.Boolean,
@@ -55,6 +58,7 @@ const store = new Store({
   defaults: {
     firstLaunch: true,
     customFrame: true,
+    customFrameNativeMenu: false,
     minimiseToTray: true,
     startMinimisedToTray: false,
     spellchecker: true,
@@ -78,6 +82,7 @@ class Config {
     mainWindow.webContents.send("config", {
       firstLaunch: this.firstLaunch,
       customFrame: this.customFrame,
+      customFrameNativeMenu: this.customFrameNativeMenu,
       minimiseToTray: this.minimiseToTray,
       startMinimisedToTray: this.startMinimisedToTray,
       spellchecker: this.spellchecker,
@@ -107,6 +112,19 @@ class Config {
   set customFrame(value: boolean) {
     (store as never as { set(k: string, value: boolean): void }).set(
       "customFrame",
+      value,
+    );
+
+    this.sync();
+  }
+
+  get customFrameNativeMenu() {
+    return (store as never as { get(k: string): boolean }).get("customFrameNativeMenu");
+  }
+
+  set customFrameNativeMenu(value: boolean) {
+    (store as never as { set(k: string, value: boolean): void }).set(
+      "customFrameNativeMenu",
       value,
     );
 

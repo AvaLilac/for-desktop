@@ -1,6 +1,7 @@
 declare type DesktopConfig = {
   firstLaunch: boolean;
   customFrame: boolean;
+  customFrameNativeMenu: boolean;
   minimiseToTray: boolean;
   spellchecker: boolean;
   hardwareAcceleration: boolean;
