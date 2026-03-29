@@ -19,6 +19,9 @@ const schema = {
   minimiseToTray: {
     type: "boolean",
   } as JSONSchema.Boolean,
+  disableTrayClick: {
+    type: "boolean",
+  } as JSONSchema.Boolean,
   startMinimisedToTray: {
     type: "boolean",
   } as JSONSchema.Boolean,
@@ -60,6 +63,7 @@ const store = new Store({
     customFrame: true,
     customFrameNativeMenu: false,
     minimiseToTray: true,
+    disableTrayClick: false,
     startMinimisedToTray: false,
     spellchecker: true,
     hardwareAcceleration: true,
@@ -84,6 +88,7 @@ class Config {
       customFrame: this.customFrame,
       customFrameNativeMenu: this.customFrameNativeMenu,
       minimiseToTray: this.minimiseToTray,
+      disableTrayClick: this.disableTrayClick,
       startMinimisedToTray: this.startMinimisedToTray,
       spellchecker: this.spellchecker,
       hardwareAcceleration: this.hardwareAcceleration,
@@ -125,6 +130,21 @@ class Config {
   set customFrameNativeMenu(value: boolean) {
     (store as never as { set(k: string, value: boolean): void }).set(
       "customFrameNativeMenu",
+      value,
+    );
+
+    this.sync();
+  }
+
+  get disableTrayClick() {
+    return (store as never as { get(k: string): boolean }).get(
+      "disableTrayClick",
+    );
+  }
+
+  set disableTrayClick(value: boolean) {
+    (store as never as { set(k: string, value: boolean): void }).set(
+      "disableTrayClick",
       value,
     );
 
