@@ -69,7 +69,7 @@ export function updateTrayMenu() {
         type: "normal",
         click() {
           app.relaunch();
-          app.quit(0);
+          app.quit();
         },
       },
       {
