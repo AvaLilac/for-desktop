@@ -56,6 +56,7 @@ export function updateTrayMenu() {
           }
         },
       },
+      { type: "separator" },
       {
         label: "Restart App",
         type: "normal",
