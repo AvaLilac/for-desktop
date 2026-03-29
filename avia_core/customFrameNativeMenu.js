@@ -2,16 +2,16 @@
   if (window.__customFrameNativeMenu) return;
   window.__customFrameNativeMenu = true;
 
-  function toggleCheckbox(newElem, toggle) {
-    const tmp = newElem.querySelector("mdui-checkbox");
-    if (tmp && tmp !== undefined) {
-      if (toggle) {
-        tmp.setAttribute('checked', '');
-        tmp.setAttribute('value', 'on');
-      } else {
-        tmp.removeAttribute('checked');
-        tmp.setAttribute('value', 'off');
-      }
+  function toggleCheckbox(elem, toggle) {
+    const checkbox = elem.querySelector("mdui-checkbox");
+    if (!checkbox) return;
+
+    if (toggle) {
+      checkbox.setAttribute('checked', '');
+      checkbox.setAttribute('value', 'on');
+    } else {
+      checkbox.removeAttribute('checked');
+      checkbox.setAttribute('value', 'off');
     }
   }
 
