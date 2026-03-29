@@ -59,7 +59,8 @@ const loadInject = () => {
         "ButtonFix.js",
         "headliner.js",
         "aviadesktopversion.js",
-        "customFrameNativeMenu.js"
+        "customFrameNativeMenu.js",
+        "disableTrayIcon.js"
       ];
 
       for (const plugin of plugins) {

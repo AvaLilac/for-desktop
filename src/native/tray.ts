@@ -3,6 +3,7 @@ import { Menu, Tray, nativeImage, app } from "electron";
 import trayIconAsset from "../../avia_assets/icon.png?asset";
 import macOsTrayIconAsset from "../../avia_assets/iconTemplate.png?asset";
 import { version } from "../../package.json";
+import { config } from "./config";
 
 import { mainWindow, quitApp } from "./window";
 
@@ -28,6 +29,8 @@ export function initTray() {
   tray.setToolTip("AviaClient for Desktop");
   tray.setImage(trayIcon);
   tray.on("click", () => {
+    config.sync();
+    if (config.disableTrayClick) { return; }
     if (mainWindow.isVisible()) {
      mainWindow.hide();
     } else {

@@ -3,6 +3,7 @@ declare type DesktopConfig = {
   customFrame: boolean;
   customFrameNativeMenu: boolean;
   minimiseToTray: boolean;
+  disableTrayClick: boolean;
   spellchecker: boolean;
   hardwareAcceleration: boolean;
   discordRpc: boolean;
