@@ -27,6 +27,14 @@ export function initTray() {
   updateTrayMenu();
   tray.setToolTip("AviaClient for Desktop");
   tray.setImage(trayIcon);
+  tray.on("click", () => {
+    if (mainWindow.isVisible()) {
+     mainWindow.hide();
+    } else {
+     mainWindow.show();
+     mainWindow.focus();
+    }
+  });
 }
 
 export function updateTrayMenu() {
