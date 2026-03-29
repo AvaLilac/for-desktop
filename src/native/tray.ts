@@ -1,4 +1,4 @@
-import { Menu, Tray, nativeImage } from "electron";
+import { Menu, Tray, nativeImage, app } from "electron";
 
 import trayIconAsset from "../../avia_assets/icon.png?asset";
 import macOsTrayIconAsset from "../../avia_assets/iconTemplate.png?asset";
@@ -62,6 +62,14 @@ export function updateTrayMenu() {
           } else {
             mainWindow.show();
           }
+        },
+      },
+      {
+        label: "Restart App",
+        type: "normal",
+        click() {
+          app.relaunch();
+          app.quit(0);
         },
       },
       {
