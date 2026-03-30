@@ -12,6 +12,58 @@
     const getPlugins = () => JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
     const setPlugins = (data) => localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 
+
+    function normalizePluginUrl(url) {
+        try {
+            const u = new URL(url);
+
+            if (u.hostname === "github.com") {
+
+                const m = u.pathname.match(/^\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)$/);
+                if (m) {
+                    return `https://raw.githubusercontent.com/${m[1]}/${m[2]}/${m[3]}/${m[4]}`;
+                }
+
+                return url;
+            }
+
+
+            if (u.hostname === "raw.githubusercontent.com") return url;
+
+
+            if (u.hostname === "raw.codeberg.page") return url;
+
+            if (u.hostname === "codeberg.org") {
+                const parts = u.pathname.split("/").filter(Boolean);
+
+                if (parts.length >= 5 && (parts[2] === "raw" || parts[2] === "src")) {
+                    const user       = parts[0];
+                    const repo       = parts[1];
+
+                    const branchName = parts[3] === "branch" || parts[3] === "commit" || parts[3] === "tag"
+                        ? parts[4]
+                        : parts[3]; 
+                    const fileStart  = parts[3] === "branch" || parts[3] === "commit" || parts[3] === "tag"
+                        ? 5
+                        : 4;
+                    const filePath   = parts.slice(fileStart).join("/");
+                    return `https://raw.codeberg.page/${user}/${repo}/@${branchName}/${filePath}`;
+                }
+
+                if (parts.length >= 4 && parts[2] === "raw") {
+                    const user       = parts[0];
+                    const repo       = parts[1];
+                    const branchName = parts[3];
+                    const filePath   = parts.slice(4).join("/");
+                    return `https://raw.codeberg.page/${user}/${repo}/@${branchName}/${filePath}`;
+                }
+            }
+        } catch (_) {
+
+        }
+        return url;
+    }
+
     async function processQueue() {
         if (processQueue.running) return;
         processQueue.running = true;
@@ -31,7 +83,8 @@
         if (runningPlugins[plugin.url] && !force) return;
         if (force) stopPlugin(plugin);
         try {
-            const res = await fetch(plugin.url);
+            const fetchUrl = normalizePluginUrl(plugin.url);
+            const res = await fetch(fetchUrl);
             if (!res.ok) throw new Error("Fetch failed");
             const code = await res.text();
             delete pluginErrors[plugin.url];
@@ -183,7 +236,8 @@
 
         let code;
         try {
-            const res = await fetch(plugin.url);
+            const fetchUrl = normalizePluginUrl(plugin.url);
+            const res = await fetch(fetchUrl);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             code = await res.text();
         } catch (err) {
