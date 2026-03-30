@@ -97,7 +97,7 @@ if (!process.env.PLATFORM) {
   );
 }
 
-var customVitePluginBuild: VitePluginBuildConfig[] = [
+const customVitePluginBuild: VitePluginBuildConfig[] = [
   {
     entry: "src/main.ts",
     config: "vite.main.config.ts",
@@ -114,11 +114,13 @@ fs.readdir("avia_core", (err: NodeJS.ErrnoException, files: string[]) => {
   if (err) return;
 
   for (const file of files) {
-    customVitePluginBuild.push({
-      entry: `avia_core/${file}`,
-      config: "vite.main.config.ts",
-      target: "main",
-    });
+    if (["js", "ts", "tsx"].includes(file.split('.').pop().toLowerCase())) {
+      customVitePluginBuild.push({
+        entry: `avia_core/${file}`,
+        config: "vite.main.config.ts",
+        target: "main",
+      });
+    }
   }
 });
 
