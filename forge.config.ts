@@ -10,8 +10,7 @@ import { VitePluginBuildConfig } from "@electron-forge/plugin-vite/dist/Config";
 import { PublisherGithub } from "@electron-forge/publisher-github";
 import type { ForgeConfig } from "@electron-forge/shared-types";
 import { FuseV1Options, FuseVersion } from "@electron/fuses";
-
-import * as fs from "fs"
+import * as fs from "fs";
 
 const STRINGS = {
   author: "Revolt Platforms LTD",
@@ -114,7 +113,7 @@ fs.readdir("avia_core", (err: NodeJS.ErrnoException, files: string[]) => {
   if (err) return;
 
   for (const file of files) {
-    if (["js", "ts", "tsx"].includes(file.split('.').pop().toLowerCase())) {
+    if (["js", "ts", "tsx"].includes(file.split(".").pop().toLowerCase())) {
       customVitePluginBuild.push({
         entry: `avia_core/${file}`,
         config: "vite.main.config.ts",

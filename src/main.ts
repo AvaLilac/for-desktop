@@ -1,4 +1,6 @@
-import { IUpdateInfo, updateElectronApp } from "update-electron-app";
+import * as fs from "fs";
+import * as path from "path";
+import { updateElectronApp } from "update-electron-app";
 
 import { BrowserWindow, Notification, app, shell } from "electron";
 import started from "electron-squirrel-startup";
@@ -9,17 +11,16 @@ import { initDiscordRpc } from "./native/discordRpc";
 import { initTray } from "./native/tray";
 import { BUILD_URL, createMainWindow, mainWindow } from "./native/window";
 
-import * as fs from "fs";
-import * as path from "path";
-
 const applyAppName = () => {
   try {
     app.setName("AviaClient");
-    (app as any).name = "AviaClient";
+    app.name = "AviaClient";
     if (process.platform === "win32") {
       app.setAppUserModelId("AviaClient");
     }
-  } catch {}
+  } catch {
+    /* empty */
+  }
 };
 
 if (started) {
@@ -32,7 +33,7 @@ if (!config.hardwareAcceleration) {
 
 const acquiredLock = app.requestSingleInstanceLock();
 
-const onNotifyUser = (_info: IUpdateInfo) => {
+const onNotifyUser = () => {
   const notification = new Notification({
     title: "Update Available",
     body: "Restart the app to install the update.",
@@ -61,7 +62,7 @@ const loadInject = () => {
         "aviadesktopversion.js",
         "customFrameNativeMenu.js",
         "disableTrayIcon.js",
-        "clientBackup.js"
+        "clientBackup.js",
       ];
 
       for (const plugin of plugins) {
@@ -69,7 +70,9 @@ const loadInject = () => {
         const pluginCode: string = fs.readFileSync(pluginPath, "utf8");
         await mainWindow.webContents.executeJavaScript(pluginCode, true);
       }
-    } catch {}
+    } catch {
+      /* empty */
+    }
   });
 };
 
