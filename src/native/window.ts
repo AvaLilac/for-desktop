@@ -48,14 +48,18 @@ export function createMainWindow() {
     height: 720,
     backgroundColor: "#191919",
     frame: !config.customFrame,
-    ...(config.customFrame && config.customFrameNativeMenu ? {
-      // remove the default titlebar
-      titleBarStyle: 'hidden',
-      // expose window controls in Windows/Linux
-      ...(process.platform !== 'darwin' ? {
-        titleBarOverlay: true
-      } : {})
-    } : {}),
+    ...(config.customFrame && config.customFrameNativeMenu
+      ? {
+          // remove the default titlebar
+          titleBarStyle: "hidden",
+          // expose window controls in Windows/Linux
+          ...(process.platform !== "darwin"
+            ? {
+                titleBarOverlay: true,
+              }
+            : {}),
+        }
+      : {}),
     icon: windowIcon,
     show: !startHidden,
     webPreferences: {
@@ -158,9 +162,8 @@ export function createMainWindow() {
 
     // on macOS add margin to the title, and hide custom controls
     // We only use initial values other the menu can disappear
-    if (process.platform === 'darwin' &&
-      initialCustomFrame && initialCFNM) {
-        mainWindow.webContents.insertCSS(`
+    if (process.platform === "darwin" && initialCustomFrame && initialCFNM) {
+      mainWindow.webContents.insertCSS(`
           #root > div[style="display: flex; flex-direction: column; height: 100%;"] > div > div.h_29px {
             &> div.d_flex:first-child {
               margin-left: 75px;
@@ -170,7 +173,7 @@ export function createMainWindow() {
             }
           }
         `);
-      }
+    }
   });
 
   // configure spellchecker context menu

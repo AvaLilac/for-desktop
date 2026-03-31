@@ -1,12 +1,10 @@
-import { Menu, Tray, nativeImage, app } from "electron";
+import { Menu, Tray, app, nativeImage } from "electron";
 
-// eslint-disable-next-line import/no-unresolved
 import trayIconAsset from "../../avia_assets/icon.png?asset";
-// eslint-disable-next-line import/no-unresolved
 import macOsTrayIconAsset from "../../avia_assets/iconTemplate.png?asset";
 import { version } from "../../package.json";
-import { config } from "./config";
 
+import { config } from "./config";
 import { mainWindow, quitApp } from "./window";
 
 // internal tray state
@@ -34,10 +32,10 @@ export function initTray() {
     config.sync();
     if (config.disableTrayClick) { return; }
     if (mainWindow.isVisible()) {
-     mainWindow.hide();
+      mainWindow.hide();
     } else {
-     mainWindow.show();
-     mainWindow.focus();
+      mainWindow.show();
+      mainWindow.focus();
     }
   });
 }
