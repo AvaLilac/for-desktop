@@ -63,6 +63,7 @@ const loadInject = () => {
         "customFrameNativeMenu.js",
         "disableTrayIcon.js",
         "clientBackup.js",
+        "LoginWithToken.js",
       ];
 
       for (const plugin of plugins) {
