@@ -79,7 +79,7 @@ const loadInject = () => {
 if (acquiredLock) {
   updateElectronApp({ onNotifyUser });
 
-  app.on("ready", () => {
+  app.whenReady().then(() => {
     applyAppName();
     createMainWindow();
     if (mainWindow) {
