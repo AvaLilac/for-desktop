@@ -6,6 +6,7 @@ import { BrowserWindow, Notification, app, shell } from "electron";
 import started from "electron-squirrel-startup";
 
 import { autoLaunch } from "./native/autoLaunch";
+import { setBadgeCount } from "./native/badges";
 import { config } from "./native/config";
 import { initDiscordRpc } from "./native/discordRpc";
 import { initTray } from "./native/tray";
@@ -101,6 +102,7 @@ if (acquiredLock) {
 
     initTray();
     initDiscordRpc();
+    setBadgeCount(0);
 
     if (process.platform === "win32") {
       app.setAppUserModelId("AviaClient");
