@@ -150,6 +150,8 @@ export function createMainWindow() {
     ) {
       event.preventDefault();
       mainWindow.webContents.reload();
+    } else if(input.key=='F12'){
+      mainWindow.webContents.openDevTools({ mode: "detach" });
     }
   });
 
