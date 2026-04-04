@@ -68,6 +68,7 @@ export function createMainWindow() {
       contextIsolation: true,
       nodeIntegration: false,
       spellcheck: true,
+      devTools: true,
     },
   });
 
@@ -150,8 +151,12 @@ export function createMainWindow() {
     ) {
       event.preventDefault();
       mainWindow.webContents.reload();
-    } else if(input.key=='F12'){
-      mainWindow.webContents.openDevTools({ mode: "detach" });
+    } else if (input.key === "F12") {
+      if (mainWindow.webContents.isDevToolsOpened()) {
+        mainWindow.webContents.closeDevTools();
+      } else {
+        mainWindow.webContents.openDevTools({ mode: "detach" });
+      }
     }
   });
 
