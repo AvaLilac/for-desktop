@@ -2,7 +2,7 @@ import { Menu, Tray, app, nativeImage } from "electron";
 
 import trayIconAsset from "../../avia_assets/icon.png?asset";
 import macOsTrayIconAsset from "../../avia_assets/iconTemplate.png?asset";
-import { version } from "../../package.json";
+import { aviaVersion, version } from "../../package.json";
 
 import { config } from "./config";
 import { mainWindow, quitApp } from "./window";
@@ -30,7 +30,9 @@ export function initTray() {
   tray.setImage(trayIcon);
   tray.on("click", () => {
     config.sync();
-    if (config.disableTrayClick) { return; }
+    if (config.disableTrayClick) {
+      return;
+    }
     if (mainWindow.isVisible()) {
       mainWindow.hide();
     } else {
@@ -45,11 +47,16 @@ export function updateTrayMenu() {
     Menu.buildFromTemplate([
       { label: "AviaClient for Desktop", type: "normal", enabled: false },
       {
-        label: "Version",
+        label: "Versions",
         type: "submenu",
         submenu: Menu.buildFromTemplate([
           {
-            label: version,
+            label: `Stoat Desktop: ${version}`,
+            type: "normal",
+            enabled: false,
+          },
+          {
+            label: `AviaClient: ${aviaVersion}`,
             type: "normal",
             enabled: false,
           },

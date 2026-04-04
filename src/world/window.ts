@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from "electron";
 
-import { version } from "../../package.json";
+import { aviaVersion, version } from "../../package.json";
 
 contextBridge.exposeInMainWorld("native", {
   versions: {
@@ -8,6 +8,7 @@ contextBridge.exposeInMainWorld("native", {
     chrome: () => process.versions.chrome,
     electron: () => process.versions.electron,
     desktop: () => version,
+    aviaClient: () => aviaVersion,
   },
 
   minimise: () => ipcRenderer.send("minimise"),
