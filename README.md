@@ -34,7 +34,7 @@ Then proceed to setup:
 # clone the repository
 git clone --recursive https://github.com/AvaLilac/for-desktop aviaclient-for-desktop
 
-# clone the repository (If you are building from developer branch)
+# clone the repository (If you are building from developer branch. Which is not always stable)
 git clone -b dev --recursive https://github.com/AvaLilac/for-desktop aviaclient-for-desktop
 
 # CD into the directory
