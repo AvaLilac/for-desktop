@@ -5,6 +5,8 @@ import { updateElectronApp } from "update-electron-app";
 import { BrowserWindow, Notification, app, shell } from "electron";
 import started from "electron-squirrel-startup";
 
+import { aviaVersion } from "../package.json";
+
 import { autoLaunch } from "./native/autoLaunch";
 import { setBadgeCount } from "./native/badges";
 import { config } from "./native/config";
@@ -106,6 +108,12 @@ if (acquiredLock) {
 
     if (process.platform === "win32") {
       app.setAppUserModelId("AviaClient");
+    }
+
+    if (process.platform === "darwin") {
+      app.setAboutPanelOptions({
+        version: aviaVersion,
+      });
     }
   });
 
