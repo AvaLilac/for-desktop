@@ -152,6 +152,7 @@ export function createMainWindow() {
       event.preventDefault();
       mainWindow.webContents.reload();
     } else if (input.key === "F12") {
+      event.preventDefault();
       if (mainWindow.webContents.isDevToolsOpened()) {
         mainWindow.webContents.closeDevTools();
       } else {
@@ -162,6 +163,7 @@ export function createMainWindow() {
       input.key === "," &&
       process.platform === "darwin"
     ) {
+      event.preventDefault();
       mainWindow.webContents.executeJavaScript(`(() => {
         var escButton = document.querySelector("#floating .top_0 > button");
         var settingsPanel = document.querySelector("#root div[aria-label='Settings'] > a");
