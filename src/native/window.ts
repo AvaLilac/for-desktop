@@ -157,6 +157,18 @@ export function createMainWindow() {
       } else {
         mainWindow.webContents.openDevTools({ mode: "detach" });
       }
+    } else if (
+      input.meta &&
+      input.key === "," &&
+      process.platform === "darwin"
+    ) {
+      mainWindow.webContents.executeJavaScript(`(() => {
+        var escButton = document.querySelector("#floating .top_0 > button");
+        var settingsPanel = document.querySelector("#root div[aria-label='Settings'] > a");
+
+        if (escButton) escButton.click();
+        if (!escButton && settingsPanel) settingsPanel.click();
+      })();`);
     }
   });
 
