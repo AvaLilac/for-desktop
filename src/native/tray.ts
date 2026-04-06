@@ -4,6 +4,7 @@ import trayIconAsset from "../../avia_assets/icon.png?asset";
 import macOsTrayIconAsset from "../../avia_assets/iconTemplate.png?asset";
 import { aviaVersion, version } from "../../package.json";
 
+import { createAboutWindow } from "./about";
 import { config } from "./config";
 import { mainWindow, quitApp } from "./window";
 
@@ -61,6 +62,13 @@ export function updateTrayMenu() {
             enabled: false,
           },
         ]),
+      },
+      {
+        label: "About",
+        type: "normal",
+        click() {
+          createAboutWindow();
+        },
       },
       { type: "separator" },
       {
