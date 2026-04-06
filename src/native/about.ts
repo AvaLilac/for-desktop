@@ -12,7 +12,7 @@ export function createAboutWindow() {
   aboutWindow = new BrowserWindow({
     minWidth: 300,
     minHeight: 300,
-    width: 1280,
+    width: 1024,
     height: 720,
     center: true,
     backgroundColor: "#191919",
