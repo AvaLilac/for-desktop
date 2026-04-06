@@ -4,7 +4,8 @@
     window.__AVIA_THEMES_LOADED__ = true;
 
     const STORAGE_KEY = "avia_themes";
-    let editingTheme = null;
+    let editingThemeId = null;
+    let monacoEditorInstance = null;
 
     const TEMPLATE = `/*
 @name Whatever name here
@@ -18,13 +19,26 @@
     const getThemes = () => JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
     const setThemes = (data) => localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 
-    function parseMeta(css){
+    function preloadMonaco() {
+        return new Promise(resolve => {
+            if (window.monaco) return resolve();
+            const loader = document.createElement("script");
+            loader.src = "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js";
+            loader.onload = function () {
+                require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs" } });
+                require(["vs/editor/editor.main"], () => resolve());
+            };
+            document.head.appendChild(loader);
+        });
+    }
+
+    function parseMeta(css) {
         const name = css.match(/@name\s+(.+)/)?.[1] || "Unknown Theme";
         const author = css.match(/@author\s+(.+)/)?.[1] || "Unknown";
         const version = css.match(/@version\s+(.+)/)?.[1] || "1.0";
         const rawDescription = css.match(/@description\s+(.+)/)?.[1] || "No Description Available";
         const description = rawDescription.trim() === "*/" ? "No Description Available" : rawDescription;
-        return {name,author,version,description};
+        return { name, author, version, description };
     }
 
     function sanitizeFilename(name) {
@@ -47,14 +61,13 @@
         URL.revokeObjectURL(url);
     }
 
-    function applyThemes(){
-        document.querySelectorAll(".avia-theme-style").forEach(e=>e.remove());
-        const themes = getThemes();
-        themes.forEach(theme=>{
-            if(!theme.enabled) return;
-            const style=document.createElement("style");
-            style.className="avia-theme-style";
-            style.textContent=theme.css;
+    function applyThemes() {
+        document.querySelectorAll(".avia-theme-style").forEach(e => e.remove());
+        getThemes().forEach(theme => {
+            if (!theme.enabled) return;
+            const style = document.createElement("style");
+            style.className = "avia-theme-style";
+            style.textContent = theme.css;
             document.head.appendChild(style);
         });
     }
@@ -75,209 +88,241 @@
         btn.onmouseleave = () => btn.style.opacity = "1";
     }
 
-    function makeDraggable(panel, handle){
-        let dragging=false,offsetX,offsetY;
-        handle.addEventListener("mousedown",e=>{
-            dragging=true;
-            offsetX=e.clientX-panel.offsetLeft;
-            offsetY=e.clientY-panel.offsetTop;
-            document.body.style.userSelect="none";
+    function makeDraggable(panel, handle) {
+        let dragging = false, offsetX, offsetY;
+        handle.addEventListener("mousedown", e => {
+            dragging = true;
+            offsetX = e.clientX - panel.offsetLeft;
+            offsetY = e.clientY - panel.offsetTop;
+            document.body.style.userSelect = "none";
         });
-        document.addEventListener("mouseup",()=>{dragging=false;document.body.style.userSelect="";});
-        document.addEventListener("mousemove",e=>{
-            if(!dragging) return;
-            panel.style.left=(e.clientX-offsetX)+"px";
-            panel.style.top=(e.clientY-offsetY)+"px";
-            panel.style.right="auto";
-            panel.style.bottom="auto";
+        document.addEventListener("mouseup", () => { dragging = false; document.body.style.userSelect = ""; });
+        document.addEventListener("mousemove", e => {
+            if (!dragging) return;
+            panel.style.left = (e.clientX - offsetX) + "px";
+            panel.style.top = (e.clientY - offsetY) + "px";
+            panel.style.right = "auto";
+            panel.style.bottom = "auto";
         });
     }
 
-    function openThemeEditor(theme){
-        editingTheme = theme;
-        let panel = document.getElementById('avia-theme-editor');
-        if(panel){
-            panel.style.display="flex";
-            panel.querySelector("textarea").value = theme.css;
+    async function openThemeEditor(themeId) {
+        await preloadMonaco();
+
+        editingThemeId = themeId;
+        const themes = getThemes();
+        const theme = themes.find(t => t.id === themeId);
+        if (!theme) return;
+
+        const meta = parseMeta(theme.css);
+        let panel = document.getElementById("avia-theme-editor");
+
+        if (panel) {
+            panel.style.display = "flex";
+            panel.querySelector("#avia-theme-editor-title").textContent = "Theme Editor — " + meta.name;
+            if (monacoEditorInstance) {
+                monacoEditorInstance._aviaThemeId = themeId;
+                const model = monacoEditorInstance.getModel();
+                if (model) model.setValue(theme.css || "");
+            }
             return;
         }
-        panel=document.createElement("div");
-        panel.id="avia-theme-editor";
-        Object.assign(panel.style,{
-            position:"fixed",
-            bottom:"24px",
-            right:"24px",
-            width:"420px",
-            height:"340px",
-            background:"var(--md-sys-color-surface,#1e1e1e)",
-            color:"var(--md-sys-color-on-surface,#fff)",
-            borderRadius:"16px",
-            boxShadow:"0 8px 28px rgba(0,0,0,0.35)",
-            zIndex:999999,
-            display:"flex",
-            flexDirection:"column",
-            overflow:"hidden",
-            border:"1px solid rgba(255,255,255,0.08)",
-            backdropFilter:"blur(12px)"
+
+        panel = document.createElement("div");
+        panel.id = "avia-theme-editor";
+        Object.assign(panel.style, {
+            position: "fixed",
+            bottom: "24px",
+            right: "24px",
+            width: "650px",
+            height: "420px",
+            background: "var(--md-sys-color-surface, #1e1e1e)",
+            color: "var(--md-sys-color-on-surface, #fff)",
+            borderRadius: "16px",
+            boxShadow: "0 8px 28px rgba(0,0,0,0.35)",
+            zIndex: "9999999",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+            border: "1px solid rgba(255,255,255,0.08)",
+            backdropFilter: "blur(12px)"
         });
-        const header=document.createElement("div");
-        header.textContent="Theme Editor";
-        Object.assign(header.style,{
-            padding:"14px 16px",
-            fontWeight:"600",
-            fontSize:"14px",
-            background:"var(--md-sys-color-surface-container,rgba(255,255,255,0.04))",
-            borderBottom:"1px solid rgba(255,255,255,0.08)",
-            cursor:"move"
+
+        const header = document.createElement("div");
+        header.id = "avia-theme-editor-title";
+        header.textContent = "Theme Editor — " + meta.name;
+        Object.assign(header.style, {
+            padding: "14px 16px",
+            fontWeight: "600",
+            fontSize: "14px",
+            background: "var(--md-sys-color-surface-container, rgba(255,255,255,0.04))",
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
+            cursor: "move",
+            color: "#fff",
+            flex: "0 0 auto"
         });
-        makeDraggable(panel,header);
-        const close=document.createElement("div");
-        close.textContent="✕";
-        Object.assign(close.style,{
-            position:"absolute",
-            right:"16px",
-            top:"12px",
-            cursor:"pointer",
-            opacity:"0.6",
-            fontSize:"15px",
-            lineHeight:"1",
-            padding:"2px 4px"
+        makeDraggable(panel, header);
+
+        const close = document.createElement("div");
+        close.textContent = "✕";
+        Object.assign(close.style, {
+            position: "absolute",
+            right: "16px",
+            top: "12px",
+            cursor: "pointer",
+            opacity: "0.6",
+            fontSize: "15px",
+            lineHeight: "1",
+            padding: "2px 4px",
+            color: "#fff"
         });
-        close.onmouseenter=()=>close.style.opacity="1";
-        close.onmouseleave=()=>close.style.opacity="0.6";
-        close.onclick=()=>panel.style.display="none";
-        const textarea=document.createElement("textarea");
-        Object.assign(textarea.style,{
-            flex:"1",
-            border:"none",
-            outline:"none",
-            resize:"none",
-            padding:"16px",
-            background:"transparent",
-            color:"inherit",
-            fontFamily:"monospace",
-            fontSize:"13px"
-        });
-        textarea.value=theme.css;
-        textarea.addEventListener("input",()=>{
-            const themes=getThemes();
-            const t=themes.find(x=>x.id===editingTheme.id);
-            if(!t) return;
-            t.css=textarea.value;
-            setThemes(themes);
-            applyThemes();
-            if(window.__avia_refresh_themes_panel){window.__avia_refresh_themes_panel();}
-        });
+        close.onmouseenter = () => close.style.opacity = "1";
+        close.onmouseleave = () => close.style.opacity = "0.6";
+        close.onclick = () => panel.style.display = "none";
+
+        const editorContainer = document.createElement("div");
+        editorContainer.style.flex = "1";
+
         panel.appendChild(header);
         panel.appendChild(close);
-        panel.appendChild(textarea);
+        panel.appendChild(editorContainer);
         document.body.appendChild(panel);
+
+        monacoEditorInstance = monaco.editor.create(editorContainer, {
+            value: theme.css || "",
+            language: "css",
+            theme: "vs-dark",
+            automaticLayout: true,
+            minimap: { enabled: false },
+            fontSize: 13,
+            scrollBeyondLastLine: false,
+            wordWrap: "on"
+        });
+
+        monacoEditorInstance._aviaThemeId = themeId;
+
+        monacoEditorInstance.onDidChangeModelContent(() => {
+            const id = monacoEditorInstance._aviaThemeId;
+            if (!id) return;
+            const value = monacoEditorInstance.getValue();
+            const all = getThemes();
+            const target = all.find(t => t.id === id);
+            if (!target) return;
+            target.css = value;
+            setThemes(all);
+            applyThemes();
+            header.textContent = "Theme Editor — " + parseMeta(value).name;
+            if (typeof window.__avia_refresh_themes_panel === "function") {
+                window.__avia_refresh_themes_panel();
+            }
+        });
     }
 
-    function toggleThemesPanel(){
-        let panel=document.getElementById("avia-themes-panel");
-        if(panel){
-            panel.style.display = panel.style.display==="none"?"flex":"none";
+    function toggleThemesPanel() {
+        let panel = document.getElementById("avia-themes-panel");
+        if (panel) {
+            panel.style.display = panel.style.display === "none" ? "flex" : "none";
             return;
         }
-        panel=document.createElement("div");
-        panel.id="avia-themes-panel";
-        Object.assign(panel.style,{
-            position:"fixed",
-            bottom:"40px",
-            right:"40px",
-            width:"500px",
-            height:"460px",
-            background:"var(--md-sys-color-surface,#1e1e1e)",
-            color:"var(--md-sys-color-on-surface,#fff)",
-            borderRadius:"16px",
-            boxShadow:"0 8px 28px rgba(0,0,0,0.35)",
-            zIndex:999999,
-            display:"flex",
-            flexDirection:"column",
-            overflow:"hidden",
-            border:"1px solid rgba(255,255,255,0.08)",
-            backdropFilter:"blur(12px)"
+
+        panel = document.createElement("div");
+        panel.id = "avia-themes-panel";
+        Object.assign(panel.style, {
+            position: "fixed",
+            bottom: "40px",
+            right: "40px",
+            width: "500px",
+            height: "460px",
+            background: "var(--md-sys-color-surface, #1e1e1e)",
+            color: "var(--md-sys-color-on-surface, #fff)",
+            borderRadius: "16px",
+            boxShadow: "0 8px 28px rgba(0,0,0,0.35)",
+            zIndex: "999999",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+            border: "1px solid rgba(255,255,255,0.08)",
+            backdropFilter: "blur(12px)"
         });
 
-        const header=document.createElement("div");
-        header.textContent="Themes";
-        Object.assign(header.style,{
-            padding:"14px 16px",
-            fontWeight:"600",
-            fontSize:"14px",
-            background:"var(--md-sys-color-surface-container,rgba(255,255,255,0.04))",
-            borderBottom:"1px solid rgba(255,255,255,0.08)",
-            cursor:"move"
+        const header = document.createElement("div");
+        header.textContent = "Themes";
+        Object.assign(header.style, {
+            padding: "14px 16px",
+            fontWeight: "600",
+            fontSize: "14px",
+            background: "var(--md-sys-color-surface-container, rgba(255,255,255,0.04))",
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
+            cursor: "move"
         });
-        makeDraggable(panel,header);
+        makeDraggable(panel, header);
 
-        const close=document.createElement("div");
-        close.textContent="✕";
-        Object.assign(close.style,{
-            position:"absolute",
-            right:"16px",
-            top:"12px",
-            cursor:"pointer",
-            opacity:"0.6",
-            fontSize:"15px",
-            lineHeight:"1",
-            padding:"2px 4px"
+        const close = document.createElement("div");
+        close.textContent = "✕";
+        Object.assign(close.style, {
+            position: "absolute",
+            right: "16px",
+            top: "12px",
+            cursor: "pointer",
+            opacity: "0.6",
+            fontSize: "15px",
+            lineHeight: "1",
+            padding: "2px 4px"
         });
-        close.onmouseenter=()=>close.style.opacity="1";
-        close.onmouseleave=()=>close.style.opacity="0.6";
-        close.onclick=()=>panel.style.display="none";
+        close.onmouseenter = () => close.style.opacity = "1";
+        close.onmouseleave = () => close.style.opacity = "0.6";
+        close.onclick = () => panel.style.display = "none";
 
-        const btnRow=document.createElement("div");
-        Object.assign(btnRow.style,{
-            display:"flex",
-            gap:"8px",
-            padding:"12px 16px",
-            borderBottom:"1px solid rgba(255,255,255,0.08)",
-            flex:"0 0 auto"
+        const btnRow = document.createElement("div");
+        Object.assign(btnRow.style, {
+            display: "flex",
+            gap: "8px",
+            padding: "12px 16px",
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
+            flex: "0 0 auto"
         });
 
-        const importBtn=document.createElement("button");
-        importBtn.textContent="Import Theme";
+        const importBtn = document.createElement("button");
+        importBtn.textContent = "Import Theme";
         styleBtn(importBtn);
-        importBtn.style.flex="1";
-        importBtn.style.padding="8px 12px";
+        importBtn.style.flex = "1";
+        importBtn.style.padding = "8px 12px";
 
-        const newBtn=document.createElement("button");
-        newBtn.textContent="+ New";
+        const newBtn = document.createElement("button");
+        newBtn.textContent = "+ New";
         styleBtn(newBtn);
-        newBtn.style.flex="1";
-        newBtn.style.padding="8px 12px";
+        newBtn.style.flex = "1";
+        newBtn.style.padding = "8px 12px";
 
         btnRow.appendChild(importBtn);
         btnRow.appendChild(newBtn);
 
-        const list=document.createElement("div");
-        Object.assign(list.style,{
-            flex:"1",
-            overflowY:"auto",
-            padding:"16px",
-            display:"flex",
-            flexDirection:"column",
-            gap:"8px"
+        const list = document.createElement("div");
+        Object.assign(list.style, {
+            flex: "1",
+            overflowY: "auto",
+            padding: "16px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px"
         });
 
-        const dropOverlay=document.createElement("div");
-        dropOverlay.textContent="Drop .css or .txt files here";
-        Object.assign(dropOverlay.style,{
-            position:"absolute",
-            inset:"0",
-            background:"rgba(0,0,0,0.6)",
-            display:"flex",
-            alignItems:"center",
-            justifyContent:"center",
-            fontSize:"18px",
-            fontWeight:"600",
-            color:"#fff",
-            opacity:"0",
-            pointerEvents:"none",
-            transition:"opacity 0.15s ease",
-            borderRadius:"16px"
+        const dropOverlay = document.createElement("div");
+        dropOverlay.textContent = "Drop .css or .txt files here";
+        Object.assign(dropOverlay.style, {
+            position: "absolute",
+            inset: "0",
+            background: "rgba(0,0,0,0.6)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "18px",
+            fontWeight: "600",
+            color: "#fff",
+            opacity: "0",
+            pointerEvents: "none",
+            transition: "opacity 0.15s ease",
+            borderRadius: "16px"
         });
 
         panel.appendChild(header);
@@ -319,10 +364,8 @@
             dropOverlay.style.opacity = "0";
             panel.style.border = "1px solid rgba(255,255,255,0.08)";
             dragDepth = 0;
-
             const files = [...e.dataTransfer.files].filter(f => f.name.endsWith(".css") || f.name.endsWith(".txt"));
             if (!files.length) return;
-
             const themes = getThemes();
             for (const file of files) {
                 const css = await file.text();
@@ -333,84 +376,83 @@
             render();
         });
 
-        function render(){
-            list.innerHTML="";
-            const themes=getThemes();
+        function render() {
+            list.innerHTML = "";
+            const themes = getThemes();
 
-            if(themes.length === 0){
-                const empty=document.createElement("div");
-                empty.textContent="No themes yet. Import or create one above.";
-                Object.assign(empty.style,{opacity:"0.4",fontSize:"13px"});
+            if (themes.length === 0) {
+                const empty = document.createElement("div");
+                empty.textContent = "No themes yet. Import or create one above.";
+                Object.assign(empty.style, { opacity: "0.4", fontSize: "13px" });
                 list.appendChild(empty);
                 return;
             }
 
-            themes.forEach(theme=>{
-                const meta=parseMeta(theme.css);
+            themes.forEach(theme => {
+                const meta = parseMeta(theme.css);
 
-                const card=document.createElement("div");
-                Object.assign(card.style,{
-                    display:"flex",
-                    justifyContent:"space-between",
-                    alignItems:"center",
-                    padding:"10px 12px",
-                    borderRadius:"10px",
-                    background:"rgba(255,255,255,0.04)",
-                    border:"1px solid rgba(255,255,255,0.06)",
-                    marginBottom:"0"
+                const card = document.createElement("div");
+                Object.assign(card.style, {
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: "10px 12px",
+                    borderRadius: "10px",
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.06)"
                 });
 
-                const left=document.createElement("div");
-                Object.assign(left.style,{display:"flex",alignItems:"center",gap:"10px"});
+                const left = document.createElement("div");
+                Object.assign(left.style, { display: "flex", alignItems: "center", gap: "10px" });
 
-                const dot=document.createElement("div");
-                Object.assign(dot.style,{
-                    width:"10px",
-                    height:"10px",
-                    borderRadius:"50%",
-                    flexShrink:"0",
+                const dot = document.createElement("div");
+                Object.assign(dot.style, {
+                    width: "10px",
+                    height: "10px",
+                    borderRadius: "50%",
+                    flexShrink: "0",
                     background: theme.enabled ? "#4dff88" : "#777",
                     boxShadow: theme.enabled ? "0 0 6px #4dff88" : "none"
                 });
 
-                const info=document.createElement("div");
-                info.innerHTML=`<div style="font-weight:600;font-size:13px">${meta.name}</div><div style="font-size:11px;opacity:.5">${meta.author} • v${meta.version}</div><div style="font-size:11px;opacity:.4">${meta.description}</div>`;
+                const info = document.createElement("div");
+                info.innerHTML = `<div style="font-weight:600;font-size:13px">${meta.name}</div><div style="font-size:11px;opacity:.5">${meta.author} • v${meta.version}</div><div style="font-size:11px;opacity:.4">${meta.description}</div>`;
 
                 left.appendChild(dot);
                 left.appendChild(info);
 
-                const controls=document.createElement("div");
-                Object.assign(controls.style,{display:"flex",gap:"6px"});
+                const controls = document.createElement("div");
+                Object.assign(controls.style, { display: "flex", gap: "6px" });
 
-                const toggle=document.createElement("button");
-                toggle.textContent=theme.enabled?"Disable":"Enable";
+                const toggle = document.createElement("button");
+                toggle.textContent = theme.enabled ? "Disable" : "Enable";
                 styleBtn(toggle);
-                toggle.onclick=()=>{
-                    theme.enabled=!theme.enabled;
+                toggle.onclick = () => {
+                    theme.enabled = !theme.enabled;
                     setThemes(themes);
                     applyThemes();
                     render();
                 };
 
-                const edit=document.createElement("button");
-                edit.textContent="Edit";
+                const edit = document.createElement("button");
+                edit.textContent = "Edit";
                 styleBtn(edit, "rgba(100,160,255,0.15)");
-                edit.onclick=()=>openThemeEditor(theme);
+                edit.onclick = () => openThemeEditor(theme.id);
 
-                const dlBtn=document.createElement("button");
-                dlBtn.textContent="Export";
+                const dlBtn = document.createElement("button");
+                dlBtn.textContent = "Export";
                 styleBtn(dlBtn, "rgba(80,200,120,0.15)");
-                dlBtn.title="Download theme as .css";
-                dlBtn.onclick=(e)=>{
+                dlBtn.title = "Download theme as .css";
+                dlBtn.onclick = e => {
                     e.stopPropagation();
                     downloadTheme(theme);
                 };
 
-                const del=document.createElement("button");
-                del.textContent="✕";
+                const del = document.createElement("button");
+                del.textContent = "✕";
                 styleBtn(del, "rgba(255,80,80,0.15)");
-                del.onclick=()=>{
-                    const updated=themes.filter(t=>t.id!==theme.id);
+                del.onclick = () => {
+                    const updated = themes.filter(t => t.id !== theme.id);
                     setThemes(updated);
                     applyThemes();
                     render();
@@ -428,18 +470,18 @@
 
         window.__avia_refresh_themes_panel = render;
 
-        importBtn.onclick=()=>{
-            const input=document.createElement("input");
-            input.type="file";
-            input.accept=".css,.txt";
-            input.multiple=true;
-            input.onchange=async()=>{
-                const files=[...input.files];
-                if(!files.length) return;
-                const themes=getThemes();
-                for(const file of files){
-                    const css=await file.text();
-                    themes.push({id:crypto.randomUUID(),css,enabled:true});
+        importBtn.onclick = () => {
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = ".css,.txt";
+            input.multiple = true;
+            input.onchange = async () => {
+                const files = [...input.files];
+                if (!files.length) return;
+                const themes = getThemes();
+                for (const file of files) {
+                    const css = await file.text();
+                    themes.push({ id: crypto.randomUUID(), css, enabled: true });
                 }
                 setThemes(themes);
                 applyThemes();
@@ -448,9 +490,9 @@
             input.click();
         };
 
-        newBtn.onclick=()=>{
-            const themes=getThemes();
-            themes.push({id:crypto.randomUUID(),css:TEMPLATE,enabled:true});
+        newBtn.onclick = () => {
+            const themes = getThemes();
+            themes.push({ id: crypto.randomUUID(), css: TEMPLATE, enabled: true });
             setThemes(themes);
             applyThemes();
             render();
@@ -459,21 +501,22 @@
         render();
     }
 
-    function injectButton(){
-        if(document.getElementById("avia-themes-btn")) return;
-        const appearanceBtn=[...document.querySelectorAll("a")].find(a=>a.textContent.trim()==="Appearance");
-        const quickCSS=document.getElementById("stoat-fake-quickcss");
-        if(!appearanceBtn || !quickCSS) return;
-        const clone=appearanceBtn.cloneNode(true);
-        clone.id="avia-themes-btn";
-        const text=[...clone.querySelectorAll("div")].find(d=>d.children.length===0);
-        if(text) text.textContent="(Avia) Themes";
-        clone.onclick=toggleThemesPanel;
+    function injectButton() {
+        if (document.getElementById("avia-themes-btn")) return;
+        const appearanceBtn = [...document.querySelectorAll("a")].find(a => a.textContent.trim() === "Appearance");
+        const quickCSS = document.getElementById("stoat-fake-quickcss");
+        if (!appearanceBtn || !quickCSS) return;
+        const clone = appearanceBtn.cloneNode(true);
+        clone.id = "avia-themes-btn";
+        const text = [...clone.querySelectorAll("div")].find(d => d.children.length === 0);
+        if (text) text.textContent = "(Avia) Themes";
+        clone.onclick = toggleThemesPanel;
         quickCSS.parentElement.insertBefore(clone, quickCSS.nextSibling);
     }
 
-    new MutationObserver(injectButton).observe(document.body,{childList:true,subtree:true});
+    new MutationObserver(injectButton).observe(document.body, { childList: true, subtree: true });
     injectButton();
     applyThemes();
+    preloadMonaco();
 
 })();
