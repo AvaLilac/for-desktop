@@ -46,6 +46,8 @@ export function createAboutWindow() {
   });
 
   aboutWindow.on("closed", () => {
+    mainWindow.show();
+    mainWindow.focus();
     aboutWindow = null;
   });
 
