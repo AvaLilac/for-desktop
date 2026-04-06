@@ -148,11 +148,7 @@ export function createMainWindow() {
       mainWindow.webContents.setZoomLevel(0);
     } else if (input.key === "F1") {
       event.preventDefault();
-      if (!aboutWindow) {
-        createAboutWindow();
-      } else {
-        aboutWindow.show();
-      }
+      createAboutWindow();
     } else if (
       input.key === "F5" ||
       ((input.control || input.meta) && input.key.toLowerCase() === "r")

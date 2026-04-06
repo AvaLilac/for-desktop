@@ -9,6 +9,12 @@ export let aboutWindow: BrowserWindow;
 
 // Create our about window
 export function createAboutWindow() {
+  // If our about window already exists, show it
+  if (aboutWindow) {
+    aboutWindow.show();
+    return;
+  }
+
   aboutWindow = new BrowserWindow({
     minWidth: 300,
     minHeight: 300,
@@ -30,6 +36,7 @@ export function createAboutWindow() {
     },
   });
 
+  // Remove the default menu
   aboutWindow.setMenu(null);
 
   aboutWindow.loadFile(join(__dirname, "about.html"));
