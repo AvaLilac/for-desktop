@@ -119,6 +119,14 @@
         overflow-wrap: break-word;
       }
 
+      #stoatVersion {
+        position: absolute;
+        bottom: 15px;
+        margin-left: 45px;
+        font-size: 12px;
+        color: #888;
+      }
+
       .version-chip {
         display: inline-flex;
         align-items: center;
@@ -414,6 +422,7 @@
           <p>
             A custom desktop client with enhancements and additional features.
           </p>
+          <div id="stoatVersion">Based on Stoat</div>
         </div>
       </div>
 
@@ -579,8 +588,15 @@
 
     <script>
       window.addEventListener("load", () => {
-        const elem = document.getElementById("aviaVersion");
-        if (elem) elem.textContent = window.native.versions.aviaClient();
+        const aviaElem = document.getElementById("aviaVersion");
+        if (aviaElem) {
+          aviaElem.textContent = window.native.versions.aviaClient();
+        }
+
+        const stoatElem = document.getElementById("stoatVersion");
+        if (stoatElem) {
+          stoatElem.textContent = `Based on Stoat ${window.native.versions.desktop()}`;
+        }
       });
     </script>
   </body>
