@@ -1,50 +1,67 @@
 {
-  "color-space-for-untagged-svg-colors" : "display-p3",
   "fill-specializations" : [
     {
       "value" : {
-        "automatic-gradient" : "extended-srgb:0.00000,0.53333,1.00000,1.00000"
+        "solid" : "display-p3:0.33912,0.12908,0.93430,1.00000"
       }
     },
     {
       "appearance" : "dark",
       "value" : {
-        "solid" : "display-p3:0.16644,0.08206,0.33650,1.00000"
+        "automatic-gradient" : "display-p3:0.15333,0.05837,0.42244,1.00000",
+        "orientation" : {
+          "start" : {
+            "x" : 0.5,
+            "y" : 0
+          },
+          "stop" : {
+            "x" : 0.5,
+            "y" : 0.7
+          }
+        }
       }
     }
   ],
   "groups" : [
     {
-      "blend-mode-specializations" : [
-        {
-          "appearance" : "dark",
-          "value" : "hard-light"
-        }
-      ],
-      "blur-material" : null,
-      "hidden" : false,
       "layers" : [
         {
+          "blend-mode-specializations" : [
+            {
+              "value" : "normal"
+            },
+            {
+              "appearance" : "tinted",
+              "value" : "normal"
+            }
+          ],
+          "fill-specializations" : [
+            {
+              "value" : "automatic"
+            },
+            {
+              "appearance" : "tinted",
+              "value" : "none"
+            }
+          ],
           "glass" : false,
-          "image-name" : "icon.svg",
-          "name" : "icon",
+          "image-name" : "IMG_0248.PNG",
+          "name" : "IMG_0248",
           "position" : {
-            "scale" : 4.5,
+            "scale" : 0.25,
             "translation-in-points" : [
-              2.0231672940001317,
-              -61.4140625
+              0,
+              0
             ]
           }
         }
       ],
-      "lighting" : "individual",
       "shadow" : {
         "kind" : "neutral",
         "opacity" : 0.5
       },
-      "specular" : true,
       "translucency" : {
-        "enabled" : false,
+        "enabled" : true,
         "value" : 0.5
       }
     }

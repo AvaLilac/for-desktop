@@ -98,6 +98,11 @@ if (!process.env.PLATFORM) {
 
 const customVitePluginBuild: VitePluginBuildConfig[] = [
   {
+    entry: "avia_assets/icon.png",
+    config: "vite.main.config.ts",
+    target: "main",
+  },
+  {
     entry: "about.html",
     config: "vite.main.config.ts",
     target: "main",
