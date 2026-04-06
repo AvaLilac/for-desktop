@@ -18,6 +18,7 @@ export function createAboutWindow() {
     backgroundColor: "#191919",
     frame: true,
     resizable: false,
+    minimizable: false,
     parent: mainWindow,
     paintWhenInitiallyHidden: true,
     webPreferences: {
@@ -37,8 +38,7 @@ export function createAboutWindow() {
     aboutWindow.show();
   });
 
-  aboutWindow.on("close", (e) => {
-    e.preventDefault();
-    aboutWindow.hide();
+  aboutWindow.on("closed", () => {
+    aboutWindow = null;
   });
 }
