@@ -6,7 +6,22 @@
     const LINKTREE_URL = "https://linktr.ee/GermanAvaLilac";
     const STOAT_SERVER_URL = "https://stt.gg/GvBhcejB";
 
-    function toggleQuickCSSPanel() {
+    function preloadMonaco() {
+        return new Promise(resolve => {
+            if (window.monaco) return resolve();
+            const loader = document.createElement("script");
+            loader.src = "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js";
+            loader.onload = function () {
+                require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs" } });
+                require(["vs/editor/editor.main"], () => resolve());
+            };
+            document.head.appendChild(loader);
+        });
+    }
+
+    async function toggleQuickCSSPanel() {
+        await preloadMonaco();
+
         let panel = document.getElementById('avia-quickcss-panel');
         if (panel) {
             panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
@@ -15,80 +30,88 @@
 
         panel = document.createElement('div');
         panel.id = 'avia-quickcss-panel';
-        panel.style.position = 'fixed';
-        panel.style.bottom = '24px';
-        panel.style.right = '24px';
-        panel.style.width = '420px';
-        panel.style.height = '340px';
-        panel.style.background = 'var(--md-sys-color-surface, #1e1e1e)';
-        panel.style.color = 'var(--md-sys-color-on-surface, #fff)';
-        panel.style.borderRadius = '16px';
-        panel.style.boxShadow = '0 8px 28px rgba(0,0,0,0.35)';
-        panel.style.zIndex = '999999';
-        panel.style.display = 'flex';
-        panel.style.flexDirection = 'column';
-        panel.style.overflow = 'hidden';
-        panel.style.border = '1px solid rgba(255,255,255,0.08)';
-        panel.style.backdropFilter = 'blur(12px)';
+        Object.assign(panel.style, {
+            position: 'fixed',
+            bottom: '24px',
+            right: '24px',
+            width: '650px',
+            height: '420px',
+            background: 'var(--md-sys-color-surface, #1e1e1e)',
+            color: 'var(--md-sys-color-on-surface, #fff)',
+            borderRadius: '16px',
+            boxShadow: '0 8px 28px rgba(0,0,0,0.35)',
+            zIndex: '999999',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            border: '1px solid rgba(255,255,255,0.08)',
+            backdropFilter: 'blur(12px)'
+        });
 
         const header = document.createElement('div');
         header.textContent = 'QuickCSS';
-        header.style.padding = '14px 16px';
-        header.style.fontWeight = '600';
-        header.style.fontSize = '14px';
-        header.style.letterSpacing = '0.3px';
-        header.style.background = 'var(--md-sys-color-surface-container, rgba(255,255,255,0.04))';
-        header.style.borderBottom = '1px solid rgba(255,255,255,0.08)';
-        header.style.cursor = 'move';
+        Object.assign(header.style, {
+            padding: '14px 16px',
+            fontWeight: '600',
+            fontSize: '14px',
+            letterSpacing: '0.3px',
+            background: 'var(--md-sys-color-surface-container, rgba(255,255,255,0.04))',
+            borderBottom: '1px solid rgba(255,255,255,0.08)',
+            cursor: 'move',
+            color: '#fff'
+        });
 
         const closeBtn = document.createElement('div');
         closeBtn.textContent = '✕';
-        closeBtn.style.position = 'absolute';
-        closeBtn.style.top = '12px';
-        closeBtn.style.right = '16px';
-        closeBtn.style.cursor = 'pointer';
-        closeBtn.style.opacity = '0.7';
+        Object.assign(closeBtn.style, {
+            position: 'absolute',
+            top: '12px',
+            right: '16px',
+            cursor: 'pointer',
+            opacity: '0.7',
+            color: '#fff'
+        });
         closeBtn.onmouseenter = () => closeBtn.style.opacity = '1';
         closeBtn.onmouseleave = () => closeBtn.style.opacity = '0.7';
         closeBtn.onclick = () => panel.style.display = 'none';
 
-        const textarea = document.createElement('textarea');
-        textarea.style.flex = '1';
-        textarea.style.border = 'none';
-        textarea.style.outline = 'none';
-        textarea.style.resize = 'none';
-        textarea.style.padding = '16px';
-        textarea.style.background = 'transparent';
-        textarea.style.color = 'inherit';
-        textarea.style.fontFamily = 'monospace';
-        textarea.style.fontSize = '13px';
-        textarea.style.lineHeight = '1.4';
-        textarea.value = localStorage.getItem('avia_quickcss') || '';
-
-        textarea.addEventListener('input', () => {
-            localStorage.setItem('avia_quickcss', textarea.value);
-            applyQuickCSS(textarea.value);
-        });
+        const editorContainer = document.createElement('div');
+        editorContainer.style.flex = '1';
 
         panel.appendChild(header);
         panel.appendChild(closeBtn);
-        panel.appendChild(textarea);
+        panel.appendChild(editorContainer);
         document.body.appendChild(panel);
 
+        const editor = monaco.editor.create(editorContainer, {
+            value: localStorage.getItem('avia_quickcss') || '',
+            language: 'css',
+            theme: 'vs-dark',
+            automaticLayout: true,
+            minimap: { enabled: false },
+            fontSize: 13,
+            scrollBeyondLastLine: false,
+            wordWrap: 'on'
+        });
+
+        editor.onDidChangeModelContent(() => {
+            const value = editor.getValue();
+            localStorage.setItem('avia_quickcss', value);
+            applyQuickCSS(value);
+        });
+
         let isDragging = false, offsetX, offsetY;
-        header.addEventListener('mousedown', (e) => {
+        header.addEventListener('mousedown', e => {
             isDragging = true;
             offsetX = e.clientX - panel.offsetLeft;
             offsetY = e.clientY - panel.offsetTop;
             document.body.style.userSelect = 'none';
         });
-
         document.addEventListener('mouseup', () => {
             isDragging = false;
             document.body.style.userSelect = '';
         });
-
-        document.addEventListener('mousemove', (e) => {
+        document.addEventListener('mousemove', e => {
             if (!isDragging) return;
             panel.style.left = (e.clientX - offsetX) + 'px';
             panel.style.top = (e.clientY - offsetY) + 'px';
@@ -204,8 +227,8 @@
             styleTag.id = 'custom-font-style';
             document.head.appendChild(styleTag);
         }
-        let ext = url.split('.').pop().toLowerCase();
-        let formatMap = {
+        const ext = url.split('.').pop().toLowerCase();
+        const formatMap = {
             ttf: 'truetype',
             otf: 'opentype',
             woff: 'woff',
@@ -213,7 +236,7 @@
             eot: 'embedded-opentype',
             css: 'truetype'
         };
-        let format = formatMap[ext] || '';
+        const format = formatMap[ext] || '';
         styleTag.textContent = `
             @font-face {
                 font-family: '${fontName}';
@@ -278,8 +301,6 @@
             if (textNode) textNode.textContent = "(Avia) Font Loader";
             setIcon(newBtn, "upload");
             newBtn.addEventListener('click', showFontLoaderPopup);
-
-            const stoatBtn = document.getElementById('stoat-fake-stoatserver');
             targetParent.appendChild(newBtn);
 
             if (!document.getElementById('stoat-fake-removefont')) {
@@ -300,11 +321,6 @@
             if (quickCssTextNode) quickCssTextNode.textContent = "(Avia) QuickCSS";
             setIcon(quickCssBtn, "code");
             quickCssBtn.addEventListener('click', toggleQuickCSSPanel);
-
-            const lastBtn = document.getElementById('stoat-fake-removefont') ||
-                            document.getElementById('stoat-fake-loadfont') ||
-                            document.getElementById('stoat-fake-stoatserver') ||
-                            document.getElementById('stoat-fake-linktree');
             targetParent.appendChild(quickCssBtn);
         }
     }
@@ -339,5 +355,7 @@
         observer.observe(document.body, { childList: true, subtree: true });
         injectButtons();
     });
+
+    preloadMonaco();
 
 })();
