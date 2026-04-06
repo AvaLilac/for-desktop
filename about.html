@@ -1,398 +1,597 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>About Aviaclient</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&family=Google+Sans+Display:wght@400;500&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About Aviaclient</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&family=Google+Sans+Display:wght@400;500&family=Roboto:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-  :root {
-    --md-primary: #adc6ff;
-    --md-primary-container: #003e9c;
-    --md-on-primary-container: #d8e2ff;
-    --md-surface: #131318;
-    --md-surface-container: #1e1e24;
-    --md-surface-container-high: #28282e;
-    --md-outline-variant: #46464f;
-    --md-on-surface: #e4e1e9;
-    --md-on-surface-variant: #c7c5d0;
-    --md-secondary: #bec6dc;
-    --md-secondary-container: #3f4759;
-    --md-on-secondary-container: #dbe2f9;
-    --md-tertiary-container: #5c3349;
-    --md-tertiary: #efb8c8;
-  }
+      :root {
+        --md-primary: #adc6ff;
+        --md-primary-container: #003e9c;
+        --md-on-primary-container: #d8e2ff;
+        --md-surface: #131318;
+        --md-surface-container: #1e1e24;
+        --md-surface-container-high: #28282e;
+        --md-outline-variant: #46464f;
+        --md-on-surface: #e4e1e9;
+        --md-on-surface-variant: #c7c5d0;
+        --md-secondary: #bec6dc;
+        --md-secondary-container: #3f4759;
+        --md-on-secondary-container: #dbe2f9;
+        --md-tertiary-container: #5c3349;
+        --md-tertiary: #efb8c8;
+      }
 
-  html, body {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-  }
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
 
-  body {
-    background: var(--md-surface);
-    color: var(--md-on-surface);
-    font-family: 'Roboto', sans-serif;
-    font-size: 14px;
-    display: flex;
-    flex-direction: column;
-  }
+      body {
+        background: var(--md-surface);
+        color: var(--md-on-surface);
+        font-family: "Roboto", sans-serif;
+        font-size: 14px;
+        display: flex;
+        flex-direction: column;
+      }
 
-  
-  .topbar {
-    padding: 14px 24px 10px;
-    flex-shrink: 0;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-  .topbar-title {
-    font-family: 'Google Sans', sans-serif;
-    font-size: 18px; font-weight: 400;
-    color: var(--md-on-surface);
-  }
+      .topbar {
+        padding: 14px 24px 10px;
+        flex-shrink: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .topbar-title {
+        font-family: "Google Sans", sans-serif;
+        font-size: 18px;
+        font-weight: 400;
+        color: var(--md-on-surface);
+      }
 
-  
-  .layout {
-    flex: 1 1 0;          
-    min-height: 0;        
-    display: flex;
-    overflow: hidden;
-  }
+      .layout {
+        flex: 1 1 0;
+        min-height: 0;
+        display: flex;
+        overflow: hidden;
+      }
 
-  
-  .sidebar {
-    width: clamp(160px, 26%, 240px);
-    flex-shrink: 0;
-    background: var(--md-surface-container);
-    border-right: 1px solid rgba(255,255,255,0.04);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;  
-    padding: 24px 20px;
-    gap: 14px;
-    overflow-y: auto;   
-    overflow-x: hidden;
-    animation: fadeIn 0.25s ease both;
-  }
+      .sidebar {
+        width: clamp(160px, 26%, 240px);
+        flex-shrink: 0;
+        background: var(--md-surface-container);
+        border-right: 1px solid rgba(255, 255, 255, 0.04);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 24px 20px;
+        gap: 14px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        animation: fadeIn 0.25s ease both;
+      }
 
-  
-  .sidebar::-webkit-scrollbar { width: 4px; }
-  .sidebar::-webkit-scrollbar-track { background: transparent; }
-  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+      .sidebar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .sidebar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 2px;
+      }
 
-  .sidebar-text { text-align: center; min-width: 0; width: 100%; }
-  .sidebar-text h1 {
-    font-family: 'Google Sans Display', 'Google Sans', sans-serif;
-    font-size: clamp(15px, 2.2vw, 21px);
-    font-weight: 400;
-    color: var(--md-on-surface);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .sidebar-text p {
-    margin-top: 8px;
-    font-size: clamp(11px, 1.3vw, 13px);
-    color: var(--md-on-surface-variant);
-    line-height: 1.55;
-    overflow-wrap: break-word;
-  }
+      .sidebar-text {
+        text-align: center;
+        min-width: 0;
+        width: 100%;
+      }
+      .sidebar-text h1 {
+        font-family: "Google Sans Display", "Google Sans", sans-serif;
+        font-size: clamp(15px, 2.2vw, 21px);
+        font-weight: 400;
+        color: var(--md-on-surface);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .sidebar-text p {
+        margin-top: 8px;
+        font-size: clamp(11px, 1.3vw, 13px);
+        color: var(--md-on-surface-variant);
+        line-height: 1.55;
+        overflow-wrap: break-word;
+      }
 
-  .version-chip {
-    display: inline-flex; align-items: center;
-    margin-top: 8px; padding: 3px 12px;
-    background: var(--md-secondary-container);
-    color: var(--md-on-secondary-container);
-    border-radius: 999px;
-    font-family: 'Google Sans', sans-serif;
-    font-size: 12px; font-weight: 500;
-    white-space: nowrap;
-  }
+      .version-chip {
+        display: inline-flex;
+        align-items: center;
+        margin-top: 8px;
+        padding: 3px 12px;
+        background: var(--md-secondary-container);
+        color: var(--md-on-secondary-container);
+        border-radius: 999px;
+        font-family: "Google Sans", sans-serif;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+      }
 
-  
-  .main {
-    flex: 1 1 0;
-    min-width: 0;
-    min-height: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 16px 20px 24px;
-    display: flex;
-    flex-direction: column;
-  }
+      .main {
+        flex: 1 1 0;
+        min-width: 0;
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 16px 20px 24px;
+        display: flex;
+        flex-direction: column;
+      }
 
-  .main::-webkit-scrollbar { width: 6px; }
-  .main::-webkit-scrollbar-track { background: transparent; }
-  .main::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
-  .main::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+      .main::-webkit-scrollbar {
+        width: 6px;
+      }
+      .main::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .main::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+      }
+      .main::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.18);
+      }
 
-  
-  .section-label {
-    font-family: 'Google Sans', sans-serif;
-    font-size: 11px; font-weight: 500;
-    color: var(--md-primary);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 12px 4px 6px;
-    flex-shrink: 0;
-  }
-  .section-label:first-child { padding-top: 4px; }
+      .section-label {
+        font-family: "Google Sans", sans-serif;
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--md-primary);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 12px 4px 6px;
+        flex-shrink: 0;
+      }
+      .section-label:first-child {
+        padding-top: 4px;
+      }
 
-  
-  .card {
-    background: var(--md-surface-container);
-    border-radius: 16px;
-    
-    margin-bottom: 8px;
-    flex-shrink: 0;
-    
-    
-  }
+      .card {
+        background: var(--md-surface-container);
+        border-radius: 16px;
 
-  
-  .card { position: relative; }
+        margin-bottom: 8px;
+        flex-shrink: 0;
+      }
 
-  
-  .list-item:first-child { border-radius: 16px 16px 0 0; }
-  .list-item:last-child  { border-radius: 0 0 16px 16px; }
-  .list-item:only-child  { border-radius: 16px; }
-  
-  .license-icon-row { border-radius: 16px 16px 0 0; }
-  .license-body     { border-radius: 0 0 16px 16px; }
+      .card {
+        position: relative;
+      }
 
-  
-  .list-item {
-    display: flex; align-items: center;
-    padding: 11px 14px; gap: 12px;
-    cursor: pointer;
-    transition: background 0.15s;
-    position: relative;
-    text-decoration: none; color: inherit;
-    min-width: 0;
-  }
-  .list-item:hover  { background: rgba(255,255,255,0.05); }
-  .list-item:active { background: rgba(255,255,255,0.09); }
+      .list-item:first-child {
+        border-radius: 16px 16px 0 0;
+      }
+      .list-item:last-child {
+        border-radius: 0 0 16px 16px;
+      }
+      .list-item:only-child {
+        border-radius: 16px;
+      }
 
-  
-  .list-item + .list-item::before {
-    content: '';
-    position: absolute; top: 0; left: 58px; right: 0;
-    height: 1px;
-    background: var(--md-outline-variant); opacity: 0.35;
-  }
+      .license-icon-row {
+        border-radius: 16px 16px 0 0;
+      }
+      .license-body {
+        border-radius: 0 0 16px 16px;
+      }
 
-  
-  .item-icon {
-    width: 36px; height: 36px;
-    border-radius: 999px;
-    background: var(--md-primary-container);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .item-icon svg { width: 18px; height: 18px; fill: var(--md-primary); }
-  .item-icon.secondary { background: var(--md-secondary-container); }
-  .item-icon.secondary svg { fill: var(--md-secondary); }
-  .item-icon.tertiary  { background: var(--md-tertiary-container); }
-  .item-icon.tertiary svg  { fill: var(--md-tertiary); }
+      .list-item {
+        display: flex;
+        align-items: center;
+        padding: 11px 14px;
+        gap: 12px;
+        cursor: pointer;
+        transition: background 0.15s;
+        position: relative;
+        text-decoration: none;
+        color: inherit;
+        min-width: 0;
+      }
+      .list-item:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .list-item:active {
+        background: rgba(255, 255, 255, 0.09);
+      }
 
-  
-  .item-text { flex: 1; min-width: 0; }
-  .item-title {
-    font-family: 'Google Sans', sans-serif;
-    font-size: 14px; font-weight: 400;
-    color: var(--md-on-surface);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .item-sub {
-    font-size: 12px; color: var(--md-on-surface-variant);
-    margin-top: 1px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
+      .list-item + .list-item::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 58px;
+        right: 0;
+        height: 1px;
+        background: var(--md-outline-variant);
+        opacity: 0.35;
+      }
 
-  
-  .item-trail { flex-shrink: 0; }
-  .item-trail svg { width: 16px; height: 16px; fill: var(--md-on-surface-variant); opacity: 0.45; display: block; }
-  .item-badge {
-    font-family: 'Google Sans', sans-serif;
-    font-size: 11px; font-weight: 500;
-    color: var(--md-on-surface-variant);
-    background: var(--md-surface-container-high);
-    border-radius: 999px; padding: 2px 10px;
-    white-space: nowrap;
-  }
+      .item-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        background: var(--md-primary-container);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .item-icon svg {
+        width: 18px;
+        height: 18px;
+        fill: var(--md-primary);
+      }
+      .item-icon.secondary {
+        background: var(--md-secondary-container);
+      }
+      .item-icon.secondary svg {
+        fill: var(--md-secondary);
+      }
+      .item-icon.tertiary {
+        background: var(--md-tertiary-container);
+      }
+      .item-icon.tertiary svg {
+        fill: var(--md-tertiary);
+      }
 
-  
-  .license-icon-row {
-    display: flex; align-items: center;
-    gap: 12px; padding: 12px 14px 10px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-  .license-body { padding: 10px 14px 14px; }
-  .license-body p {
-    font-size: 13px; color: var(--md-on-surface-variant); line-height: 1.65;
-    overflow-wrap: break-word;
-  }
-  .license-body a { color: var(--md-primary); text-decoration: none; font-weight: 500; }
-  .license-body a:hover { text-decoration: underline; }
+      .item-text {
+        flex: 1;
+        min-width: 0;
+      }
+      .item-title {
+        font-family: "Google Sans", sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        color: var(--md-on-surface);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .item-sub {
+        font-size: 12px;
+        color: var(--md-on-surface-variant);
+        margin-top: 1px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
 
-  
-  @media (max-width: 460px) {
-    .layout { flex-direction: column; overflow-y: auto; }
-    .sidebar {
-      width: 100%;
-      flex-direction: row;
-      justify-content: flex-start;
-      padding: 14px 16px;
-      gap: 14px;
-      border-right: none;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      overflow: visible;
-    }
-    .sidebar-text { text-align: left; }
-    .sidebar-text p { display: none; }
-    .main { overflow-y: visible; }
-  }
+      .item-trail {
+        flex-shrink: 0;
+      }
+      .item-trail svg {
+        width: 16px;
+        height: 16px;
+        fill: var(--md-on-surface-variant);
+        opacity: 0.45;
+        display: block;
+      }
+      .item-badge {
+        font-family: "Google Sans", sans-serif;
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--md-on-surface-variant);
+        background: var(--md-surface-container-high);
+        border-radius: 999px;
+        padding: 2px 10px;
+        white-space: nowrap;
+      }
 
-  
-  .sidebar { animation: fadeIn 0.25s ease both; }
-  .main > * { animation: slideUp 0.25s ease both; }
-  .main > *:nth-child(1) { animation-delay: 0.06s; }
-  .main > *:nth-child(2) { animation-delay: 0.10s; }
-  .main > *:nth-child(3) { animation-delay: 0.13s; }
-  .main > *:nth-child(4) { animation-delay: 0.16s; }
-  .main > *:nth-child(5) { animation-delay: 0.19s; }
-  .main > *:nth-child(6) { animation-delay: 0.22s; }
-  .main > *:nth-child(7) { animation-delay: 0.25s; }
+      .license-icon-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .license-body {
+        padding: 10px 14px 14px;
+      }
+      .license-body p {
+        font-size: 13px;
+        color: var(--md-on-surface-variant);
+        line-height: 1.65;
+        overflow-wrap: break-word;
+      }
+      .license-body a {
+        color: var(--md-primary);
+        text-decoration: none;
+        font-weight: 500;
+      }
+      .license-body a:hover {
+        text-decoration: underline;
+      }
 
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-</style>
-</head>
-<body>
+      @media (max-width: 460px) {
+        .layout {
+          flex-direction: column;
+          overflow-y: auto;
+        }
+        .sidebar {
+          width: 100%;
+          flex-direction: row;
+          justify-content: flex-start;
+          padding: 14px 16px;
+          gap: 14px;
+          border-right: none;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+          overflow: visible;
+        }
+        .sidebar-text {
+          text-align: left;
+        }
+        .sidebar-text p {
+          display: none;
+        }
+        .main {
+          overflow-y: visible;
+        }
+      }
 
-<div class="topbar">
-  <span class="topbar-title">About</span>
-</div>
+      .sidebar {
+        animation: fadeIn 0.25s ease both;
+      }
+      .main > * {
+        animation: slideUp 0.25s ease both;
+      }
+      .main > *:nth-child(1) {
+        animation-delay: 0.06s;
+      }
+      .main > *:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+      .main > *:nth-child(3) {
+        animation-delay: 0.13s;
+      }
+      .main > *:nth-child(4) {
+        animation-delay: 0.16s;
+      }
+      .main > *:nth-child(5) {
+        animation-delay: 0.19s;
+      }
+      .main > *:nth-child(6) {
+        animation-delay: 0.22s;
+      }
+      .main > *:nth-child(7) {
+        animation-delay: 0.25s;
+      }
 
-<div class="layout">
-
-  
-  <div class="sidebar">
-    <div class="sidebar-text">
-      <h1>Aviaclient</h1>
-      <div class="version-chip">1.6.0</div>
-      <p>A custom desktop client with enhancements and additional features.</p>
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <span class="topbar-title">About</span>
     </div>
-  </div>
 
-  
-  <div class="main">
-
-    <div class="section-label">Links</div>
-    <div class="card">
-      <a class="list-item" href="https://github.com/AvaLilac/for-desktop" target="_blank">
-        <div class="item-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/></svg>
-        </div>
-        <div class="item-text">
-          <div class="item-title">Source code</div>
-          <div class="item-sub">github.com/AvaLilac/for-desktop</div>
-        </div>
-        <div class="item-trail"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></div>
-      </a>
-      <a class="list-item" href="https://github.com/AvaLilac/for-desktop/issues" target="_blank">
-        <div class="item-icon secondary">
-          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-        </div>
-        <div class="item-text">
-          <div class="item-title">Issues</div>
-          <div class="item-sub">Report bugs or request features</div>
-        </div>
-        <div class="item-trail"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></div>
-      </a>
-      <a class="list-item" href="https://github.com/AvaLilac/for-desktop/tree/dev" target="_blank">
-        <div class="item-icon tertiary">
-          <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
-        </div>
-        <div class="item-text">
-          <div class="item-title">Dev branch</div>
-          <div class="item-sub">Latest development changes</div>
-        </div>
-        <div class="item-trail"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></div>
-      </a>
-    </div>
-
-    <div class="section-label">License</div>
-    <div class="card">
-      <div class="license-icon-row">
-        <div class="item-icon tertiary">
-          <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-        </div>
-        <div class="item-text">
-          <div class="item-title">GNU AGPL v3.0</div>
+    <div class="layout">
+      <div class="sidebar">
+        <div class="sidebar-text">
+          <h1>Aviaclient</h1>
+          <div class="version-chip">1.6.0</div>
+          <p>
+            A custom desktop client with enhancements and additional features.
+          </p>
         </div>
       </div>
-      <div class="license-body">
-        <p>Licensed under the <a href="https://www.gnu.org/licenses/agpl-3.0.txt" target="_blank">GNU Affero General Public License v3.0</a>. You are free to use, modify, and distribute this software under the same license.</p>
+
+      <div class="main">
+        <div class="section-label">Links</div>
+        <div class="card">
+          <a
+            class="list-item"
+            href="https://github.com/AvaLilac/for-desktop"
+            target="_blank"
+          >
+            <div class="item-icon">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"
+                />
+              </svg>
+            </div>
+            <div class="item-text">
+              <div class="item-title">Source code</div>
+              <div class="item-sub">github.com/AvaLilac/for-desktop</div>
+            </div>
+            <div class="item-trail">
+              <svg viewBox="0 0 24 24">
+                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z" />
+              </svg>
+            </div>
+          </a>
+          <a
+            class="list-item"
+            href="https://github.com/AvaLilac/for-desktop/issues"
+            target="_blank"
+          >
+            <div class="item-icon secondary">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                />
+              </svg>
+            </div>
+            <div class="item-text">
+              <div class="item-title">Issues</div>
+              <div class="item-sub">Report bugs or request features</div>
+            </div>
+            <div class="item-trail">
+              <svg viewBox="0 0 24 24">
+                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z" />
+              </svg>
+            </div>
+          </a>
+          <a
+            class="list-item"
+            href="https://github.com/AvaLilac/for-desktop/tree/dev"
+            target="_blank"
+          >
+            <div class="item-icon tertiary">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"
+                />
+              </svg>
+            </div>
+            <div class="item-text">
+              <div class="item-title">Dev branch</div>
+              <div class="item-sub">Latest development changes</div>
+            </div>
+            <div class="item-trail">
+              <svg viewBox="0 0 24 24">
+                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z" />
+              </svg>
+            </div>
+          </a>
+        </div>
+
+        <div class="section-label">License</div>
+        <div class="card">
+          <div class="license-icon-row">
+            <div class="item-icon tertiary">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"
+                />
+              </svg>
+            </div>
+            <div class="item-text">
+              <div class="item-title">GNU AGPL v3.0</div>
+            </div>
+          </div>
+          <div class="license-body">
+            <p>
+              Licensed under the
+              <a
+                href="https://www.gnu.org/licenses/agpl-3.0.txt"
+                target="_blank"
+                >GNU Affero General Public License v3.0</a
+              >. You are free to use, modify, and distribute this software under
+              the same license.
+            </p>
+          </div>
+        </div>
+
+        <div class="section-label">Open source</div>
+        <div class="card">
+          <a
+            class="list-item"
+            href="https://github.com/electron/electron"
+            target="_blank"
+          >
+            <div class="item-icon">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"
+                />
+              </svg>
+            </div>
+            <div class="item-text">
+              <div class="item-title">Electron</div>
+              <div class="item-sub">Desktop runtime framework</div>
+            </div>
+            <div class="item-trail">
+              <span class="item-badge">runtime</span>
+            </div>
+          </a>
+          <a
+            class="list-item"
+            href="https://github.com/electron-userland/electron-builder"
+            target="_blank"
+          >
+            <div class="item-icon secondary">
+              <svg viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+              </svg>
+            </div>
+            <div class="item-text">
+              <div class="item-title">Electron Forge</div>
+              <div class="item-sub">Packaging and distribution</div>
+            </div>
+            <div class="item-trail">
+              <span class="item-badge">packaging</span>
+            </div>
+          </a>
+          <a
+            class="list-item"
+            href="https://github.com/discordjs/RPC"
+            target="_blank"
+          >
+            <div class="item-icon tertiary">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"
+                />
+              </svg>
+            </div>
+            <div class="item-text">
+              <div class="item-title">discord-rpc</div>
+              <div class="item-sub">Discord Rich Presence integration</div>
+            </div>
+            <div class="item-trail"><span class="item-badge">rpc</span></div>
+          </a>
+        </div>
       </div>
     </div>
 
-    <div class="section-label">Open source</div>
-    <div class="card">
-      <a class="list-item" href="https://github.com/electron/electron" target="_blank">
-        <div class="item-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
-        </div>
-        <div class="item-text">
-          <div class="item-title">Electron</div>
-          <div class="item-sub">Desktop runtime framework</div>
-        </div>
-        <div class="item-trail"><span class="item-badge">runtime</span></div>
-      </a>
-      <a class="list-item" href="https://github.com/electron-userland/electron-builder" target="_blank">
-        <div class="item-icon secondary">
-          <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-        </div>
-        <div class="item-text">
-          <div class="item-title">Electron Forge</div>
-          <div class="item-sub">Packaging and distribution</div>
-        </div>
-        <div class="item-trail"><span class="item-badge">packaging</span></div>
-      </a>
-      <a class="list-item" href="https://github.com/discordjs/RPC" target="_blank">
-        <div class="item-icon tertiary">
-          <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-        </div>
-        <div class="item-text">
-          <div class="item-title">discord-rpc</div>
-          <div class="item-sub">Discord Rich Presence integration</div>
-        </div>
-        <div class="item-trail"><span class="item-badge">rpc</span></div>
-      </a>
-    </div>
-
-  </div>
-</div>
-
-<script>
-const data = new URLSearchParams(location.search);
-function walk(node) {
-  if (node.nodeType === Node.TEXT_NODE) {
-    node.textContent = node.textContent.replace(/{{(\w+)}}/g, (m, k) => data.get(k) || m);
-    return;
-  }
-  if (node.nodeType === Node.ELEMENT_NODE && node.nodeName !== "SCRIPT") {
-    for (const child of node.childNodes) walk(child);
-  }
-}
-walk(document.body);
-</script>
-</body>
+    <script>
+      const data = new URLSearchParams(location.search);
+      function walk(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          node.textContent = node.textContent.replace(
+            /{{(\w+)}}/g,
+            (m, k) => data.get(k) || m,
+          );
+          return;
+        }
+        if (node.nodeType === Node.ELEMENT_NODE && node.nodeName !== "SCRIPT") {
+          for (const child of node.childNodes) walk(child);
+        }
+      }
+      walk(document.body);
+    </script>
+  </body>
 </html>
