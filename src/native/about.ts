@@ -29,6 +29,8 @@ export function createAboutWindow() {
     },
   });
 
+  aboutWindow.setMenu(null);
+
   aboutWindow.loadFile(join(__dirname, "about.html"));
 
   aboutWindow.on("ready-to-show", () => {
