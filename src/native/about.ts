@@ -29,7 +29,7 @@ export function createAboutWindow() {
     },
   });
 
-  aboutWindow.loadFile("about.html");
+  aboutWindow.loadFile(join(__dirname, "about.html"));
 
   aboutWindow.on("ready-to-show", () => {
     aboutWindow.show();
