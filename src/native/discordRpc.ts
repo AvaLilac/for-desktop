@@ -16,8 +16,8 @@ export async function initDiscordRpc() {
 
     rpc.on("ready", () =>
       rpc.setActivity({
+        details: "Chatting with others on AviaClient",
         state: "stoat.chat",
-        details: "Chatting with others",
         largeImageKey: "qr",
         largeImageText: "Join Stoat!",
         buttons: [
@@ -31,7 +31,7 @@ export async function initDiscordRpc() {
 
     rpc.on("disconnected", reconnect);
 
-    rpc.login({ clientId: "872068124005007420" });
+    rpc.login({ clientId: "1490783938829090837" });
   } catch (err) {
     reconnect();
   }
