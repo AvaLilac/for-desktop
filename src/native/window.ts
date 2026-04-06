@@ -11,6 +11,7 @@ import {
 
 import windowIconAsset from "../../avia_assets/icon.png?asset";
 
+import { aboutWindow, createAboutWindow } from "./about";
 import { config } from "./config";
 import { updateTrayMenu } from "./tray";
 
@@ -145,6 +146,13 @@ export function createMainWindow() {
       // reset zoom to default.
       event.preventDefault();
       mainWindow.webContents.setZoomLevel(0);
+    } else if (input.key === "F1") {
+      event.preventDefault();
+      if (!aboutWindow) {
+        createAboutWindow();
+      } else {
+        aboutWindow.show();
+      }
     } else if (
       input.key === "F5" ||
       ((input.control || input.meta) && input.key.toLowerCase() === "r")

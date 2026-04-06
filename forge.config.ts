@@ -98,6 +98,11 @@ if (!process.env.PLATFORM) {
 
 const customVitePluginBuild: VitePluginBuildConfig[] = [
   {
+    entry: "about.html",
+    config: "vite.main.config.ts",
+    target: "main",
+  },
+  {
     entry: "src/main.ts",
     config: "vite.main.config.ts",
     target: "main",
