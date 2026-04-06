@@ -410,7 +410,7 @@
       <div class="sidebar">
         <div class="sidebar-text">
           <h1>Aviaclient</h1>
-          <div class="version-chip">1.6.0</div>
+          <div id="aviaVersion" class="version-chip">TBD</div>
           <p>
             A custom desktop client with enhancements and additional features.
           </p>
@@ -578,20 +578,10 @@
     </div>
 
     <script>
-      const data = new URLSearchParams(location.search);
-      function walk(node) {
-        if (node.nodeType === Node.TEXT_NODE) {
-          node.textContent = node.textContent.replace(
-            /{{(\w+)}}/g,
-            (m, k) => data.get(k) || m,
-          );
-          return;
-        }
-        if (node.nodeType === Node.ELEMENT_NODE && node.nodeName !== "SCRIPT") {
-          for (const child of node.childNodes) walk(child);
-        }
-      }
-      walk(document.body);
+      window.addEventListener("load", () => {
+        const elem = document.getElementById("aviaVersion");
+        if (elem) elem.textContent = window.native.versions.aviaClient();
+      });
     </script>
   </body>
 </html>
