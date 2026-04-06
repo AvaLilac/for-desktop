@@ -48,4 +48,12 @@ export function createAboutWindow() {
   aboutWindow.on("closed", () => {
     aboutWindow = null;
   });
+
+  // Close window on Escape
+  aboutWindow.webContents.on("before-input-event", (event, input) => {
+    if (input.key.toLowerCase() === "escape") {
+      event.preventDefault();
+      aboutWindow.close();
+    }
+  });
 }
