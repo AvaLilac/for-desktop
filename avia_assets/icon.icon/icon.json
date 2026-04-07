@@ -32,6 +32,12 @@
           "name" : "Eyes"
         },
         {
+          "glass" : true,
+          "hidden" : false,
+          "image-name" : "Outline.png",
+          "name" : "Outline"
+        },
+        {
           "image-name" : "Nose & Undereye.png",
           "name" : "Nose & Undereye"
         },
@@ -45,12 +51,6 @@
           "hidden" : false,
           "image-name" : "Blue Highlights.png",
           "name" : "Blue Highlights"
-        },
-        {
-          "glass" : true,
-          "hidden" : false,
-          "image-name" : "Outline.png",
-          "name" : "Outline"
         },
         {
           "glass" : false,
