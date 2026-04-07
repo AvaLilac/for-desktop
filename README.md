@@ -3,6 +3,7 @@
  Avia Client for Desktop
 "stoat desktop"
 </h1>
+ <img width="256" height="256" alt="aurora" src="https://github.com/user-attachments/assets/dc3adfa3-ce3b-41ef-bdfd-9ca66d333e24" /><br />
 Application for Windows, macOS, and Linux. now with avia client injected
 </div>
 <br/>
