@@ -2,7 +2,7 @@
   "fill-specializations" : [
     {
       "value" : {
-        "solid" : "display-p3:0.33912,0.12908,0.93430,1.00000"
+        "automatic-gradient" : "display-p3:0.33912,0.12908,0.93430,1.00000"
       }
     },
     {
@@ -24,42 +24,58 @@
   ],
   "groups" : [
     {
+      "blur-material" : null,
       "layers" : [
         {
-          "blend-mode-specializations" : [
-            {
-              "value" : "normal"
-            },
-            {
-              "appearance" : "tinted",
-              "value" : "normal"
-            }
-          ],
-          "fill-specializations" : [
-            {
-              "value" : "automatic"
-            },
-            {
-              "appearance" : "tinted",
-              "value" : "none"
-            }
-          ],
           "glass" : false,
-          "image-name" : "IMG_0248.PNG",
-          "name" : "IMG_0248",
-          "position" : {
-            "scale" : 0.25,
-            "translation-in-points" : [
-              0,
-              0
-            ]
-          }
+          "image-name" : "Eyes.png",
+          "name" : "Eyes"
+        },
+        {
+          "image-name" : "Nose & Undereye.png",
+          "name" : "Nose & Undereye"
+        },
+        {
+          "glass" : true,
+          "image-name" : "Purple Highlights.png",
+          "name" : "Purple Highlights"
+        },
+        {
+          "glass" : true,
+          "hidden" : false,
+          "image-name" : "Blue Highlights.png",
+          "name" : "Blue Highlights"
+        },
+        {
+          "glass" : true,
+          "hidden" : false,
+          "image-name" : "Outline.png",
+          "name" : "Outline"
+        },
+        {
+          "glass" : false,
+          "image-name" : "Pink Ears.png",
+          "name" : "Pink Ears"
+        },
+        {
+          "fill" : "none",
+          "glass" : false,
+          "image-name" : "Base.png",
+          "name" : "Base"
         }
       ],
+      "position" : {
+        "scale" : 1,
+        "translation-in-points" : [
+          0,
+          0
+        ]
+      },
       "shadow" : {
-        "kind" : "neutral",
+        "kind" : "layer-color",
         "opacity" : 0.5
       },
+      "specular" : true,
       "translucency" : {
         "enabled" : true,
         "value" : 0.5
