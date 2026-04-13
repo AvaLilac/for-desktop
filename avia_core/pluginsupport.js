@@ -18,36 +18,35 @@
             const u = new URL(url);
 
             if (u.hostname === "github.com") {
-
                 const m = u.pathname.match(/^\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)$/);
                 if (m) {
                     return `https://raw.githubusercontent.com/${m[1]}/${m[2]}/${m[3]}/${m[4]}`;
                 }
-
                 return url;
             }
 
-
             if (u.hostname === "raw.githubusercontent.com") return url;
-
 
             if (u.hostname === "raw.codeberg.page") return url;
 
             if (u.hostname === "codeberg.org") {
+
+                if (u.pathname.startsWith("/api/v1/repos/")) return url;
+
                 const parts = u.pathname.split("/").filter(Boolean);
 
                 if (parts.length >= 5 && (parts[2] === "raw" || parts[2] === "src")) {
                     const user       = parts[0];
                     const repo       = parts[1];
-
                     const branchName = parts[3] === "branch" || parts[3] === "commit" || parts[3] === "tag"
                         ? parts[4]
-                        : parts[3]; 
+                        : parts[3];
                     const fileStart  = parts[3] === "branch" || parts[3] === "commit" || parts[3] === "tag"
                         ? 5
                         : 4;
                     const filePath   = parts.slice(fileStart).join("/");
-                    return `https://raw.codeberg.page/${user}/${repo}/@${branchName}/${filePath}`;
+
+                    return `https://codeberg.org/api/v1/repos/${user}/${repo}/raw/${filePath}?ref=${branchName}`;
                 }
 
                 if (parts.length >= 4 && parts[2] === "raw") {
@@ -55,12 +54,19 @@
                     const repo       = parts[1];
                     const branchName = parts[3];
                     const filePath   = parts.slice(4).join("/");
-                    return `https://raw.codeberg.page/${user}/${repo}/@${branchName}/${filePath}`;
+
+                    return `https://codeberg.org/api/v1/repos/${user}/${repo}/raw/${filePath}?ref=${branchName}`;
+                }
+
+                if (parts.length >= 5 && parts[2] === "src" && parts[3] === "branch") {
+                    const user     = parts[0];
+                    const repo     = parts[1];
+                    const branch   = parts[4];
+                    const filePath = parts.slice(5).join("/");
+                    return `https://codeberg.org/api/v1/repos/${user}/${repo}/raw/${filePath}?ref=${branch}`;
                 }
             }
-        } catch (_) {
-
-        }
+        } catch (_) {}
         return url;
     }
 
