@@ -14,8 +14,8 @@ Application for Windows, macOS, and Linux. now with avia client injected
     <img src="https://repology.org/badge/vertical-allrepos/stoat-desktop.svg" alt="Packaging status" align="right">
 </a>
 
-- If you use the Browser you can find FireFox/Chrome/Userscript Builds at [BrowserBuilds](https://github.com/AvaLilac/Ava-Client).
-- Though I reccomend you use Userscript if on Chrome Based Browsers. As Plugins do not exist due to browser limits in Extensions. Userscript fine though
+- If you use the Browser you can find FireFox/Userscript Builds at [AviaClient Home](https://avalilac.codeberg.page/Avia-Client-Home/).
+- Our Chrome Extension is Discontinued. Because Userscript offers features chrome blocks via extension
 
 ## Development Guide
 
