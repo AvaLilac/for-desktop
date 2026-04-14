@@ -167,6 +167,11 @@ if (acquiredLock) {
       return { action: "deny" };
     });
   });
+
+  // Prevent ghost badges
+  app.on("quit", (_event, _exitCode) => {
+    setBadgeCount(0);
+  });
 } else {
   app.quit();
 }
