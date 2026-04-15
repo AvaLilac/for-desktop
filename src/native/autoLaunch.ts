@@ -3,7 +3,7 @@ import AutoLaunch from "auto-launch";
 import { ipcMain } from "electron";
 
 export const autoLaunch = new AutoLaunch({
-  name: "AviaClient",
+  name: "aviaclient",
 });
 
 ipcMain.handle("getAutostart", async () => {
