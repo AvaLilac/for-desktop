@@ -1,15 +1,18 @@
 <div align="center">
 <h1>
- Avia Client for Desktop
+ Nylo Client for Desktop
 "stoat desktop"
 </h1>
  <img width="256" height="256" alt="aurora" src="https://github.com/user-attachments/assets/dc3adfa3-ce3b-41ef-bdfd-9ca66d333e24" /><br />
-Application for Windows, macOS, and Linux. now with avia client injected
+Application for Windows, macOS, and Linux.
 </div>
 <br/>
 
 > [!NOTE]
-> Avia Client is not officially supported by ```Stoat chat```, also known as the ```Revolt Platforms Ltd```. team
+> Nylo Client is not officially supported by ```Stoat chat```, also known as the ```Revolt Platforms Ltd```. team, Or the ```AviaClient``` team
+
+> [!WARNING]
+> My Fork Of AviaClient isnt developed yet as i dont have enough motivation. But i have ideas that will i think make it look better. Building NyloClient from source will only give you AviaClient
 
 ## Installation
 
@@ -36,13 +39,13 @@ Then proceed to setup:
 
 ```bash
 # clone the repository
-git clone --recursive https://github.com/AvaLilac/for-desktop aviaclient-for-desktop
+git clone --recursive https://github.com/NyloClient/for-desktop nyloclient-for-desktop
 
 # clone the repository (If you are building from developer branch. Which is not always stable)
-git clone -b dev --recursive https://github.com/AvaLilac/for-desktop aviaclient-for-desktop
+git clone -b dev --recursive https://github.com/NyloClient/for-desktop nyloclient-for-desktop
 
 # CD into the directory
-cd aviaclient-for-desktop
+cd nyloclient-for-desktop
 
 # install all packages
 pnpm i --frozen-lockfile
