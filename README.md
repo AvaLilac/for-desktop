@@ -12,7 +12,7 @@ Application for Windows, macOS, and Linux.
 > Nylo Client is not officially supported by ```Stoat chat```, also known as the ```Revolt Platforms Ltd```. team, Or the ```AviaClient``` team
 
 > [!WARNING]
-> My Fork Of AviaClient isnt developed yet as i dont have enough motivation. But i have ideas that will i think make it look better. Building NyloClient from source will only give you AviaClient
+> My Fork Of AviaClient isnt developed yet as i dont have enough motivation. But i have ideas that will i think make it look better. Building NyloClient from source will only give you AviaClient, And no. I do not have a server yet
 
 ## Installation
 
