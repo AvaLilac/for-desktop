@@ -8,6 +8,9 @@ Application for Windows, macOS, and Linux. now with avia client injected
 </div>
 <br/>
 
+> [!NOTE]
+> Avia Client is not officially supported by ```Stoat chat```, also known as the ```Revolt Platforms Ltd```. team
+
 ## Installation
 
 <a href="https://repology.org/project/stoat-desktop/versions">
