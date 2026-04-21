@@ -16,10 +16,10 @@ import { BUILD_URL, createMainWindow, mainWindow } from "./native/window";
 
 const applyAppName = () => {
   try {
-    app.setName("AviaClient");
-    app.name = "AviaClient";
+    app.setName("NyloClient");
+    app.name = "NyloClient";
     if (process.platform === "win32") {
-      app.setAppUserModelId("AviaClient");
+      app.setAppUserModelId("NyloClient");
     }
   } catch {
     /* empty */
@@ -87,10 +87,10 @@ if (acquiredLock) {
     applyAppName();
     createMainWindow();
     if (mainWindow) {
-      mainWindow.setTitle("AviaClient");
+      mainWindow.setTitle("NyloClient");
       mainWindow.on("page-title-updated", (e) => {
         e.preventDefault();
-        mainWindow.setTitle("AviaClient");
+        mainWindow.setTitle("NyloClient");
       });
     }
     loadInject();
@@ -107,7 +107,7 @@ if (acquiredLock) {
     setBadgeCount(0);
 
     if (process.platform === "win32") {
-      app.setAppUserModelId("AviaClient");
+      app.setAppUserModelId("NyloClient");
     }
 
     if (process.platform === "darwin") {
@@ -133,10 +133,10 @@ if (acquiredLock) {
     if (BrowserWindow.getAllWindows().length === 0) {
       createMainWindow();
       if (mainWindow) {
-        mainWindow.setTitle("AviaClient");
+        mainWindow.setTitle("NyloClient");
         mainWindow.on("page-title-updated", (e) => {
           e.preventDefault();
-          mainWindow.setTitle("AviaClient");
+          mainWindow.setTitle("NyloClient");
         });
       }
       loadInject();
