@@ -14,8 +14,8 @@ import * as fs from "fs";
 
 const STRINGS = {
   author: "Revolt Platforms LTD",
-  name: "AviaClient",
-  execName: "aviaclient-desktop",
+  name: "NyloClient",
+  execName: "nyloclient-desktop",
   description: "Open source user-first chat platform.",
 };
 
