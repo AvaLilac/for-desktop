@@ -409,7 +409,7 @@
             renderGrid();
         };
 
-        favs.forEach(item => grid.appendChild(buildCard(item, onRemove)));
+        favs.forEach(item => grid.insertBefore(buildCard(item, onRemove), grid.firstChild));
     }
 
     function injectButton() {
