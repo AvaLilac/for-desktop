@@ -14,6 +14,12 @@ Application for Windows, macOS, and Linux.
 > [!WARNING]
 > My Fork Of AviaClient isnt developed yet as i dont have enough motivation. But i have ideas that will i think make it look better. Building NyloClient from source will only give you AviaClient, And no. I do not have a server yet
 
+> [!NOTE]
+> Some changes i would like to make is the following
+> 1. I want to lock down the plugins manager to activate User Scripts via a toggle and only allow Trusted Plugins when the toggle is disabled
+> 2. If not. Then i would atleast like to pop up a warning when adding plugins saying it can be unsafe to load from an untrusted Source
+> This isnt all my ideas but its all i can think about right now. Once i figure everything out. if i get motivation. i'll do it
+
 ## Installation
 
 <a href="https://repology.org/project/stoat-desktop/versions">
