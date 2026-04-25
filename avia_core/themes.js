@@ -23,9 +23,9 @@
         return new Promise(resolve => {
             if (window.monaco) return resolve();
             const loader = document.createElement("script");
-            loader.src = "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js";
+            loader.src = "https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0/min/vs/loader.js";
             loader.onload = function () {
-                require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs" } });
+                require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0/min/vs" } });
                 require(["vs/editor/editor.main"], () => resolve());
             };
             document.head.appendChild(loader);
