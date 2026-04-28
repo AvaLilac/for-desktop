@@ -4,8 +4,8 @@
     window.__AVIA_OFFICIAL_REPO_LOADED__ = true;
 
     const STORAGE_KEY = "avia_plugins";
-    const OFFICIAL_REPO_URL = "https://avalilac.github.io/PluginRepo/pluginrepobackend.js";
-    const THEMES_REGISTRY_URL = "https://avalilac.github.io/PluginRepo/themebackend/themerepobackend.js";
+    const OFFICIAL_REPO_URL = "https://raw.githubusercontent.com/NyloClient/NyloClient-PluginRepo/refs/heads/main/pluginrepobackend.js";
+    const THEMES_REGISTRY_URL = "https://raw.githubusercontent.com/NyloClient/NyloClient-PluginRepo/refs/heads/main/themebackend/themerepobackend.js";
 
     const getPlugins = () => JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
     const setPlugins = (data) => localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
