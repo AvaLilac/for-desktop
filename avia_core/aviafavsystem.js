@@ -422,20 +422,37 @@
         const clone = wrapper.cloneNode(true);
         clone.id = "avia-favorites-btn";
         clone.style.position = "relative";
+
+        const btn = clone.querySelector("button");
+        btn.onclick = toggleFavoritesPanel;
+
+        btn.style.position = "relative";
+
         clone.querySelector("span.material-symbols-outlined").textContent = "star";
-        clone.querySelector("button").onclick = toggleFavoritesPanel;
+
         const badge = document.createElement("div");
         badge.id = "avia-favorites-badge";
         Object.assign(badge.style, {
-            position: "absolute", top: "2px", right: "2px",
+            position: "absolute",
+            top: "2px",
+            right: "2px",
             background: "var(--md-sys-color-primary, #6750a4)",
             color: "var(--md-sys-color-on-primary, #fff)",
-            borderRadius: "99px", fontSize: "9px", fontWeight: "700",
-            minWidth: "14px", height: "14px", display: "none",
-            alignItems: "center", justifyContent: "center",
-            padding: "0 3px", pointerEvents: "none", zIndex: "1"
+            borderRadius: "99px",
+            fontSize: "9px",
+            fontWeight: "700",
+            minWidth: "14px",
+            height: "14px",
+            display: "none",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "0 3px",
+            pointerEvents: "none",
+            zIndex: "1"
         });
-        clone.appendChild(badge);
+
+        btn.appendChild(badge);
+
         wrapper.parentElement.insertBefore(clone, wrapper.nextSibling);
         updateBadge();
     }
