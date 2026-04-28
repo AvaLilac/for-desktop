@@ -65,10 +65,29 @@
         document.querySelectorAll(".avia-theme-style").forEach(e => e.remove());
         getThemes().forEach(theme => {
             if (!theme.enabled) return;
-            const style = document.createElement("style");
-            style.className = "avia-theme-style";
-            style.textContent = theme.css;
-            document.head.appendChild(style);
+
+            const importRegex = /@import\s+url\(["']?([^"')]+)["']?\)\s*;/g;
+            let match;
+            while ((match = importRegex.exec(theme.css)) !== null) {
+                const url = match[1];
+                fetch(url)
+                    .then(r => r.text())
+                    .then(css => {
+                        const style = document.createElement("style");
+                        style.className = "avia-theme-style";
+                        style.textContent = css;
+                        document.head.appendChild(style);
+                    })
+                    .catch(() => {});
+            }
+
+            const stripped = theme.css.replace(/@import\s+url\(["']?[^"')]+["']?\)\s*;/g, "").trim();
+            if (stripped) {
+                const style = document.createElement("style");
+                style.className = "avia-theme-style";
+                style.textContent = stripped;
+                document.head.appendChild(style);
+            }
         });
     }
 
