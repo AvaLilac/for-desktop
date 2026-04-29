@@ -27,7 +27,7 @@ export function initTray() {
   const trayIcon = createTrayIcon();
   tray = new Tray(trayIcon);
   updateTrayMenu();
-  tray.setToolTip("AviaClient for Desktop");
+  tray.setToolTip("NyloClient for Desktop");
   tray.setImage(trayIcon);
   tray.on("click", () => {
     config.sync();
@@ -46,7 +46,7 @@ export function initTray() {
 export function updateTrayMenu() {
   tray.setContextMenu(
     Menu.buildFromTemplate([
-      { label: "AviaClient for Desktop", type: "normal", enabled: false },
+      { label: "NyloClient for Desktop", type: "normal", enabled: false },
       {
         label: "Versions",
         type: "submenu",
@@ -57,7 +57,7 @@ export function updateTrayMenu() {
             enabled: false,
           },
           {
-            label: `AviaClient: ${aviaVersion}`,
+            label: `NyloClient: ${aviaVersion}`,
             type: "normal",
             enabled: false,
           },
