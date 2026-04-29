@@ -16,7 +16,7 @@ export async function initDiscordRpc() {
 
     rpc.on("ready", () =>
       rpc.setActivity({
-        details: "Chatting with others on AviaClient",
+        details: "Chatting with others on NyloClient",
         state: "stoat.chat",
         largeImageKey: "qr",
         largeImageText: "Join Stoat!",
