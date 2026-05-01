@@ -67,6 +67,7 @@ const loadInject = () => {
         "disableTrayIcon.js",
         "clientBackup.js",
         "LoginWithToken.js",
+        "UpdateChecker.js",
       ];
 
       for (const plugin of plugins) {
