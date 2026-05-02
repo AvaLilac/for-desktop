@@ -1,9 +1,9 @@
 (function() {
-    if (window.__AVIA_UPDATE_CHECKER__) return;
-    window.__AVIA_UPDATE_CHECKER__ = true;
+    if (window.__NYLO_UPDATE_CHECKER__) return;
+    window.__NYLO_UPDATE_CHECKER__ = true;
 
-    const PACKAGE_URL = "https://raw.githubusercontent.com/AvaLilac/for-desktop/refs/heads/main/package.json";
-    const RELEASES_URL = "https://github.com/AvaLilac/for-desktop/releases";
+    const PACKAGE_URL = "https://raw.githubusercontent.com/NyloClient/for-desktop/refs/heads/main/package.json";
+    const RELEASES_URL = "https://github.com/NyloClient/for-desktop/releases";
     const STORAGE_KEY = "avia_update_checker_enabled";
     const TARGET_TEXT = "Spellchecker";
 
@@ -73,7 +73,7 @@
         latestRow.appendChild(latestVersionEl);
 
         const message = document.createElement("span");
-        message.textContent = `You are currently on version ${clientVersion || "Unknown"}. The latest version of AviaClient is ${latestVersion}.`;
+        message.textContent = `You are currently on version ${clientVersion || "Unknown"}. The latest version of NyloClient is ${latestVersion}.`;
 
         body.appendChild(currentRow);
         body.appendChild(latestRow);
@@ -118,10 +118,10 @@
         const desc = entry.querySelector("[data-update-desc]");
         const checkbox = entry.querySelector("mdui-checkbox");
         if (isEnabled()) {
-            if (desc) desc.textContent = "Get notified when a new AviaClient version is available";
+            if (desc) desc.textContent = "Get notified when a new NyloClient version is available";
             if (checkbox) checkbox.setAttribute("checked", "");
         } else {
-            if (desc) desc.textContent = "Get notified when a new AviaClient version is available";
+            if (desc) desc.textContent = "Get notified when a new NyloClient version is available";
             if (checkbox) checkbox.removeAttribute("checked");
         }
     }
