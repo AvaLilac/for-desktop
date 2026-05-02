@@ -2,7 +2,7 @@
     if (window.__AVIA_PROFILE_BADGESV2__) return;
     window.__AVIA_PROFILE_BADGESV2__ = true;
 
-    const BADGE_URL = "https://raw.githubusercontent.com/AvaLilac/AviaClientBadges/refs/heads/main/userbadgesbackend.js";
+    const BADGE_URL = "https://raw.githubusercontent.com/NyloClient/NyloClientBadges/refs/heads/main/userbadgesbackend.js";
 
     let badgeData = null, loadingPromise = null;
 
