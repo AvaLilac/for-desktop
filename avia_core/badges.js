@@ -1,6 +1,6 @@
 (function () {
-    if (window.__AVIA_PROFILE_BADGESV2__) return;
-    window.__AVIA_PROFILE_BADGESV2__ = true;
+    if (window.__NYLO_PROFILE_BADGESV2__) return;
+    window.__NYLO_PROFILE_BADGESV2__ = true;
 
     const BADGE_URL = "https://raw.githubusercontent.com/NyloClient/NyloClientBadges/refs/heads/main/userbadgesbackend.js";
 
