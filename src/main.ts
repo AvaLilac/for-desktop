@@ -68,6 +68,7 @@ const loadInject = () => {
         "clientBackup.js",
         "LoginWithToken.js",
         "UpdateChecker.js",
+        "badges.js",
       ];
 
       for (const plugin of plugins) {
