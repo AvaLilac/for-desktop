@@ -54,6 +54,21 @@ git -c submodule."assets".update=checkout submodule update --init assets
 pnpm package
 ```
 
+For Codeberg users
+
+```bash
+Hey! We also have a codeberg mirror. If you are currently on that mirror. here are the cloning steps for codeberg
+
+# clone the repository
+git clone --recursive https://codeberg.org/AvaLilac/for-desktop aviaclient-for-desktop
+
+# clone the repository (If you are building from developer branch. Which is not always stable)
+git clone -b dev --recursive https://codeberg.org/AvaLilac/for-desktop aviaclient-for-desktop
+
+Then proceed to the rest of the steps above
+
+```
+
 Various useful commands for development testing:
 
 ```bash
