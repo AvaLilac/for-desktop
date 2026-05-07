@@ -63,17 +63,17 @@ git -c submodule."assets".update=checkout submodule update --init assets
 pnpm package
 ```
 
-For Codeberg users (Nylo does not have a mirror. but now that this is here i'll figure out how to do that with my selfhost forgejo)
+For Codeberg users
 
 ```bash
 Hey! We also have a codeberg mirror. If you are currently on that mirror.
 here are the cloning steps for codeberg
 
 # clone the repository
-git clone --recursive https://codeberg.org/AvaLilac/for-desktop aviaclient-for-desktop
+git clone --recursive https://codeberg.org/NyloClient/for-desktop.git nyloclient-for-desktop
 
 # clone the repository (If you are building from developer branch. Which is not always stable)
-git clone -b dev --recursive https://codeberg.org/AvaLilac/for-desktop aviaclient-for-desktop
+git clone -b dev --recursive https://codeberg.org/NyloClient/for-desktop.git nyloclient-for-desktop
 
 Then proceed to the rest of the steps above
 ```
