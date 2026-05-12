@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>chat.avia.AviaClient</id>
+  <name>Avia Client</name>
+  <icon type="remote">https://raw.githubusercontent.com/AvaLilac/for-desktop/refs/heads/main/avia_assets/icon.ico</icon>
+  <summary>Avia is an open-source modification of Stoat, an open-source, user-first chat platform</summary>
+  <url type="bugtracker">https://stt.gg/2vNF0JzH</url>
+  <url type="homepage">https://avalilac.github.io/AviaClient-Home/</url>
+  <url type="contact">https://stt.gg/2vNF0JzH</url>
+  <metadata_license>FSFAP</metadata_license>
+  <project_license>AGPL-3.0</project_license>
+  <requires>
+    <internet>always</internet>
+  </requires>
+  <developer>
+    <name>AvaLilac</name>
+  </developer>
+  <description>
+  <p>The Stoat client you actually want</p>
+  <p>Avia Client is a modification of Stoat, it allows for use of plugins and CSS themes with a bunch of pre-included features such as a menu for all your favorite gifs ! This Flatpak version is maintained by Raptor.</p>
+  </description>
+  <launchable type="desktop-id">chat.avia.AviaClient.desktop</launchable>
+  <releases>
+    <release version="1.6.0" date="2026-05-07">
+      <url type="details">https://github.com/AvaLilac/for-desktop/compare/1.5.0...1.6.0</url>
+      <description>
+        <p>Changelog</p>
+        <p>New</p>
+        <ul>
+          <li>Meet Aurora, our new mascot and logo (Created by Amelia in Procreate)</li>
+          <li>There is now an integrated Repository for plugins and themes, allowing you to browse &amp; install them from within the client.</li>
+          <li>With the new Headliner feature, you can change the titlebar of AviaClient to anything you like</li>
+          <li>You can now fully backup and restore AviaClient's data (Themes, plugins, QuickCSS, etc)</li>
+          <li>You can now Login with a session token</li>
+          <li>Added a new About window, which can be access via the tray or by pressing F1</li>
+          <li>Monaco is now used as the default editor for Plugins, Local Plugins, Themes, and QuickCSS</li>
+          <li>Flatpak version</li>
+        </ul>
+        <p>Changes</p>
+        <ul>
+          <li>Many, many Quality-of-Life changes under the hood for developers</li>
+          <li>Rebranded the desktop app</li>
+          <li>Local plugins can now be imported directly from a .js file</li>
+          <li>Themes can now be imported directly from a .txt or .css file (via Drag-n-Drop too!)</li>
+          <li>The Settings UI now properly displays that this is AviaClient</li>
+          <li>You can now display the custom titlebar with the system's native menu buttons (close, minimize, maximize)</li>
+          <li>The tray icon menu now has "Restart App"</li>
+          <li>There's now an option to disable the show/hide behaviour of the tray icon upon clicking it</li>
+          <li>Plugin installation is no longer limited to GitHub URLs - we now support Codeberg as well</li>
+          <li>DevTools can now be opened by pressing F12</li>
+          <li>Exposed a method to get AviaClient version via js (window.native.versions.aviaClient())</li>
+          <li>AviaClient version is now displayed in the tray, alongside Stoat's</li>
+          <li>Discord RPC now displays AviaClient</li>
+          <li>macOS only: the default about window now uses AviaClient's version as the buildId</li>
+          <li>macOS only: Settings can now be opened and closed by pressing Cmd + ,</li>
+        </ul>
+        <p>Fixes</p>
+        <ul>
+          <li>Fix the chatbar buttons being placed incorrectly under specific circumstances (by 0simp#2291)</li>
+          <li>Fix a rare race condition during app initialization</li>
+          <li>Fixed app badges being unable to be displayed - still needs badge logic</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
+  <content_rating type="oars-1.0">
+    <content_attribute id="social-chat">intense</content_attribute>
+    <content_attribute id="social-audio">intense</content_attribute>
+    <content_attribute id="social-contacts">intense</content_attribute>
+  </content_rating>
+</component>

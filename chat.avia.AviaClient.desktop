@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Avia Client
+Comment=Open source, user-first chat platform, modded with Avia !
+Exec=aviaclient-desktop
+Terminal=false
+Type=Application
+Icon=chat.avia.AviaClient
+Categories=Network;InstantMessaging
+StartupWMClass=aviaclient-desktop
+X-Desktop-File-Install-Version=0.26
+X-Flatpak=chat.avia.AviaClient.desktop
