@@ -9,23 +9,10 @@
     function preloadMonaco() {
         return new Promise(resolve => {
             if (window.monaco) return resolve();
-            if (window.__AVIA_MONACO_LOADING__) {
-                const wait = setInterval(() => {
-                    if (window.monaco) { clearInterval(wait); resolve(); }
-                }, 50);
-                return;
-            }
-            window.__AVIA_MONACO_LOADING__ = true;
-            if (document.querySelector('script[src*="monaco-editor"][src*="loader.js"]')) {
-                const wait = setInterval(() => {
-                    if (window.monaco) { clearInterval(wait); resolve(); }
-                }, 50);
-                return;
-            }
             const loader = document.createElement("script");
-            loader.src = "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js";
+            loader.src = "https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0/min/vs/loader.js";
             loader.onload = function () {
-                require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs" } });
+                require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0/min/vs" } });
                 require(["vs/editor/editor.main"], () => resolve());
             };
             document.head.appendChild(loader);
@@ -159,18 +146,101 @@
         button.insertBefore(svg, button.firstChild);
     }
 
-    function applyFont(src, name) {
-        const fontName = "AviaCustomFont";
+    function showFontLoaderPopup() {
+        removeExistingPopup();
+        const popup = document.createElement('div');
+        popup.id = 'avia-font-loader-popup';
+        Object.assign(popup.style, {
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            padding: '16px',
+            background: '#1e1e1e',
+            color: '#fff',
+            borderRadius: '12px',
+            boxShadow: '0 8px 20px rgba(0,0,0,0.5)',
+            zIndex: 999999,
+            minWidth: '320px'
+        });
+        popup.innerHTML = `
+            <div style="margin-bottom:8px;">Paste font URL (.ttf, .woff, etc.)</div>
+            <input id="avia-font-url" type="text" style="width:100%; padding:6px; margin-bottom:8px; border-radius:6px; border:none; outline:none;"/>
+            <div style="display:flex; justify-content:flex-end; gap:8px;">
+                <button id="avia-font-apply" style="padding:6px 12px;">Apply</button>
+                <button id="avia-font-cancel" style="padding:6px 12px;">Cancel</button>
+            </div>
+        `;
+        document.body.appendChild(popup);
+        document.getElementById('avia-font-apply').onclick = () => {
+            const url = document.getElementById('avia-font-url').value;
+            if (!url) return;
+            localStorage.setItem('avia_custom_font_url', url);
+            applyFont(url);
+            alert("Font Applied.");
+            popup.remove();
+        };
+        document.getElementById('avia-font-cancel').onclick = () => popup.remove();
+    }
+
+    function showRemoveFontPopup() {
+        removeExistingPopup();
+        const popup = document.createElement('div');
+        popup.id = 'avia-remove-font-popup';
+        Object.assign(popup.style, {
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            padding: '16px',
+            background: '#1e1e1e',
+            color: '#fff',
+            borderRadius: '12px',
+            boxShadow: '0 8px 20px rgba(0,0,0,0.5)',
+            zIndex: 999999,
+            minWidth: '280px',
+            textAlign: 'center'
+        });
+        popup.innerHTML = `
+            <div style="margin-bottom:12px;">Are you sure you want to remove the custom font?</div>
+            <button id="avia-font-remove" style="padding:6px 12px;">Remove Font</button>
+            <button id="avia-font-cancel" style="padding:6px 12px; margin-left:6px;">Cancel</button>
+        `;
+        document.body.appendChild(popup);
+        document.getElementById('avia-font-remove').onclick = () => {
+            removeFont();
+            popup.remove();
+        };
+        document.getElementById('avia-font-cancel').onclick = () => popup.remove();
+    }
+
+    function removeExistingPopup() {
+        const existing = document.getElementById('avia-font-loader-popup') || document.getElementById('avia-remove-font-popup');
+        if (existing) existing.remove();
+    }
+
+    function applyFont(url) {
+        const fontName = "CustomFont" + Date.now();
         let styleTag = document.getElementById('custom-font-style');
         if (!styleTag) {
             styleTag = document.createElement('style');
             styleTag.id = 'custom-font-style';
             document.head.appendChild(styleTag);
         }
+        const ext = url.split('.').pop().toLowerCase();
+        const formatMap = {
+            ttf: 'truetype',
+            otf: 'opentype',
+            woff: 'woff',
+            woff2: 'woff2',
+            eot: 'embedded-opentype',
+            css: 'truetype'
+        };
+        const format = formatMap[ext] || '';
         styleTag.textContent = `
             @font-face {
                 font-family: '${fontName}';
-                src: url('${src}');
+                src: url('${url}')${format ? " format('" + format + "')" : ""};
                 font-weight: normal;
                 font-style: normal;
             }
@@ -178,342 +248,19 @@
                 font-family: '${fontName}', sans-serif !important;
             }
         `;
-        if (name) localStorage.setItem('avia_custom_font_name', name);
     }
 
     function removeFont() {
         localStorage.removeItem('avia_custom_font_url');
-        localStorage.removeItem('avia_custom_font_data');
-        localStorage.removeItem('avia_custom_font_name');
         const styleTag = document.getElementById('custom-font-style');
         if (styleTag) styleTag.remove();
+        alert("Reverted Font To Original Settings.");
     }
 
     (function applySavedFont() {
-        const data = localStorage.getItem('avia_custom_font_data');
-        const url = localStorage.getItem('avia_custom_font_url');
-        const name = localStorage.getItem('avia_custom_font_name') || '';
-        if (data) applyFont(data, name);
-        else if (url) applyFont(url, name);
+        const savedUrl = localStorage.getItem('avia_custom_font_url');
+        if (savedUrl) applyFont(savedUrl);
     })();
-
-    function showFontLoaderModal() {
-        if (document.getElementById('avia-font-modal-scrim')) return;
-
-        const scrim = document.createElement('div');
-        scrim.id = 'avia-font-modal-scrim';
-        Object.assign(scrim.style, {
-            position: 'fixed',
-            top: '0', left: '0', right: '0', bottom: '0',
-            zIndex: '999999',
-            display: 'grid',
-            placeItems: 'center',
-            background: 'rgba(0,0,0,0.6)',
-            padding: '80px',
-            overflowY: 'auto',
-            animation: 'avia-scrim-in 0.1s forwards'
-        });
-
-        const styleEl = document.createElement('style');
-        styleEl.textContent = `
-            @keyframes avia-scrim-in { from { opacity: 0; } to { opacity: 1; } }
-            @keyframes avia-modal-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-            #avia-font-modal-inner { animation: avia-modal-in 0.15s forwards; }
-            .avia-tab-btn { transition: background 0.15s, color 0.15s; }
-            .avia-tab-btn:hover { background: rgba(255,255,255,0.06) !important; }
-            .avia-tab-btn.active {
-                background: var(--md-sys-color-primary, rgba(103,80,164,0.9)) !important;
-                color: #fff !important;
-            }
-            .avia-modal-action-btn {
-                height: 40px;
-                border-radius: 999px;
-                border: none;
-                padding: 0 16px;
-                font-size: 0.875rem;
-                font-weight: 500;
-                letter-spacing: 0.015625rem;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: opacity 0.15s;
-                font-family: inherit;
-            }
-            .avia-modal-action-btn:hover { opacity: 0.8; }
-            .avia-modal-action-btn:disabled { cursor: not-allowed; opacity: 0.38; }
-            .avia-font-input {
-                width: 100%;
-                box-sizing: border-box;
-                padding: 14px 16px;
-                border-radius: 12px;
-                border: 1px solid rgba(255,255,255,0.12);
-                background: rgba(255,255,255,0.06);
-                color: var(--md-sys-color-on-surface, #fff);
-                font-size: 0.875rem;
-                outline: none;
-                font-family: inherit;
-                transition: border-color 0.15s;
-            }
-            .avia-font-input:focus { border-color: var(--md-sys-color-primary, rgba(103,80,164,0.9)); }
-            .avia-font-input::placeholder { color: rgba(255,255,255,0.4); }
-            .avia-file-drop {
-                width: 100%;
-                box-sizing: border-box;
-                border: 2px dashed rgba(255,255,255,0.15);
-                border-radius: 12px;
-                padding: 28px 16px;
-                text-align: center;
-                cursor: pointer;
-                transition: border-color 0.15s, background 0.15s;
-                color: rgba(255,255,255,0.5);
-                font-size: 0.875rem;
-            }
-            .avia-file-drop:hover, .avia-file-drop.drag-over {
-                border-color: var(--md-sys-color-primary, rgba(103,80,164,0.9));
-                background: rgba(103,80,164,0.08);
-            }
-        `;
-        document.head.appendChild(styleEl);
-
-        scrim.addEventListener('click', e => {
-            if (e.target === scrim) { scrim.remove(); styleEl.remove(); }
-        });
-
-        const modal = document.createElement('div');
-        modal.id = 'avia-font-modal-inner';
-        Object.assign(modal.style, {
-            padding: '24px',
-            minWidth: '340px',
-            maxWidth: '480px',
-            width: '100%',
-            borderRadius: '28px',
-            display: 'flex',
-            flexDirection: 'column',
-            color: 'var(--md-sys-color-on-surface, #fff)',
-            background: 'var(--md-sys-color-surface-container-high, #2b2b2f)',
-            boxSizing: 'border-box'
-        });
-
-        const title = document.createElement('span');
-        title.textContent = 'Font Loader';
-        Object.assign(title.style, {
-            lineHeight: '2rem',
-            fontSize: '1.5rem',
-            letterSpacing: '0',
-            fontWeight: '400',
-            marginBottom: '6px'
-        });
-        modal.appendChild(title);
-
-        const activeFontName = localStorage.getItem('avia_custom_font_name') || '';
-        const activeFontEl = document.createElement('div');
-        activeFontEl.id = 'avia-font-active-label';
-        Object.assign(activeFontEl.style, {
-            fontSize: '0.8rem',
-            color: 'rgba(255,255,255,0.45)',
-            marginBottom: '18px',
-            minHeight: '16px'
-        });
-        activeFontEl.textContent = activeFontName ? `Active: ${activeFontName}` : 'No custom font active';
-        modal.appendChild(activeFontEl);
-
-        const tabRow = document.createElement('div');
-        Object.assign(tabRow.style, {
-            display: 'flex',
-            gap: '8px',
-            marginBottom: '18px'
-        });
-
-        const tabUrl = document.createElement('button');
-        tabUrl.textContent = 'URL';
-        tabUrl.className = 'avia-tab-btn active';
-        Object.assign(tabUrl.style, {
-            flex: '1', padding: '8px', borderRadius: '8px', border: 'none',
-            color: '#fff', fontSize: '13px', fontWeight: '600', cursor: 'pointer',
-            fontFamily: 'inherit'
-        });
-
-        const tabFile = document.createElement('button');
-        tabFile.textContent = 'Local File';
-        tabFile.className = 'avia-tab-btn';
-        Object.assign(tabFile.style, {
-            flex: '1', padding: '8px', borderRadius: '8px', border: 'none',
-            background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.7)',
-            fontSize: '13px', fontWeight: '600', cursor: 'pointer', fontFamily: 'inherit'
-        });
-
-        tabRow.appendChild(tabUrl);
-        tabRow.appendChild(tabFile);
-        modal.appendChild(tabRow);
-
-        const body = document.createElement('div');
-        Object.assign(body.style, {
-            color: 'var(--md-sys-color-on-surface-variant, rgba(255,255,255,0.7))',
-            lineHeight: '1.25rem',
-            fontSize: '0.875rem',
-            letterSpacing: '0.015625rem',
-            fontWeight: '400',
-            marginBottom: '20px'
-        });
-        modal.appendChild(body);
-
-        let selectedFile = null;
-        let currentTab = 'url';
-
-        const urlInput = document.createElement('input');
-        urlInput.className = 'avia-font-input';
-        urlInput.type = 'text';
-        urlInput.placeholder = 'https://example.com/font.ttf';
-
-        const urlSaved = localStorage.getItem('avia_custom_font_url') || '';
-        if (urlSaved) urlInput.value = urlSaved;
-
-        const fileDropZone = document.createElement('div');
-        fileDropZone.className = 'avia-file-drop';
-
-        const fileDropText = document.createElement('div');
-        fileDropText.style.marginBottom = '10px';
-        fileDropText.textContent = 'Drop a font file here or click to browse';
-
-        const fileDropSub = document.createElement('div');
-        Object.assign(fileDropSub.style, { fontSize: '11px', opacity: '0.5', marginTop: '4px' });
-        fileDropSub.textContent = '.ttf · .otf · .woff · .woff2';
-
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = '.ttf,.otf,.woff,.woff2';
-        fileInput.style.display = 'none';
-
-        fileDropZone.appendChild(fileDropText);
-        fileDropZone.appendChild(fileDropSub);
-        fileDropZone.appendChild(fileInput);
-
-        fileDropZone.addEventListener('click', () => fileInput.click());
-        fileDropZone.addEventListener('dragover', e => { e.preventDefault(); fileDropZone.classList.add('drag-over'); });
-        fileDropZone.addEventListener('dragleave', () => fileDropZone.classList.remove('drag-over'));
-        fileDropZone.addEventListener('drop', e => {
-            e.preventDefault();
-            fileDropZone.classList.remove('drag-over');
-            const f = e.dataTransfer.files[0];
-            if (f) handleFileSelected(f);
-        });
-
-        fileInput.addEventListener('change', () => {
-            if (fileInput.files[0]) handleFileSelected(fileInput.files[0]);
-        });
-
-        function handleFileSelected(f) {
-            selectedFile = f;
-            fileDropText.textContent = f.name;
-            fileDropSub.textContent = (f.size / 1024).toFixed(1) + ' KB';
-            fileDropZone.style.borderColor = 'var(--md-sys-color-primary, rgba(103,80,164,0.9))';
-            fileDropZone.style.background = 'rgba(103,80,164,0.08)';
-            applyBtn.disabled = false;
-        }
-
-        function renderTab() {
-            body.innerHTML = '';
-            selectedFile = null;
-            applyBtn.disabled = false;
-
-            if (currentTab === 'url') {
-                tabUrl.classList.add('active');
-                tabFile.classList.remove('active');
-                tabUrl.style.background = '';
-                tabFile.style.background = 'rgba(255,255,255,0.06)';
-                tabFile.style.color = 'rgba(255,255,255,0.7)';
-                body.appendChild(urlInput);
-            } else {
-                tabFile.classList.add('active');
-                tabUrl.classList.remove('active');
-                tabFile.style.background = '';
-                tabFile.style.color = '#fff';
-                tabUrl.style.background = 'rgba(255,255,255,0.06)';
-                tabUrl.style.color = 'rgba(255,255,255,0.7)';
-                applyBtn.disabled = true;
-                body.appendChild(fileDropZone);
-            }
-        }
-
-        tabUrl.addEventListener('click', () => { currentTab = 'url'; renderTab(); });
-        tabFile.addEventListener('click', () => { currentTab = 'file'; renderTab(); });
-
-        const btnRow = document.createElement('div');
-        Object.assign(btnRow.style, {
-            display: 'flex', justifyContent: 'flex-end',
-            gap: '8px', marginTop: '4px', flexWrap: 'wrap'
-        });
-
-        const removeBtn = document.createElement('button');
-        removeBtn.textContent = 'Remove Font';
-        removeBtn.className = 'avia-modal-action-btn';
-        Object.assign(removeBtn.style, {
-            color: 'var(--md-sys-color-error, #f2b8b8)',
-            background: 'transparent',
-            marginRight: 'auto'
-        });
-        removeBtn.addEventListener('click', () => {
-            removeFont();
-            activeFontEl.textContent = 'No custom font active';
-            fileDropText.textContent = 'Drop a font file here or click to browse';
-            fileDropSub.textContent = '.ttf · .otf · .woff · .woff2';
-            fileDropZone.style.borderColor = '';
-            fileDropZone.style.background = '';
-            urlInput.value = '';
-            selectedFile = null;
-        });
-
-        const closeModalBtn = document.createElement('button');
-        closeModalBtn.textContent = 'Close';
-        closeModalBtn.className = 'avia-modal-action-btn';
-        Object.assign(closeModalBtn.style, {
-            color: 'var(--md-sys-color-primary, #cfbcff)',
-            background: 'transparent'
-        });
-        closeModalBtn.addEventListener('click', () => { scrim.remove(); styleEl.remove(); });
-
-        const applyBtn = document.createElement('button');
-        applyBtn.textContent = 'Apply';
-        applyBtn.className = 'avia-modal-action-btn';
-        Object.assign(applyBtn.style, {
-            background: 'var(--md-sys-color-primary, rgba(103,80,164,0.9))',
-            color: '#fff'
-        });
-
-        applyBtn.addEventListener('click', () => {
-            if (currentTab === 'url') {
-                const url = urlInput.value.trim();
-                if (!url) return;
-                localStorage.removeItem('avia_custom_font_data');
-                localStorage.setItem('avia_custom_font_url', url);
-                const name = url.split('/').pop().split('?')[0];
-                applyFont(url, name);
-                activeFontEl.textContent = `Active: ${name}`;
-            } else {
-                if (!selectedFile) return;
-                const reader = new FileReader();
-                reader.onload = () => {
-                    const dataUrl = reader.result;
-                    localStorage.removeItem('avia_custom_font_url');
-                    localStorage.setItem('avia_custom_font_data', dataUrl);
-                    applyFont(dataUrl, selectedFile.name);
-                    activeFontEl.textContent = `Active: ${selectedFile.name}`;
-                };
-                reader.readAsDataURL(selectedFile);
-            }
-        });
-
-        btnRow.appendChild(removeBtn);
-        btnRow.appendChild(closeModalBtn);
-        btnRow.appendChild(applyBtn);
-        modal.appendChild(btnRow);
-
-        scrim.appendChild(modal);
-        document.body.appendChild(scrim);
-
-        renderTab();
-    }
 
     function injectButtons() {
         const appearanceBtn = Array.from(document.querySelectorAll('a')).find(a => a.textContent.trim() === 'Appearance');
@@ -553,8 +300,18 @@
             const textNode = Array.from(newBtn.querySelectorAll('div')).find(d => d.children.length === 0);
             if (textNode) textNode.textContent = "(Avia) Font Loader";
             setIcon(newBtn, "upload");
-            newBtn.addEventListener('click', showFontLoaderModal);
+            newBtn.addEventListener('click', showFontLoaderPopup);
             targetParent.appendChild(newBtn);
+
+            if (!document.getElementById('stoat-fake-removefont')) {
+                const removeBtn = appearanceBtn.cloneNode(true);
+                removeBtn.id = 'stoat-fake-removefont';
+                const removeTextNode = Array.from(removeBtn.querySelectorAll('div')).find(d => d.children.length === 0);
+                if (removeTextNode) removeTextNode.textContent = "(Avia) Remove selected font";
+                setIcon(removeBtn, "refresh");
+                removeBtn.addEventListener('click', showRemoveFontPopup);
+                targetParent.appendChild(removeBtn);
+            }
         }
 
         if (!document.getElementById('stoat-fake-quickcss')) {
