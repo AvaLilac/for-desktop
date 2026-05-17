@@ -183,7 +183,6 @@
         localStorage.removeItem('avia_custom_font_name');
         const styleTag = document.getElementById('custom-font-style');
         if (styleTag) styleTag.remove();
-        alert("Reverted Font To Original Settings.");
     }
 
     (function applySavedFont() {
@@ -317,7 +316,7 @@
             minHeight: '16px'
         });
         const savedName = localStorage.getItem('avia_custom_font_name') || '';
-        activeFontEl.textContent = savedName ? 'Active: ' + savedName : 'No font active';
+        activeFontEl.textContent = savedName ? 'Active: ' + savedName : 'No custom font active';
         modal.appendChild(activeFontEl);
 
         const tabRow = document.createElement('div');
@@ -480,7 +479,6 @@
                 const name = url.split('/').pop().split('?')[0];
                 applyFont(url, name);
                 activeFontEl.textContent = 'Active: ' + name;
-                alert("Font Applied.");
             } else {
                 if (!selectedFile) return;
                 const reader = new FileReader();
@@ -490,7 +488,6 @@
                     localStorage.setItem('avia_custom_font_data', dataUrl);
                     applyFont(dataUrl, selectedFile.name);
                     activeFontEl.textContent = 'Active: ' + selectedFile.name;
-                    alert("Font Applied.");
                 };
                 reader.readAsDataURL(selectedFile);
             }
