@@ -1,6 +1,6 @@
 {
-  "name": "nylo-desktop",
-  "productName": "nylo-desktop",
+  "name": "nyloclient-desktop",
+  "productName": "nyloclient-desktop",
   "version": "1.3.0",
   "aviaVersion": "1.7.0",
   "main": ".vite/build/main.js",
