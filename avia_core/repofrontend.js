@@ -1,7 +1,7 @@
 (function () {
 
-    if (window.__AVIA_OFFICIAL_REPO__) return;
-    window.__AVIA_OFFICIAL_REPO__ = true;
+    if (window.__AVIA_OFFICIAL_REPO_LOADED__) return;
+    window.__AVIA_OFFICIAL_REPO_LOADED__ = true;
 
     const STORAGE_KEY = "avia_plugins";
     const OFFICIAL_REPO_URL = "https://raw.githubusercontent.com/AvaLilac/PluginRepo/refs/heads/main/pluginrepobackend.js";
@@ -145,7 +145,6 @@
                 border-color: rgba(255,255,255,0.2);
                 background: rgba(255,255,255,0.07);
             }
-
             .avia-repo-count {
                 font-size: 10px;
                 font-weight: 500;
@@ -187,15 +186,34 @@
     }
 
     function rawUrlFromLink(link) {
+        try {
+            const u = new URL(link);
 
-        const ghBlob = link.match(/^https:\/\/github\.com\/([^/]+\/[^/]+)\/blob\/(.+)$/);
-        if (ghBlob) return `https://raw.githubusercontent.com/${ghBlob[1]}/${ghBlob[2]}`;
+            if (u.hostname === "github.com") {
+                const m = u.pathname.match(/^\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)$/);
+                if (m) return `https://raw.githubusercontent.com/${m[1]}/${m[2]}/${m[3]}/${m[4]}`;
+                return link;
+            }
 
-        if (link.includes("raw.githubusercontent.com")) return link;
+            if (u.hostname === "raw.githubusercontent.com") return link;
 
-        const cbSrc = link.match(/^(https:\/\/codeberg\.org\/[^/]+\/[^/]+)\/src\/branch\/([^/]+)\/(.+)$/);
-        if (cbSrc) return `${cbSrc[1]}/raw/branch/${cbSrc[2]}/${cbSrc[3]}`;
+            if (u.hostname === "raw.codeberg.page") return link;
 
+            if (u.hostname === "codeberg.org") {
+                const parts = u.pathname.split("/").filter(Boolean);
+                if (parts.length >= 5 && (parts[2] === "raw" || parts[2] === "src")) {
+                    const user = parts[0];
+                    const repo = parts[1];
+                    const branchName = ["branch", "commit", "tag"].includes(parts[3]) ? parts[4] : parts[3];
+                    const fileStart = ["branch", "commit", "tag"].includes(parts[3]) ? 5 : 4;
+                    const filePath = parts.slice(fileStart).join("/");
+                    return `https://raw.codeberg.page/${user}/${repo}/@${branchName}/${filePath}`;
+                }
+                if (parts.length >= 4 && parts[2] === "raw") {
+                    return `https://raw.codeberg.page/${parts[0]}/${parts[1]}/@${parts[3]}/${parts.slice(4).join("/")}`;
+                }
+            }
+        } catch (_) {}
         return link;
     }
 
