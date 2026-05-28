@@ -87,11 +87,14 @@ if (!process.env.PLATFORM) {
           "--talk-name=org.freedesktop.ScreenSaver",
           "--talk-name=org.freedesktop.Notifications",
 <<<<<<< HEAD
+<<<<<<< HEAD
           "--talk-name=org.kde.StatusNotifierWatcher",
           "--talk-name=com.canonical.AppMenu.Registrar",
           "--talk-name=com.canonical.indicator.application",
 =======
 >>>>>>> d32fd3b (Put inject.js into the same folder as main.js)
+=======
+>>>>>>> 74ba56962983c872ed91b63a6009c0e1b16905e5
           "--talk-name=com.canonical.Unity",
           "--env=XCURSOR_PATH=/run/host/user-share/icons:/run/host/share/icons",
           "--env=ELECTRON_TRASH=gio",
