@@ -130,7 +130,7 @@ fs.readdir("avia_core", (err: NodeJS.ErrnoException, files: string[]) => {
   if (err) return;
 
   for (const file of files) {
-    if (["js", "ts", "tsx"].includes(file.split(".").pop().toLowerCase())) {
+    if (["js", "ts", "tsx", "json"].includes(file.split(".").pop().toLowerCase())) {
       customVitePluginBuild.push({
         entry: `avia_core/${file}`,
         config: "vite.main.config.ts",
