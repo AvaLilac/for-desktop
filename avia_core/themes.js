@@ -1,7 +1,7 @@
 (function () {
 
-    if (window.__AVIA_THEMES_LOADED__) return;
-    window.__AVIA_THEMES_LOADED__ = true;
+    if (window.__AVIA_THEMES__) return;
+    window.__AVIA_THEMES__ = true;
 
     const STORAGE_KEY = "avia_themes";
     let editingThemeId = null;
@@ -240,7 +240,14 @@
     function toggleThemesPanel() {
         let panel = document.getElementById("avia-themes-panel");
         if (panel) {
-            panel.style.display = panel.style.display === "none" ? "flex" : "none";
+            if (panel.style.display === "none") {
+                panel.style.display = "flex";
+                if (typeof window.__avia_refresh_themes_panel === "function") {
+                    window.__avia_refresh_themes_panel();
+                }
+            } else {
+                panel.style.display = "none";
+            }
             return;
         }
 
