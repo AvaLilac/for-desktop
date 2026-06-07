@@ -1,7 +1,7 @@
 (function () {
 
-    if (window.__AVIA_PLUGINS_LOADED__) return;
-    window.__AVIA_PLUGINS_LOADED__ = true;
+    if (window.__AVIA_PLUGINS__) return;
+    window.__AVIA_PLUGINS__ = true;
 
     const STORAGE_KEY = "avia_plugins";
 
@@ -241,7 +241,12 @@
     function togglePluginsPanel() {
         let panel = document.getElementById('avia-plugins-panel');
         if (panel) {
-            panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
+            if (panel.style.display === 'none') {
+                panel.style.display = 'flex';
+                renderPanel();
+            } else {
+                panel.style.display = 'none';
+            }
             return;
         }
 
