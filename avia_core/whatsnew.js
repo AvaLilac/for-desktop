@@ -3,7 +3,8 @@
     if (window.__WHATS_NEW___) return;
     window.__WHATS_NEW__ = true;
 
-    const BACKEND_URL = "https://raw.githubusercontent.com/AvaLilac/aviaclient-backend-whatsnew/refs/heads/main/backend1-7-0.json";
+    const version = window.native.versions.aviaClient().replaceAll('.', '-');
+    const BACKEND_URL = "https://raw.githubusercontent.com/AvaLilac/aviaclient-backend-whatsnew/refs/heads/main/backend" + version + ".json";
 
     function injectStyles() {
         if (document.getElementById("avia-whatsnew-styles")) return;
