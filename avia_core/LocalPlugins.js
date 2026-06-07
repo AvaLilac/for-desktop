@@ -1,7 +1,7 @@
 (function () {
 
-    if (window.__AVIA_LOCAL_PLUGINS_LOADED__) return;
-    window.__AVIA_LOCAL_PLUGINS_LOADED__ = true;
+    if (window.__LOCAL_PLUGINS__) return;
+    window.__LOCAL_PLUGINS__ = true;
 
     const STORAGE_KEY = "avia_local_plugins";
 
@@ -195,7 +195,12 @@
     function toggleLocalPanel() {
         let panel = document.getElementById("avia-local-plugins-panel");
         if (panel) {
-            panel.style.display = panel.style.display === "none" ? "flex" : "none";
+            if (panel.style.display === "none") {
+                panel.style.display = "flex";
+                renderLocalPanel();
+            } else {
+                panel.style.display = "none";
+            }
             return;
         }
 
