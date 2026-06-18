@@ -52,14 +52,14 @@ const loadInject = () => {
   mainWindow.webContents.on("dom-ready", async () => {
     try {
       const plugins: string[] = [
-        "inject.js",
-        "LocalPlugins.js",
         "aviaclientcategory.js",
+        "inject.js",
         "themes.js",
         "aviafavsystem.js",
-        "pluginsupport.js",
         "aviaversion.js",
         "repofrontend.js",
+        "pluginsupport.js",
+        "LocalPlugins.js",
         "ButtonFix.js",
         "headliner.js",
         "aviadesktopversion.js",
