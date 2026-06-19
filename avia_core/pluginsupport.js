@@ -398,9 +398,9 @@
         const runSnap = { ...runningPlugins };
         const errSnap = { ...pluginErrors };
 
-        const visible = filter
+        const visible = (filter
             ? plugins.filter(p => p.name.toLowerCase().includes(filter))
-            : plugins;
+            : plugins).slice().reverse();
 
         if (visible.length === 0) {
             const empty = document.createElement('div');
@@ -645,6 +645,19 @@
         }).observe(document.documentElement, { childList: true });
     }
 
+    function registerWithAviaMenu() {
+        if (window.AviaMenu) {
+            window.AviaMenu.register({ id: "avia_plugins_online", name: "Plugins", icon: "extension", onClick: togglePluginsPanel });
+        } else {
+            const interval = setInterval(() => {
+                if (window.AviaMenu) {
+                    clearInterval(interval);
+                    window.AviaMenu.register({ id: "avia_plugins_online", name: "Plugins", icon: "extension", onClick: togglePluginsPanel });
+                }
+            }, 100);
+        }
+    }
+
     waitForBody(() => {
         const observer = new MutationObserver(() => injectButtons());
         observer.observe(document.body, { childList: true, subtree: true });
@@ -655,5 +668,7 @@
     getPlugins().forEach(plugin => {
         if (plugin.enabled) queuePlugin(plugin);
     });
+
+    registerWithAviaMenu();
 
 })();
