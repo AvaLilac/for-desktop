@@ -540,9 +540,23 @@
         quickCSS.parentElement.insertBefore(clone, quickCSS.nextSibling);
     }
 
+    function registerWithAviaMenu() {
+        if (window.AviaMenu) {
+            window.AviaMenu.register({ id: "avia_themes", name: "Themes", icon: "palette", onClick: toggleThemesPanel });
+        } else {
+            const interval = setInterval(() => {
+                if (window.AviaMenu) {
+                    clearInterval(interval);
+                    window.AviaMenu.register({ id: "avia_themes", name: "Themes", icon: "palette", onClick: toggleThemesPanel });
+                }
+            }, 100);
+        }
+    }
+
     new MutationObserver(injectButton).observe(document.body, { childList: true, subtree: true });
     injectButton();
     applyThemes();
     preloadMonaco();
+    registerWithAviaMenu();
 
 })();
