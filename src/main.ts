@@ -64,7 +64,6 @@ const loadInject = () => {
         "ButtonFix.js",
         "headliner.js",
         "aviadesktopversion.js",
-        "customFrameNativeMenu.js",
         "disableTrayIcon.js",
         "clientBackup.js",
         "LoginWithToken.js",
