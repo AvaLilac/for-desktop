@@ -54,10 +54,10 @@ const loadInject = () => {
       const plugins: string[] = [
         "aviaclientcategory.js",
         "inject.js",
+        "repofrontend.js",
         "themes.js",
         "aviafavsystem.js",
         "aviaversion.js",
-        "repofrontend.js",
         "pluginsupport.js",
         "LocalPlugins.js",
         "ButtonFix.js",
