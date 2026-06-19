@@ -716,6 +716,19 @@
         aviaPluginsBtn.parentElement.insertBefore(localBtn, aviaPluginsBtn.nextSibling);
     }
 
+
+    function registerWithAviaMenu() {
+        if (window.AviaMenu) {
+            window.AviaMenu.register({ id: "avia_plugins_local", name: "Local Plugins", icon: "extension", onClick: toggleLocalPanel });
+        } else {
+            const interval = setInterval(() => {
+                if (window.AviaMenu) {
+                    clearInterval(interval);
+                    window.AviaMenu.register({ id: "avia_plugins_local", name: "Local Plugins", icon: "extension", onClick: toggleLocalPanel });
+                }
+            }, 100);
+        }
+    }
     function waitForBody(callback) {
         if (document.body) callback();
         else new MutationObserver((obs) => {
@@ -734,5 +747,7 @@
     });
 
     preloadMonaco();
+
+    registerWithAviaMenu();
 
 })();
