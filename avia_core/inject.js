@@ -582,6 +582,21 @@
         }).observe(document.documentElement, { childList: true });
     }
 
+    function registerWithAviaMenu() {
+        if (window.AviaMenu) {
+            window.AviaMenu.register({ id: "avia_fontloader", name: "Font Loader", icon: "upload", onClick: showFontLoaderModal });
+            window.AviaMenu.register({ id: "avia_quickcss", name: "QuickCSS", icon: "code", onClick: toggleQuickCSSPanel });
+        } else {
+            const interval = setInterval(() => {
+                if (window.AviaMenu) {
+                    clearInterval(interval);
+                    window.AviaMenu.register({ id: "avia_fontloader", name: "Font Loader", icon: "upload", onClick: showFontLoaderModal });
+                    window.AviaMenu.register({ id: "avia_quickcss", name: "QuickCSS", icon: "code", onClick: toggleQuickCSSPanel });
+                }
+            }, 100);
+        }
+    }
+
     waitForBody(() => {
         const observer = new MutationObserver(() => injectButtons());
         observer.observe(document.body, { childList: true, subtree: true });
@@ -589,5 +604,6 @@
     });
 
     preloadMonaco();
+    registerWithAviaMenu();
 
 })();
