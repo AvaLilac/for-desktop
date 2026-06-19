@@ -714,6 +714,19 @@
         referenceNode.parentElement.insertBefore(clone, referenceNode.nextSibling);
     }
 
+    function registerWithAviaMenu() {
+        if (window.AviaMenu) {
+            window.AviaMenu.register({ id: "avia_official_repo", name: "Plugins & Themes Repo", icon: "palette", onClick: openWindow });
+        } else {
+            const interval = setInterval(() => {
+                if (window.AviaMenu) {
+                    clearInterval(interval);
+                    window.AviaMenu.register({ id: "avia_official_repo", name: "Plugins & Themes Repo", icon: "palette", onClick: openWindow });
+                }
+            }, 100);
+        }
+    }
+
     window.addEventListener("avia-plugin-list-changed", () => {
         if (document.getElementById("avia-official-repo-window")) updateInstallStates();
     });
@@ -726,5 +739,6 @@
         .observe(document.body, { childList: true, subtree: true });
 
     injectSettingsButton();
+    registerWithAviaMenu();
 
 })();
