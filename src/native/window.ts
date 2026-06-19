@@ -171,27 +171,9 @@ export function createMainWindow() {
     }
   });
 
-  const initialCustomFrame: boolean = config.customFrame;
-  const initialCFNM: boolean = config.customFrameNativeMenu;
-
   mainWindow.webContents.on("did-finish-load", () => {
     // send the config
     config.sync();
-
-    // on macOS add margin to the title, and hide custom controls
-    // We only use initial values other the menu can disappear
-    if (process.platform === "darwin" && initialCustomFrame && initialCFNM) {
-      mainWindow.webContents.insertCSS(`
-          #root > div[style="display: flex; flex-direction: column; height: 100%;"] > div > div.h_29px {
-            &> div.d_flex:first-child {
-              margin-left: 75px;
-            }
-            &> a.place-items_center {
-              display: none;
-            }
-          }
-        `);
-    }
   });
 
   // configure spellchecker context menu

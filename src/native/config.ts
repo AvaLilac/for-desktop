@@ -86,7 +86,6 @@ class Config {
     mainWindow.webContents.send("config", {
       firstLaunch: this.firstLaunch,
       customFrame: this.customFrame,
-      customFrameNativeMenu: this.customFrameNativeMenu,
       minimiseToTray: this.minimiseToTray,
       disableTrayClick: this.disableTrayClick,
       startMinimisedToTray: this.startMinimisedToTray,
@@ -117,19 +116,6 @@ class Config {
   set customFrame(value: boolean) {
     (store as never as { set(k: string, value: boolean): void }).set(
       "customFrame",
-      value,
-    );
-
-    this.sync();
-  }
-
-  get customFrameNativeMenu() {
-    return (store as never as { get(k: string): boolean }).get("customFrameNativeMenu");
-  }
-
-  set customFrameNativeMenu(value: boolean) {
-    (store as never as { set(k: string, value: boolean): void }).set(
-      "customFrameNativeMenu",
       value,
     );
 
