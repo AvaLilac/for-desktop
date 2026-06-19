@@ -126,19 +126,23 @@ const customVitePluginBuild: VitePluginBuildConfig[] = [
   },
 ];
 
-fs.readdir("avia_core", (err: NodeJS.ErrnoException, files: string[]) => {
-  if (err) return;
+fs.readdir(
+  "avia_core",
+  (err: NodeJS.ErrnoException | null, files: string[]) => {
+    if (err) return;
 
-  for (const file of files) {
-    if (["js", "ts", "tsx", "json"].includes(file.split(".").pop().toLowerCase())) {
-      customVitePluginBuild.push({
-        entry: `avia_core/${file}`,
-        config: "vite.main.config.ts",
-        target: "main",
-      });
+    for (const file of files) {
+      let ext = file.toLowerCase().split(".").pop() ?? "";
+      if (["js", "ts", "tsx", "json"].includes(ext)) {
+        customVitePluginBuild.push({
+          entry: `avia_core/${file}`,
+          config: "vite.main.config.ts",
+          target: "main",
+        });
+      }
     }
-  }
-});
+  },
+);
 
 const config: ForgeConfig = {
   packagerConfig: {
