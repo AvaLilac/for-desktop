@@ -42,6 +42,7 @@ export function createMainWindow() {
   // (CLI arg --hidden or config)
   const startHidden =
     app.commandLine.hasSwitch("hidden") || config.startMinimisedToTray;
+  const isMacOS = process.platform === "darwin";
 
   // create the window
   mainWindow = new BrowserWindow({
@@ -50,19 +51,9 @@ export function createMainWindow() {
     width: 1280,
     height: 720,
     backgroundColor: "#191919",
-    frame: !config.customFrame,
-    ...(config.customFrame && config.customFrameNativeMenu
-      ? {
-          // remove the default titlebar
-          titleBarStyle: "hidden",
-          // expose window controls in Windows/Linux
-          ...(process.platform !== "darwin"
-            ? {
-                titleBarOverlay: true,
-              }
-            : {}),
-        }
-      : {}),
+    frame: isMacOS ? true : !config.customFrame,
+    titleBarStyle: isMacOS ? "hidden" : "default",
+    trafficLightPosition: isMacOS ? { x: 8, y: 8 } : undefined,
     icon: windowIcon,
     show: !startHidden,
     webPreferences: {

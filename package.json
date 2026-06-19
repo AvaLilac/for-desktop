@@ -1,12 +1,12 @@
 {
   "name": "aviaclient-desktop",
   "productName": "aviaclient-desktop",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "aviaVersion": "1.7.0",
   "main": ".vite/build/main.js",
   "repository": "stoatchat/desktop",
   "scripts": {
-    "start": "electron-forge start",
+    "start": "electron-forge start -- --no-sandbox",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
