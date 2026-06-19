@@ -73,14 +73,26 @@ if (!process.env.PLATFORM) {
         ],
         finishArgs: [
           "--socket=fallback-x11",
+          "--socket=wayland",
           "--share=ipc",
+          "--share=network",
           "--device=dri",
+          "--device=all",
           "--socket=pulseaudio",
           "--filesystem=home",
-          "--env=TMPDIR=/var/tmp",
-          "--share=network",
+          "--filesystem=xdg-run/pipewire-0",
+          "--filesystem=xdg-videos:ro",
+          "--filesystem=xdg-pictures:ro",
+          "--filesystem=xdg-run/speech-dispatcher",
+          "--talk-name=org.freedesktop.ScreenSaver",
           "--talk-name=org.freedesktop.Notifications",
+          "--talk-name=org.kde.StatusNotifierWatcher",
+          "--talk-name=com.canonical.AppMenu.Registrar",
+          "--talk-name=com.canonical.indicator.application",
           "--talk-name=com.canonical.Unity",
+          "--env=XCURSOR_PATH=/run/host/user-share/icons:/run/host/share/icons",
+          "--env=ELECTRON_TRASH=gio",
+          "--env=TMPDIR=xdg-run/app/chat.stoat.stoat-desktop",
         ],
         files: [],
       } as MakerFlatpakOptionsConfig,
@@ -98,11 +110,6 @@ if (!process.env.PLATFORM) {
 
 const customVitePluginBuild: VitePluginBuildConfig[] = [
   {
-    entry: "avia_assets/icon.png",
-    config: "vite.main.config.ts",
-    target: "main",
-  },
-  {
     entry: "about.html",
     config: "vite.main.config.ts",
     target: "main",
@@ -119,19 +126,23 @@ const customVitePluginBuild: VitePluginBuildConfig[] = [
   },
 ];
 
-fs.readdir("avia_core", (err: NodeJS.ErrnoException, files: string[]) => {
-  if (err) return;
+fs.readdir(
+  "avia_core",
+  (err: NodeJS.ErrnoException | null, files: string[]) => {
+    if (err) return;
 
-  for (const file of files) {
-    if (["js", "ts", "tsx"].includes(file.split(".").pop().toLowerCase())) {
-      customVitePluginBuild.push({
-        entry: `avia_core/${file}`,
-        config: "vite.main.config.ts",
-        target: "main",
-      });
+    for (const file of files) {
+      let ext = file.toLowerCase().split(".").pop() ?? "";
+      if (["js", "ts", "tsx", "json"].includes(ext)) {
+        customVitePluginBuild.push({
+          entry: `avia_core/${file}`,
+          config: "vite.main.config.ts",
+          target: "main",
+        });
+      }
     }
-  }
-});
+  },
+);
 
 const config: ForgeConfig = {
   packagerConfig: {

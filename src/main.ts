@@ -52,21 +52,24 @@ const loadInject = () => {
   mainWindow.webContents.on("dom-ready", async () => {
     try {
       const plugins: string[] = [
-        "inject.js",
-        "LocalPlugins.js",
+	      "menu.js",
         "aviaclientcategory.js",
+        "inject.js",
+        "repofrontend.js",
         "themes.js",
         "aviafavsystem.js",
-        "pluginsupport.js",
         "aviaversion.js",
-        "repofrontend.js",
+        "pluginsupport.js",
+        "LocalPlugins.js",
         "ButtonFix.js",
         "headliner.js",
         "aviadesktopversion.js",
-        "customFrameNativeMenu.js",
         "disableTrayIcon.js",
         "clientBackup.js",
         "LoginWithToken.js",
+        "UpdateChecker.js",
+        "badges.js",
+        "whatsnew.js",
       ];
 
       for (const plugin of plugins) {
@@ -166,6 +169,11 @@ if (acquiredLock) {
 
       return { action: "deny" };
     });
+  });
+
+  // Prevent ghost badges
+  app.on("quit", (_event, _exitCode) => {
+    setBadgeCount(0);
   });
 } else {
   app.quit();

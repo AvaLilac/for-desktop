@@ -1,7 +1,7 @@
 (function () {
 
-    if (window.__AVIA_THEMES_LOADED__) return;
-    window.__AVIA_THEMES_LOADED__ = true;
+    if (window.__AVIA_THEMES__) return;
+    window.__AVIA_THEMES__ = true;
 
     const STORAGE_KEY = "avia_themes";
     let editingThemeId = null;
@@ -23,9 +23,9 @@
         return new Promise(resolve => {
             if (window.monaco) return resolve();
             const loader = document.createElement("script");
-            loader.src = "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js";
+            loader.src = "https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0/min/vs/loader.js";
             loader.onload = function () {
-                require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs" } });
+                require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0/min/vs" } });
                 require(["vs/editor/editor.main"], () => resolve());
             };
             document.head.appendChild(loader);
@@ -65,10 +65,29 @@
         document.querySelectorAll(".avia-theme-style").forEach(e => e.remove());
         getThemes().forEach(theme => {
             if (!theme.enabled) return;
-            const style = document.createElement("style");
-            style.className = "avia-theme-style";
-            style.textContent = theme.css;
-            document.head.appendChild(style);
+
+            const importRegex = /@import\s+url\(["']?([^"')]+)["']?\)\s*;/g;
+            let match;
+            while ((match = importRegex.exec(theme.css)) !== null) {
+                const url = match[1];
+                fetch(url)
+                    .then(r => r.text())
+                    .then(css => {
+                        const style = document.createElement("style");
+                        style.className = "avia-theme-style";
+                        style.textContent = css;
+                        document.head.appendChild(style);
+                    })
+                    .catch(() => {});
+            }
+
+            const stripped = theme.css.replace(/@import\s+url\(["']?[^"')]+["']?\)\s*;/g, "").trim();
+            if (stripped) {
+                const style = document.createElement("style");
+                style.className = "avia-theme-style";
+                style.textContent = stripped;
+                document.head.appendChild(style);
+            }
         });
     }
 
@@ -221,7 +240,14 @@
     function toggleThemesPanel() {
         let panel = document.getElementById("avia-themes-panel");
         if (panel) {
-            panel.style.display = panel.style.display === "none" ? "flex" : "none";
+            if (panel.style.display === "none") {
+                panel.style.display = "flex";
+                if (typeof window.__avia_refresh_themes_panel === "function") {
+                    window.__avia_refresh_themes_panel();
+                }
+            } else {
+                panel.style.display = "none";
+            }
             return;
         }
 
@@ -514,9 +540,23 @@
         quickCSS.parentElement.insertBefore(clone, quickCSS.nextSibling);
     }
 
+    function registerWithAviaMenu() {
+        if (window.AviaMenu) {
+            window.AviaMenu.register({ id: "avia_themes", name: "Themes", icon: "palette", onClick: toggleThemesPanel });
+        } else {
+            const interval = setInterval(() => {
+                if (window.AviaMenu) {
+                    clearInterval(interval);
+                    window.AviaMenu.register({ id: "avia_themes", name: "Themes", icon: "palette", onClick: toggleThemesPanel });
+                }
+            }, 100);
+        }
+    }
+
     new MutationObserver(injectButton).observe(document.body, { childList: true, subtree: true });
     injectButton();
     applyThemes();
     preloadMonaco();
+    registerWithAviaMenu();
 
 })();

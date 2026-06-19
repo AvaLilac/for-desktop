@@ -5,7 +5,7 @@ import { BrowserWindow } from "electron";
 import { mainWindow } from "./window";
 
 // global reference to about window
-export let aboutWindow: BrowserWindow;
+export let aboutWindow: BrowserWindow | null;
 
 // Create our about window
 export function createAboutWindow() {
@@ -42,7 +42,7 @@ export function createAboutWindow() {
   aboutWindow.loadFile(join(__dirname, "about.html"));
 
   aboutWindow.on("ready-to-show", () => {
-    aboutWindow.show();
+    aboutWindow?.show();
   });
 
   aboutWindow.on("closed", () => {
@@ -55,7 +55,7 @@ export function createAboutWindow() {
   aboutWindow.webContents.on("before-input-event", (event, input) => {
     if (input.key.toLowerCase() === "escape") {
       event.preventDefault();
-      aboutWindow.close();
+      aboutWindow?.close();
     }
   });
 }

@@ -5,8 +5,10 @@ import {
   Menu,
   MenuItem,
   app,
+  desktopCapturer,
   ipcMain,
   nativeImage,
+  session,
 } from "electron";
 
 import windowIconAsset from "../../avia_assets/icon.png?asset";
@@ -40,6 +42,7 @@ export function createMainWindow() {
   // (CLI arg --hidden or config)
   const startHidden =
     app.commandLine.hasSwitch("hidden") || config.startMinimisedToTray;
+  const isMacOS = process.platform === "darwin";
 
   // create the window
   mainWindow = new BrowserWindow({
@@ -48,19 +51,9 @@ export function createMainWindow() {
     width: 1280,
     height: 720,
     backgroundColor: "#191919",
-    frame: !config.customFrame,
-    ...(config.customFrame && config.customFrameNativeMenu
-      ? {
-          // remove the default titlebar
-          titleBarStyle: "hidden",
-          // expose window controls in Windows/Linux
-          ...(process.platform !== "darwin"
-            ? {
-                titleBarOverlay: true,
-              }
-            : {}),
-        }
-      : {}),
+    frame: isMacOS ? true : !config.customFrame,
+    titleBarStyle: isMacOS ? "hidden" : "default",
+    trafficLightPosition: isMacOS ? { x: 8, y: 8 } : undefined,
     icon: windowIcon,
     show: !startHidden,
     webPreferences: {
@@ -178,27 +171,9 @@ export function createMainWindow() {
     }
   });
 
-  const initialCustomFrame: boolean = config.customFrame;
-  const initialCFNM: boolean = config.customFrameNativeMenu;
-
   mainWindow.webContents.on("did-finish-load", () => {
     // send the config
     config.sync();
-
-    // on macOS add margin to the title, and hide custom controls
-    // We only use initial values other the menu can disappear
-    if (process.platform === "darwin" && initialCustomFrame && initialCFNM) {
-      mainWindow.webContents.insertCSS(`
-          #root > div[style="display: flex; flex-direction: column; height: 100%;"] > div > div.h_29px {
-            &> div.d_flex:first-child {
-              margin-left: 75px;
-            }
-            &> a.place-items_center {
-              display: none;
-            }
-          }
-        `);
-    }
   });
 
   // configure spellchecker context menu
@@ -243,6 +218,59 @@ export function createMainWindow() {
       menu.popup();
     }
   });
+
+  // Create display media request handler
+  session.defaultSession.setDisplayMediaRequestHandler(
+    (request, callback) => {
+      desktopCapturer
+        .getSources({ types: ["screen", "window"], fetchWindowIcons: true })
+        .then((sources) => {
+          // Shortcut for linux wayland.
+          if (sources.length == 1) {
+            // TODO: Get audio to work with wayland
+            // See vencord for an implementation using a virtual microphone.
+            callback({
+              video: sources[0],
+              audio: request.audioRequested ? "loopbackWithMute" : undefined,
+            });
+            return;
+          }
+          ipcMain.once(
+            "screenPickerCallback",
+            (_, idx: number, audio: boolean) => {
+              if (idx < 0 || idx > sources.length) {
+                callback({});
+              } else {
+                callback({
+                  video: sources[idx],
+                  audio: audio ? "loopbackWithMute" : undefined,
+                });
+              }
+            },
+          );
+          mainWindow.webContents.send(
+            "screenPicker",
+            sources.map((source, idx) => {
+              const image = source.appIcon;
+              if (image) {
+                if (image.getAspectRatio() > 1) {
+                  image.resize({ width: 256 });
+                } else {
+                  image.resize({ height: 256 });
+                }
+              }
+              return {
+                idx: idx,
+                name: source.name,
+                isFullScreen: source.id.startsWith("screen"),
+                image: image?.toDataURL(),
+              };
+            }),
+          );
+        });
+    },
+    { useSystemPicker: true },
+  );
 
   // push world events to the window
   ipcMain.on("minimise", () => mainWindow.minimize());

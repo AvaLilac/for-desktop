@@ -8,14 +8,17 @@ Application for Windows, macOS, and Linux. now with avia client injected
 </div>
 <br/>
 
+> [!NOTE]
+> Avia Client is not officially supported by ```Stoat chat```, also known as the ```Revolt Platforms Ltd```. team
+
 ## Installation
 
 <a href="https://repology.org/project/stoat-desktop/versions">
     <img src="https://repology.org/badge/vertical-allrepos/stoat-desktop.svg" alt="Packaging status" align="right">
 </a>
 
-- If you use the Browser you can find FireFox/Chrome/Userscript Builds at [BrowserBuilds](https://github.com/AvaLilac/Ava-Client).
-- Though I reccomend you use Userscript if on Chrome Based Browsers. As Plugins do not exist due to browser limits in Extensions. Userscript fine though
+- If you use the Browser you can find FireFox/Userscript Builds at [AviaClient Home](https://avalilac.codeberg.page/Avia-Client-Home/).
+- Our Chrome Extension is Discontinued. Because Userscript offers features chrome blocks via extension
 
 ## Development Guide
 
@@ -49,6 +52,21 @@ git -c submodule."assets".update=checkout submodule update --init assets
 
 # build the bundle
 pnpm package
+```
+
+For Codeberg users
+
+```bash
+Hey! We also have a codeberg mirror. If you are currently on that mirror.
+here are the cloning steps for codeberg
+
+# clone the repository
+git clone --recursive https://codeberg.org/AvaLilac/for-desktop aviaclient-for-desktop
+
+# clone the repository (If you are building from developer branch. Which is not always stable)
+git clone -b dev --recursive https://codeberg.org/AvaLilac/for-desktop aviaclient-for-desktop
+
+Then proceed to the rest of the steps above
 ```
 
 Various useful commands for development testing:
