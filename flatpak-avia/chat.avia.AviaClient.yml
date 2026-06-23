@@ -14,7 +14,7 @@ command: aviaclient-desktop
 finish-args:
   - --share=ipc
   - --device=dri
-  - --socket=x11
+  - --socket=wayland
   - --socket=pulseaudio
   - --share=network
   - --env=ELECTRON_TRASH=gio

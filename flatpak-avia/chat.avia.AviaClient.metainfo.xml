@@ -62,6 +62,45 @@
         </ul>
       </description>
     </release>
+    <release version="1.7.0" date="20/06/2026">
+      <p>Changelog</p>
+      <p>New</p>
+      <ul>
+        <li>Update checker: Lets you know when there is a new release of Avia Client.</li>
+        <li>Custom badges: Expanded list of available badges.</li>
+        <li>Flatpak support: Thanks to Raptor.</li>
+        <li>What's new: A recreation of Stoat's What's New to display what's new in Avia Client.</li>
+        <li>Avia Menu: A new menu has been added within the chat header.</li>
+        <li>New API: Plugin Devs can register their own buttons using the API, which will appear inside the new menu.</li>
+      </ul>
+      <p>Changes</p>
+      <ul>
+        <li>Avia Client Now uses its own storage. Meaning its a completely fresh install of Avia Client.</li>
+        <li>Both Online and Local Plugins have both been given a UI revamp.</li>
+        <li>Both Online and Local Plugins have had their plugin order reversed - the most recent plugins added now shows on top instead of bottom.</li>
+        <li>Added @import url("") support to Themes (not QuickCSS). This allows you to load themes via a URL, allowing themes that either both local and parts of it online - or purely online.</li>
+        <li>Font Loader has had a complete UI revamp, including support for Local fonts.</li>
+        <li>The Trusted Repo now has the ability to Install Plugins to Local Plugins.</li>
+        <li>Monaco has been updated to v0.50.</li>
+        <li>MacOS: Aurora icon now supports Liquid Glass.</li>
+      </ul>
+      <p>Fixes</p>
+      <ul>
+        <li>Fixed Codeberg support being unreliable</li>
+        <li>Every Panel now Fetches its contents on open. This fixes a bug where newly added buttons could not show till you restarted the client.</li>
+      </ul>
+      <p>Removed</p>
+      <ul>
+        <li>Removed our custom frame plugin now that MacOS support is built-in</li>
+      </ul>
+      <p>Stoat v1.4.0</p>
+      <ul>
+        <li>Screensharing support is now supported along with a Integrated screen picker</li>
+        <li>Electron was updated to v40</li>
+      </ul>
+      <p>Warning ! Due to an update in the backend, you'll need to backup your settings before updating and then after doing that log back into your account and import settings.</p>
+
+    </release>
   </releases>
   <content_rating type="oars-1.0">
     <content_attribute id="social-chat">intense</content_attribute>
