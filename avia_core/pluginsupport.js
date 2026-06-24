@@ -565,6 +565,63 @@
             const footer = document.createElement('div');
             Object.assign(footer.style, { display: 'flex', gap: '6px', marginTop: 'auto', paddingTop: '2px' });
 
+            const LOCAL_KEY = "avia_local_plugins";
+            const getLocals = () => JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]");
+
+            const toLocalBtn = document.createElement('button');
+            styleBtn(toLocalBtn, 'rgba(80,200,120,0.15)');
+            toLocalBtn.style.flex = '1';
+            const alreadyLocal = getLocals().some(p => p.name === plugin.name);
+            if (alreadyLocal) {
+                toLocalBtn.textContent = 'In Local';
+                toLocalBtn.disabled = true;
+                toLocalBtn.style.opacity = '0.45';
+                toLocalBtn.onmouseenter = null;
+                toLocalBtn.onmouseleave = null;
+            } else {
+                toLocalBtn.textContent = 'To Local';
+            }
+
+            toLocalBtn.onclick = async () => {
+                if (toLocalBtn.disabled) return;
+                toLocalBtn.textContent = '…';
+                toLocalBtn.disabled = true;
+
+                let code = null;
+                const scriptEl = runningPlugins[plugin.url];
+                if (scriptEl && scriptEl.textContent) code = scriptEl.textContent;
+
+                if (!code) {
+                    try {
+                        const res = await fetch(normalizePluginUrl(plugin.url));
+                        if (!res.ok) throw new Error("HTTP " + res.status);
+                        code = await res.text();
+                    } catch {
+                        toLocalBtn.textContent = 'Failed';
+                        setTimeout(() => { toLocalBtn.textContent = 'Local'; toLocalBtn.disabled = false; }, 2000);
+                        return;
+                    }
+                }
+
+                const locals = getLocals();
+                if (locals.some(p => p.name === plugin.name)) {
+                    toLocalBtn.textContent = 'In Local';
+                    return;
+                }
+                locals.push({
+                    id: "local_" + Date.now() + "_" + Math.random().toString(36).slice(2),
+                    name: plugin.name,
+                    code,
+                    enabled: plugin.enabled
+                });
+                localStorage.setItem(LOCAL_KEY, JSON.stringify(locals));
+                window.dispatchEvent(new Event("avia-local-plugin-list-changed"));
+                stopPlugin(plugin);
+                plugins.splice(realIndex, 1);
+                setPlugins(plugins);
+                renderPanel(filter);
+            };
+
             const viewBtn = document.createElement('button');
             viewBtn.textContent = 'View';
             styleBtn(viewBtn, 'rgba(100,160,255,0.15)');
@@ -581,6 +638,7 @@
                 renderPanel(filter);
             };
 
+            footer.appendChild(toLocalBtn);
             footer.appendChild(viewBtn);
             footer.appendChild(removeBtn);
 
