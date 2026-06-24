@@ -2,7 +2,7 @@
   "name": "aviaclient-desktop",
   "productName": "aviaclient-desktop",
   "version": "1.4.0",
-  "aviaVersion": "1.7.1",
+  "aviaVersion": "1.8.0",
   "main": ".vite/build/main.js",
   "repository": "stoatchat/desktop",
   "scripts": {
