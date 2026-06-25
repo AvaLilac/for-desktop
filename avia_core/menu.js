@@ -73,6 +73,21 @@
                 icon: typeof item.icon === "string" && item.icon.trim() ? item.icon.trim() : null
             });
             if (menuEl) rebuildMenu();
+        },
+
+        unregister: function (item) {
+            if (!item || typeof item.id !== "string" || !item.id.trim()) {
+                console.error("[AviaMenu] Unregister failed: item.id must be a non-empty string");
+                return;
+            }
+            const id = item.id.trim();
+            const idx = registeredItems.findIndex(i => i.id === id);
+            if (idx === -1) {
+                console.error("[AviaMenu] Unregister failed: no item with id '%s' found", id);
+                return;
+            }
+            registeredItems.splice(idx, 1);
+            if (menuEl) rebuildMenu();
         }
     };
 
