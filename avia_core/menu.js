@@ -207,9 +207,54 @@
         }
 
         const total = getSortedItems().length;
-        list.style.maxHeight = (MAX_VISIBLE * ITEM_HEIGHT) + "px";
+        list.style.maxHeight = (MAX_VISIBLE * ITEM_HEIGHT + 16) + "px";
         list.style.overflowY = total > MAX_VISIBLE ? "auto" : "hidden";
         list.style.scrollbarWidth = "none";
+
+        const existingTop = menuEl.querySelector("#avia-scroll-top");
+        const existingBot = menuEl.querySelector("#avia-scroll-bot");
+        if (existingTop) existingTop.remove();
+        if (existingBot) existingBot.remove();
+
+        if (total > MAX_VISIBLE) {
+            function makeArrow(id, rotation) {
+                const el = document.createElement("div");
+                el.id = id;
+                Object.assign(el.style, {
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "20px",
+                    pointerEvents: "none",
+                    flexShrink: "0",
+                    visibility: "hidden"
+                });
+                const icon = document.createElement("span");
+                icon.className = "material-symbols-outlined";
+                icon.textContent = "arrow_back_2";
+                icon.style.cssText = `font-size:16px;display:block;transform:rotate(${rotation}deg);color:var(--md-sys-color-on-surface,#fff);opacity:0.5;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0;`;
+                el.appendChild(icon);
+                return el;
+            }
+
+            const arrowTop = makeArrow("avia-scroll-top", 90);
+            const arrowBot = makeArrow("avia-scroll-bot", 270);
+            arrowBot.style.display = "none";
+            arrowBot.style.visibility = "visible";
+
+            menuEl.insertBefore(arrowTop, list);
+            menuEl.insertBefore(arrowBot, list.nextSibling);
+
+            function updateArrows() {
+                const canUp = list.scrollTop > 0;
+                const canDown = list.scrollTop + list.clientHeight < list.scrollHeight - 1;
+                arrowTop.style.visibility = canUp ? "visible" : "hidden";
+                arrowBot.style.display = canDown ? "flex" : "none";
+            }
+
+            list.addEventListener("scroll", updateArrows);
+            updateArrows();
+        }
     }
 
     function openMenu(anchorEl) {
