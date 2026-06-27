@@ -63,16 +63,16 @@
     window.AviaMenu = {
         register: function (item) {
             if (!item || typeof item !== "object") {
-                console.error("[AviaMenu] register: item must be an object"); return;
+                console.error("[AviaMenu] register: item must be an object, got", typeof item); return;
             }
             if (typeof item.id !== "string" || !item.id.trim()) {
-                console.error("[AviaMenu] register: item.id must be a non-empty string"); return;
+                console.error("[AviaMenu] register: item.id must be a non-empty string, got", item.id); return;
             }
             if (!item.name || typeof item.name !== "string") {
-                console.error("[AviaMenu] register: item.name must be a non-empty string"); return;
+                console.error("[AviaMenu] register failed for id '%s': item.name must be a non-empty string, got", item.id, item.name); return;
             }
             if (typeof item.onClick !== "function") {
-                console.error("[AviaMenu] register: item.onClick must be a function"); return;
+                console.error("[AviaMenu] register failed for id '%s': item.onClick must be a function, got", item.id, typeof item.onClick); return;
             }
             if (allIds().includes(item.id.trim())) {
                 console.error("[AviaMenu] register: id '%s' is already registered", item.id.trim()); return;
@@ -88,13 +88,13 @@
 
         submenuregister: function (item) {
             if (!item || typeof item !== "object") {
-                console.error("[AviaMenu] submenuregister: item must be an object"); return;
+                console.error("[AviaMenu] submenuregister: item must be an object, got", typeof item); return;
             }
             if (typeof item.id !== "string" || !item.id.trim()) {
-                console.error("[AviaMenu] submenuregister: item.id must be a non-empty string"); return;
+                console.error("[AviaMenu] submenuregister: item.id must be a non-empty string, got", item.id); return;
             }
             if (!item.name || typeof item.name !== "string") {
-                console.error("[AviaMenu] submenuregister: item.name must be a non-empty string"); return;
+                console.error("[AviaMenu] submenuregister failed for id '%s': item.name must be a non-empty string, got", item.id, item.name); return;
             }
             if (allIds().includes(item.id.trim())) {
                 console.error("[AviaMenu] submenuregister: id '%s' is already registered", item.id.trim()); return;
@@ -109,19 +109,19 @@
 
         submenu: function (item) {
             if (!item || typeof item !== "object") {
-                console.error("[AviaMenu] submenu: item must be an object"); return;
+                console.error("[AviaMenu] submenu: item must be an object, got", typeof item); return;
             }
             if (typeof item.parent !== "string" || !item.parent.trim()) {
-                console.error("[AviaMenu] submenu: item.parent must be a non-empty string"); return;
+                console.error("[AviaMenu] submenu: item.parent must be a non-empty string, got", item.parent); return;
             }
             if (typeof item.id !== "string" || !item.id.trim()) {
-                console.error("[AviaMenu] submenu: item.id must be a non-empty string"); return;
+                console.error("[AviaMenu] submenu: item.id must be a non-empty string, got", item.id); return;
             }
             if (!item.name || typeof item.name !== "string") {
-                console.error("[AviaMenu] submenu: item.name must be a non-empty string"); return;
+                console.error("[AviaMenu] submenu failed for id '%s': item.name must be a non-empty string, got", item.id, item.name); return;
             }
             if (typeof item.onClick !== "function") {
-                console.error("[AviaMenu] submenu: item.onClick must be a function"); return;
+                console.error("[AviaMenu] submenu failed for id '%s': item.onClick must be a function, got", item.id, typeof item.onClick); return;
             }
             if (!submenuParents.find(p => p.id === item.parent.trim())) {
                 console.error("[AviaMenu] submenu: no submenuregister found with id '%s'", item.parent.trim()); return;
@@ -139,9 +139,35 @@
             if (menuEl) rebuildMenu();
         },
 
+        updatesubmenu: function (item) {
+            if (!item || typeof item !== "object") {
+                console.error("[AviaMenu] updatesubmenu: item must be an object, got", typeof item); return;
+            }
+            if (typeof item.parent !== "string" || !item.parent.trim()) {
+                console.error("[AviaMenu] updatesubmenu: item.parent must be a non-empty string, got", item.parent); return;
+            }
+            if (typeof item.id !== "string" || !item.id.trim()) {
+                console.error("[AviaMenu] updatesubmenu: item.id must be a non-empty string, got", item.id); return;
+            }
+            const entry = submenuItems.find(i => i.parent === item.parent.trim() && i.id === item.id.trim());
+            if (!entry) {
+                console.error("[AviaMenu] updatesubmenu: no submenu item found with parent '%s' and id '%s'", item.parent.trim(), item.id.trim()); return;
+            }
+            if (typeof item.text === "string" && item.text.trim()) {
+                entry.name = item.text.trim();
+            }
+            if (typeof item.icon === "string") {
+                entry.icon = item.icon.trim() || null;
+            }
+            if (activeSubmenuEl && activeSubmenuParentBtn) {
+                const parentEntry = submenuParents.find(p => p.id === item.parent.trim());
+                if (parentEntry) openSubmenu(parentEntry, activeSubmenuParentBtn);
+            }
+        },
+
         unregister: function (item) {
             if (!item || typeof item.id !== "string" || !item.id.trim()) {
-                console.error("[AviaMenu] unregister: item.id must be a non-empty string"); return;
+                console.error("[AviaMenu] unregister: item.id must be a non-empty string, got", item?.id); return;
             }
             const id = item.id.trim();
 
@@ -281,6 +307,46 @@
         sub.appendChild(subList);
         document.body.appendChild(sub);
 
+        if (items.length > SUBMENU_MAX_VISIBLE) {
+            function makeSubArrow(id, rotation) {
+                const el = document.createElement("div");
+                el.id = id;
+                Object.assign(el.style, {
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "20px",
+                    pointerEvents: "none",
+                    flexShrink: "0",
+                    visibility: "hidden"
+                });
+                const icon = document.createElement("span");
+                icon.className = "material-symbols-outlined";
+                icon.textContent = "arrow_back_2";
+                icon.style.cssText = `font-size:16px;display:block;transform:rotate(${rotation}deg);color:var(--md-sys-color-on-surface,#fff);opacity:0.5;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0;`;
+                el.appendChild(icon);
+                return el;
+            }
+
+            const subArrowTop = makeSubArrow("avia-submenu-scroll-top", 90);
+            const subArrowBot = makeSubArrow("avia-submenu-scroll-bot", 270);
+            subArrowBot.style.display = "none";
+            subArrowBot.style.visibility = "visible";
+
+            sub.insertBefore(subArrowTop, subList);
+            sub.insertBefore(subArrowBot, subList.nextSibling);
+
+            function updateSubArrows() {
+                const canUp = subList.scrollTop > 0;
+                const canDown = subList.scrollTop + subList.clientHeight < subList.scrollHeight - 1;
+                subArrowTop.style.visibility = canUp ? "visible" : "hidden";
+                subArrowBot.style.display = canDown ? "flex" : "none";
+            }
+
+            subList.addEventListener("scroll", updateSubArrows);
+            updateSubArrows();
+        }
+
         const anchorRect = anchorBtn.getBoundingClientRect();
         const subRect = sub.getBoundingClientRect();
         let top = anchorRect.top;
@@ -397,7 +463,7 @@
                 chevron.className = "material-symbols-outlined";
                 chevron.textContent = "arrow_back_2";
                 chevron.style.cssText = "font-size:14px;display:block;transform:rotate(180deg);flex-shrink:0;opacity:0.5;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0;";
-                btn.appendChild(chevron);
+                btn.insertBefore(chevron, pinBtn);
 
                 btn.addEventListener("mouseenter", () => {
                     btn.style.background = "rgba(255,255,255,0.07)";
