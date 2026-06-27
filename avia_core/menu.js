@@ -4,11 +4,26 @@
 
     const ITEM_HEIGHT = 32;
     const MAX_VISIBLE = 12;
+    const SUBMENU_MAX_VISIBLE = 8;
     const PIN_STORAGE_KEY = "avia_menu_pins";
 
     const registeredItems = [];
+    const submenuParents = [];
+    const submenuItems = [];
+
     let menuEl = null;
     let menuOpen = false;
+    let activeSubmenuEl = null;
+    let activeSubmenuParentBtn = null;
+    let submenuHoverTimeout = null;
+
+    function allIds() {
+        return [
+            ...registeredItems.map(i => i.id),
+            ...submenuParents.map(i => i.id),
+            ...submenuItems.map(i => i.id)
+        ];
+    }
 
     function getPins() {
         try { return JSON.parse(localStorage.getItem(PIN_STORAGE_KEY) || "[]"); }
@@ -33,38 +48,34 @@
         return getPins().includes(id);
     }
 
-    function getSortedItems() {
+    function getSortedMainItems() {
         const pins = getPins();
+        const all = [...registeredItems, ...submenuParents];
         const pinned = [];
         for (const id of pins) {
-            const found = registeredItems.find(i => i.id === id);
+            const found = all.find(i => i.id === id);
             if (found) pinned.push(found);
         }
-        const unpinned = registeredItems.filter(i => !isPinned(i.id));
+        const unpinned = all.filter(i => !isPinned(i.id));
         return [...pinned, ...unpinned];
     }
 
     window.AviaMenu = {
         register: function (item) {
             if (!item || typeof item !== "object") {
-                console.error("[AviaMenu] Registration failed: item must be an object, got", typeof item);
-                return;
+                console.error("[AviaMenu] register: item must be an object"); return;
             }
             if (typeof item.id !== "string" || !item.id.trim()) {
-                console.error("[AviaMenu] Registration failed: item.id must be a non-empty string, got", item.id);
-                return;
+                console.error("[AviaMenu] register: item.id must be a non-empty string"); return;
             }
             if (!item.name || typeof item.name !== "string") {
-                console.error("[AviaMenu] Registration failed for id '%s': item.name must be a non-empty string, got", item.id, item.name);
-                return;
+                console.error("[AviaMenu] register: item.name must be a non-empty string"); return;
             }
             if (typeof item.onClick !== "function") {
-                console.error("[AviaMenu] Registration failed for id '%s': item.onClick must be a function, got", item.id, typeof item.onClick);
-                return;
+                console.error("[AviaMenu] register: item.onClick must be a function"); return;
             }
-            if (registeredItems.find(i => i.id === item.id.trim())) {
-                console.error("[AviaMenu] Registration failed: an item with id '%s' is already registered", item.id.trim());
-                return;
+            if (allIds().includes(item.id.trim())) {
+                console.error("[AviaMenu] register: id '%s' is already registered", item.id.trim()); return;
             }
             registeredItems.push({
                 id: item.id.trim(),
@@ -75,28 +86,220 @@
             if (menuEl) rebuildMenu();
         },
 
+        submenuregister: function (item) {
+            if (!item || typeof item !== "object") {
+                console.error("[AviaMenu] submenuregister: item must be an object"); return;
+            }
+            if (typeof item.id !== "string" || !item.id.trim()) {
+                console.error("[AviaMenu] submenuregister: item.id must be a non-empty string"); return;
+            }
+            if (!item.name || typeof item.name !== "string") {
+                console.error("[AviaMenu] submenuregister: item.name must be a non-empty string"); return;
+            }
+            if (allIds().includes(item.id.trim())) {
+                console.error("[AviaMenu] submenuregister: id '%s' is already registered", item.id.trim()); return;
+            }
+            submenuParents.push({
+                id: item.id.trim(),
+                name: item.name,
+                icon: typeof item.icon === "string" && item.icon.trim() ? item.icon.trim() : null
+            });
+            if (menuEl) rebuildMenu();
+        },
+
+        submenu: function (item) {
+            if (!item || typeof item !== "object") {
+                console.error("[AviaMenu] submenu: item must be an object"); return;
+            }
+            if (typeof item.parent !== "string" || !item.parent.trim()) {
+                console.error("[AviaMenu] submenu: item.parent must be a non-empty string"); return;
+            }
+            if (typeof item.id !== "string" || !item.id.trim()) {
+                console.error("[AviaMenu] submenu: item.id must be a non-empty string"); return;
+            }
+            if (!item.name || typeof item.name !== "string") {
+                console.error("[AviaMenu] submenu: item.name must be a non-empty string"); return;
+            }
+            if (typeof item.onClick !== "function") {
+                console.error("[AviaMenu] submenu: item.onClick must be a function"); return;
+            }
+            if (!submenuParents.find(p => p.id === item.parent.trim())) {
+                console.error("[AviaMenu] submenu: no submenuregister found with id '%s'", item.parent.trim()); return;
+            }
+            if (allIds().includes(item.id.trim())) {
+                console.error("[AviaMenu] submenu: id '%s' is already registered", item.id.trim()); return;
+            }
+            submenuItems.push({
+                parent: item.parent.trim(),
+                id: item.id.trim(),
+                name: item.name,
+                onClick: item.onClick,
+                icon: typeof item.icon === "string" && item.icon.trim() ? item.icon.trim() : null
+            });
+            if (menuEl) rebuildMenu();
+        },
+
         unregister: function (item) {
             if (!item || typeof item.id !== "string" || !item.id.trim()) {
-                console.error("[AviaMenu] Unregister failed: item.id must be a non-empty string");
-                return;
+                console.error("[AviaMenu] unregister: item.id must be a non-empty string"); return;
             }
             const id = item.id.trim();
-            const idx = registeredItems.findIndex(i => i.id === id);
-            if (idx === -1) {
-                console.error("[AviaMenu] Unregister failed: no item with id '%s' found", id);
+
+            const rIdx = registeredItems.findIndex(i => i.id === id);
+            if (rIdx !== -1) {
+                registeredItems.splice(rIdx, 1);
+                if (menuEl) rebuildMenu();
                 return;
             }
-            registeredItems.splice(idx, 1);
-            if (menuEl) rebuildMenu();
+
+            const pIdx = submenuParents.findIndex(i => i.id === id);
+            if (pIdx !== -1) {
+                submenuParents.splice(pIdx, 1);
+                const children = submenuItems.filter(i => i.parent === id);
+                children.forEach(c => {
+                    const cIdx = submenuItems.findIndex(s => s.id === c.id);
+                    if (cIdx !== -1) submenuItems.splice(cIdx, 1);
+                });
+                closeSubmenu();
+                if (menuEl) rebuildMenu();
+                return;
+            }
+
+            const sIdx = submenuItems.findIndex(i => i.id === id);
+            if (sIdx !== -1) {
+                const parentId = submenuItems[sIdx].parent;
+                submenuItems.splice(sIdx, 1);
+                const remaining = submenuItems.filter(i => i.parent === parentId);
+                if (remaining.length === 0) {
+                    const pIdx2 = submenuParents.findIndex(i => i.id === parentId);
+                    if (pIdx2 !== -1) submenuParents.splice(pIdx2, 1);
+                    closeSubmenu();
+                }
+                if (menuEl) rebuildMenu();
+                return;
+            }
+
+            console.error("[AviaMenu] unregister: no item with id '%s' found", id);
         }
     };
 
+    function closeSubmenu() {
+        if (activeSubmenuEl) {
+            activeSubmenuEl.remove();
+            activeSubmenuEl = null;
+        }
+        activeSubmenuParentBtn = null;
+        clearTimeout(submenuHoverTimeout);
+    }
+
     function closeMenu() {
+        closeSubmenu();
         if (menuEl) {
             menuEl.remove();
             menuEl = null;
         }
         menuOpen = false;
+    }
+
+    function openSubmenu(parentItem, anchorBtn) {
+        if (activeSubmenuParentBtn === anchorBtn) return;
+        closeSubmenu();
+        activeSubmenuParentBtn = anchorBtn;
+
+        const items = submenuItems.filter(i => i.parent === parentItem.id);
+        if (items.length === 0) return;
+
+        const sub = document.createElement("div");
+        activeSubmenuEl = sub;
+        Object.assign(sub.style, {
+            position: "fixed",
+            zIndex: "9999999",
+            background: "var(--md-sys-color-surface, #1e1e1e)",
+            borderRadius: "16px",
+            boxShadow: "0 8px 28px rgba(0,0,0,0.4)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            backdropFilter: "blur(12px)",
+            overflow: "hidden",
+            minWidth: "180px",
+            display: "flex",
+            flexDirection: "column"
+        });
+
+        const subList = document.createElement("div");
+        Object.assign(subList.style, {
+            display: "flex",
+            flexDirection: "column",
+            padding: "8px",
+            boxSizing: "border-box",
+            maxHeight: (SUBMENU_MAX_VISIBLE * ITEM_HEIGHT + 16) + "px",
+            overflowY: items.length > SUBMENU_MAX_VISIBLE ? "auto" : "hidden",
+            scrollbarWidth: "none"
+        });
+
+        for (const subItem of items) {
+            const btn = document.createElement("div");
+            Object.assign(btn.style, {
+                padding: "0 12px",
+                height: ITEM_HEIGHT + "px",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                fontSize: "13px",
+                fontWeight: "500",
+                color: "var(--md-sys-color-on-surface, #fff)",
+                cursor: "pointer",
+                borderRadius: "10px",
+                transition: "background 0.12s",
+                userSelect: "none",
+                flexShrink: "0"
+            });
+
+            if (subItem.icon) {
+                const iconEl = document.createElement("span");
+                iconEl.className = "material-symbols-outlined";
+                iconEl.textContent = subItem.icon;
+                iconEl.style.cssText = "font-size:20px;display:block;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0;flex-shrink:0;opacity:0.85;";
+                btn.appendChild(iconEl);
+            }
+
+            const label = document.createElement("span");
+            label.textContent = subItem.name;
+            label.style.flex = "1";
+            btn.appendChild(label);
+
+            btn.addEventListener("mouseenter", () => { btn.style.background = "rgba(255,255,255,0.07)"; });
+            btn.addEventListener("mouseleave", () => { btn.style.background = "transparent"; });
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                closeMenu();
+                try { subItem.onClick(); } catch (err) { console.error("[AviaMenu]", err); }
+            });
+
+            subList.appendChild(btn);
+        }
+
+        sub.appendChild(subList);
+        document.body.appendChild(sub);
+
+        const anchorRect = anchorBtn.getBoundingClientRect();
+        const subRect = sub.getBoundingClientRect();
+        let top = anchorRect.top;
+        let left = anchorRect.left - subRect.width - 6;
+
+        if (left < 8) left = anchorRect.right + 6;
+        if (top + subRect.height > window.innerHeight - 8) {
+            top = window.innerHeight - subRect.height - 8;
+        }
+
+        sub.style.top = top + "px";
+        sub.style.left = left + "px";
+
+        sub.addEventListener("mouseleave", () => {
+            submenuHoverTimeout = setTimeout(closeSubmenu, 120);
+        });
+        sub.addEventListener("mouseenter", () => {
+            clearTimeout(submenuHoverTimeout);
+        });
     }
 
     function rebuildMenu() {
@@ -105,7 +308,9 @@
         if (!list) return;
         list.innerHTML = "";
 
-        if (registeredItems.length === 0) {
+        const sorted = getSortedMainItems();
+
+        if (sorted.length === 0) {
             const empty = document.createElement("div");
             empty.textContent = "No buttons registered";
             Object.assign(empty.style, {
@@ -122,9 +327,8 @@
             return;
         }
 
-        const sorted = getSortedItems();
-
         for (const item of sorted) {
+            const isParent = submenuParents.some(p => p.id === item.id);
             const pinned = isPinned(item.id);
 
             const btn = document.createElement("div");
@@ -181,32 +385,51 @@
             });
             pinBtn.addEventListener("click", (e) => {
                 e.stopPropagation();
-                if (isPinned(item.id)) {
-                    unpinItem(item.id);
-                } else {
-                    pinItem(item.id);
-                }
+                if (isPinned(item.id)) unpinItem(item.id);
+                else pinItem(item.id);
                 rebuildMenu();
             });
 
             btn.appendChild(pinBtn);
 
-            btn.addEventListener("mouseenter", () => {
-                btn.style.background = "rgba(255,255,255,0.07)";
-            });
-            btn.addEventListener("mouseleave", () => {
-                btn.style.background = "transparent";
-            });
-            btn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                closeMenu();
-                try { item.onClick(); } catch (err) { console.error("[AviaMenu]", err); }
-            });
+            if (isParent) {
+                const chevron = document.createElement("span");
+                chevron.className = "material-symbols-outlined";
+                chevron.textContent = "arrow_back_2";
+                chevron.style.cssText = "font-size:14px;display:block;transform:rotate(180deg);flex-shrink:0;opacity:0.5;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0;";
+                btn.appendChild(chevron);
+
+                btn.addEventListener("mouseenter", () => {
+                    btn.style.background = "rgba(255,255,255,0.07)";
+                    clearTimeout(submenuHoverTimeout);
+                    openSubmenu(item, btn);
+                });
+                btn.addEventListener("mouseleave", () => {
+                    btn.style.background = "transparent";
+                    submenuHoverTimeout = setTimeout(() => {
+                        if (activeSubmenuParentBtn === btn) closeSubmenu();
+                    }, 120);
+                });
+            } else {
+                btn.addEventListener("mouseenter", () => {
+                    btn.style.background = "rgba(255,255,255,0.07)";
+                    clearTimeout(submenuHoverTimeout);
+                    if (activeSubmenuEl) closeSubmenu();
+                });
+                btn.addEventListener("mouseleave", () => {
+                    btn.style.background = "transparent";
+                });
+                btn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    closeMenu();
+                    try { item.onClick(); } catch (err) { console.error("[AviaMenu]", err); }
+                });
+            }
 
             list.appendChild(btn);
         }
 
-        const total = getSortedItems().length;
+        const total = sorted.length;
         list.style.maxHeight = (MAX_VISIBLE * ITEM_HEIGHT + 16) + "px";
         list.style.overflowY = total > MAX_VISIBLE ? "auto" : "hidden";
         list.style.scrollbarWidth = "none";
@@ -312,7 +535,7 @@
     }
 
     function onOutsideClick(e) {
-        if (menuEl && !menuEl.contains(e.target)) {
+        if (menuEl && !menuEl.contains(e.target) && (!activeSubmenuEl || !activeSubmenuEl.contains(e.target))) {
             closeMenu();
         }
     }
