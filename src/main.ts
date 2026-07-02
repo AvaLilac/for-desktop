@@ -52,7 +52,8 @@ const loadInject = () => {
   mainWindow.webContents.on("dom-ready", async () => {
     try {
       const plugins: string[] = [
-	      "menu.js",
+	    "menu.js",
+		"forceapperance.js"
         "aviaclientcategory.js",
         "inject.js",
         "repofrontend.js",
