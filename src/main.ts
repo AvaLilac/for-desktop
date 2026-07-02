@@ -13,6 +13,7 @@ import { config } from "./native/config";
 import { initDiscordRpc } from "./native/discordRpc";
 import { initTray } from "./native/tray";
 import { BUILD_URL, createMainWindow, mainWindow } from "./native/window";
+import "./world/plugins";
 
 const applyAppName = () => {
   try {
