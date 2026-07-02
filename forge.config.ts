@@ -150,6 +150,7 @@ const config: ForgeConfig = {
     name: STRINGS.name,
     executableName: STRINGS.execName,
     icon: `${AVIA_ASSET_DIR}/icon`,
+    extraResource: ["plugins"],
   },
   rebuildConfig: {},
   makers,
