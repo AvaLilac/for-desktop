@@ -68,6 +68,7 @@ const loadInject = () => {
         "aviadesktopversion.js",
         "disableTrayIcon.js",
         "clientBackup.js",
+        "AccountSwitcher.js",
         "LoginWithToken.js",
         "UpdateChecker.js",
         "badges.js",
