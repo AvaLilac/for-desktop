@@ -4,8 +4,10 @@ import * as path from "path";
 
 function getPluginsPath(): string {
     return app.isPackaged
-        ? path.join(process.resourcesPath, "plugins")
-        : path.join(app.getAppPath(), "plugins");
+    ? process.platform != "win32"
+        ? path.join(app.getPath('userData'), "plugins")
+        : path.join(process.resourcesPath, "plugins")
+    : path.join(app.getAppPath(), 'plugins');
 }
 
 function safePath(dir: string, filename: string): string | null {

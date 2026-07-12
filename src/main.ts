@@ -91,6 +91,8 @@ if (acquiredLock) {
   updateElectronApp({ onNotifyUser });
 
   app.whenReady().then(() => {
+    app.setPath("sessionData", app.getPath("sessionData")); //This is needed so it doesn't default to userData
+    app.setPath("userData", path.join(app.getPath("home"), "aviaClient"));
     applyAppName();
     createMainWindow();
     if (mainWindow) {
