@@ -53,6 +53,7 @@ const loadInject = () => {
   mainWindow.webContents.on("dom-ready", async () => {
     try {
       const plugins: string[] = [
+        "TitlebarRefresh.js",
         "menu.js",
         "forceapperance.js",
         "aviaclientcategory.js",
@@ -68,6 +69,7 @@ const loadInject = () => {
         "aviadesktopversion.js",
         "disableTrayIcon.js",
         "clientBackup.js",
+        "AccountSwitcher.js",
         "LoginWithToken.js",
         "UpdateChecker.js",
         "badges.js",
