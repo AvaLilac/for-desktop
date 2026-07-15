@@ -69,18 +69,6 @@ git clone -b dev --recursive https://codeberg.org/AvaLilac/for-desktop aviaclien
 Then proceed to the rest of the steps above
 ```
 
-Error when compiling:
-
-```bash
-If you see something like this while compiling:
-
-Entry module is using named and default exports together. Consumers of your bundle will have to use `chunk.default` to access the default export, which may not be what you want. Use `output.exports: "named"` to disable this warning.
-
-That is completely normal. It is a warning, not an error.
-This warning appears because of the code that allows JSON files to compile without being compressed. It is intentional
-Leave it as is. It will not affect Avia client, and Avia client will build and run normally.
-```
-
 Various useful commands for development testing:
 
 ```bash
