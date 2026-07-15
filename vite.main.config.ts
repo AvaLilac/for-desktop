@@ -18,5 +18,15 @@ export default defineConfig({
           ));
       }
     }
-  ]
+  ],
+  json: {
+    namedExports: true,
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        exports: "none", // We are building an app, not a library
+      },
+    },
+  },
 });
