@@ -64,6 +64,7 @@ const loadInject = () => {
         "aviaversion.js",
         "pluginsupport.js",
         "LocalPlugins.js",
+        "ReallyLocalPlugins.js",
         "ButtonFix.js",
         "headliner.js",
         "aviadesktopversion.js",
