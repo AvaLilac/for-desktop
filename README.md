@@ -69,7 +69,7 @@ git clone -b dev --recursive https://codeberg.org/AvaLilac/for-desktop aviaclien
 Then proceed to the rest of the steps above
 ```
 
-Various useful commands for development testing:
+Error when compiling:
 
 ```bash
 If you see something like this while compiling:
@@ -81,7 +81,7 @@ This warning appears because of the code that allows JSON files to compile witho
 Leave it as is. It will not affect Avia client, and Avia client will build and run normally.
 ```
 
-
+Various useful commands for development testing:
 
 ```bash
 # connect to the development server
