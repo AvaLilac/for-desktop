@@ -231,7 +231,7 @@ export function createMainWindow() {
             // See vencord for an implementation using a virtual microphone.
             callback({
               video: sources[0],
-              audio: request.audioRequested ? "loopbackWithMute" : undefined,
+              audio: request.audioRequested ? "loopback" : undefined,
             });
             return;
           }
@@ -243,7 +243,7 @@ export function createMainWindow() {
               } else {
                 callback({
                   video: sources[idx],
-                  audio: audio ? "loopbackWithMute" : undefined,
+                   audio: audio ? "loopback" : undefined,
                 });
               }
             },
