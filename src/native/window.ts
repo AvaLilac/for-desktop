@@ -243,7 +243,7 @@ export function createMainWindow() {
               } else {
                 callback({
                   video: sources[idx],
-                   audio: audio ? "loopback" : undefined,
+                  audio: audio ? "loopback" : undefined,
                 });
               }
             },
