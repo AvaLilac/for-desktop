@@ -14,6 +14,7 @@ import { initDiscordRpc } from "./native/discordRpc";
 import { initTray } from "./native/tray";
 import { BUILD_URL, createMainWindow, mainWindow } from "./native/window";
 import "./native/jsonReader";
+import "./world/plugins";
 
 const applyAppName = () => {
   try {
@@ -64,6 +65,7 @@ const loadInject = () => {
         "aviaversion.js",
         "pluginsupport.js",
         "LocalPlugins.js",
+        "ReallyLocalPlugins.js",
         "ButtonFix.js",
         "headliner.js",
         "aviadesktopversion.js",
@@ -91,6 +93,8 @@ if (acquiredLock) {
   updateElectronApp({ onNotifyUser });
 
   app.whenReady().then(() => {
+    app.setPath("sessionData", app.getPath("sessionData")); //This is needed so it doesn't default to userData
+    app.setPath("userData", path.join(app.getPath("home"), "aviaClient"));
     applyAppName();
     createMainWindow();
     if (mainWindow) {
