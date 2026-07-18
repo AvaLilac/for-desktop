@@ -5,5 +5,7 @@ onlyBuiltDependencies:
   - electron
   - electron-winstaller
   - esbuild
+  - fs-xattr
+  - macos-alias
   - register-scheme
   - utf-8-validate
