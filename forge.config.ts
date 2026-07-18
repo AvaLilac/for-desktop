@@ -35,13 +35,16 @@ const makers: ForgeConfig["makers"] = [
     copyright: "Copyright (C) 2025 Revolt Platforms LTD",
   }),
   new MakerZIP({}),
-  new MakerDMG((arch) => {
-    return {
-      name: `${STRINGS.name}-${process.platform}-${arch}`,
-      format: "ULFO",
-      overwrite: true,
-    };
-  }),
+  new MakerDMG(
+    (arch) => {
+      return {
+        name: `${STRINGS.name}-${process.platform}-${arch}`,
+        format: "ULFO",
+        overwrite: true,
+      };
+    },
+    ["darwin"],
+  ),
 ];
 
 if (!process.env.PLATFORM) {
