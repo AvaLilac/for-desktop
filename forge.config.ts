@@ -1,5 +1,6 @@
 import { MakerAppX } from "@electron-forge/maker-appx";
 import { MakerDeb } from "@electron-forge/maker-deb";
+import { MakerDMG } from "@electron-forge/maker-dmg";
 import { MakerFlatpak } from "@electron-forge/maker-flatpak";
 import { MakerFlatpakOptionsConfig } from "@electron-forge/maker-flatpak/dist/Config";
 import { MakerSquirrel } from "@electron-forge/maker-squirrel";
@@ -34,6 +35,13 @@ const makers: ForgeConfig["makers"] = [
     copyright: "Copyright (C) 2025 Revolt Platforms LTD",
   }),
   new MakerZIP({}),
+  new MakerDMG((arch) => {
+    return {
+      name: `${STRINGS.name}-${process.platform}-${arch}`,
+      format: "ULFO",
+      overwrite: true,
+    };
+  }),
 ];
 
 if (!process.env.PLATFORM) {
