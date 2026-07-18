@@ -13,6 +13,7 @@ import { config } from "./native/config";
 import { initDiscordRpc } from "./native/discordRpc";
 import { initTray } from "./native/tray";
 import { BUILD_URL, createMainWindow, mainWindow } from "./native/window";
+import "./native/jsonReader";
 
 const applyAppName = () => {
   try {
@@ -52,7 +53,9 @@ const loadInject = () => {
   mainWindow.webContents.on("dom-ready", async () => {
     try {
       const plugins: string[] = [
-	      "menu.js",
+        "TitlebarRefresh.js",
+        "menu.js",
+        "forceapperance.js",
         "aviaclientcategory.js",
         "inject.js",
         "repofrontend.js",
@@ -66,6 +69,7 @@ const loadInject = () => {
         "aviadesktopversion.js",
         "disableTrayIcon.js",
         "clientBackup.js",
+        "AccountSwitcher.js",
         "LoginWithToken.js",
         "UpdateChecker.js",
         "badges.js",
@@ -98,10 +102,10 @@ if (acquiredLock) {
     }
     loadInject();
 
+    // save first launch state
     if (config.firstLaunch) {
-      if (process.platform === "win32" || process.platform === "darwin") {
-        autoLaunch.enable();
-      }
+      // Doesn't do anything right now. Used to enable auto start, but that behaviour was removed.
+      // Left in case it gets used in the future.
       config.firstLaunch = false;
     }
 

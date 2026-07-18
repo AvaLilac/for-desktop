@@ -24,6 +24,17 @@
         });
     }
 
+    function exportPlugin(plugin) {
+        const filename = plugin.name.endsWith(".js") ? plugin.name : plugin.name + ".js";
+        const blob = new Blob([plugin.code || ""], { type: "text/javascript" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
     function runLocalPlugin(plugin) {
         stopLocalPlugin(plugin);
         try {
@@ -502,7 +513,6 @@
         });
 
         visible.forEach((plugin) => {
-            const realIndex = plugins.indexOf(plugin);
             const isRunning = !!runSnap[plugin.id];
             const hasError = !!errSnap[plugin.id];
 
@@ -632,6 +642,12 @@
                 });
             };
 
+            const exportBtn = document.createElement("button");
+            exportBtn.textContent = "Export";
+            styleLocalBtn(exportBtn, "rgba(80,200,120,0.15)");
+            exportBtn.title = "Download as .js file";
+            exportBtn.onclick = () => exportPlugin(plugin);
+
             const removeBtn = document.createElement("button");
             removeBtn.textContent = "✕";
             styleLocalBtn(removeBtn, "rgba(255,80,80,0.15)");
@@ -645,6 +661,7 @@
                 renderLocalPanel(filter);
             };
 
+            footer.appendChild(exportBtn);
             footer.appendChild(editBtn);
             footer.appendChild(removeBtn);
 
@@ -716,7 +733,6 @@
         aviaPluginsBtn.parentElement.insertBefore(localBtn, aviaPluginsBtn.nextSibling);
     }
 
-
     function registerWithAviaMenu() {
         if (window.AviaMenu) {
             window.AviaMenu.register({ id: "avia_plugins_local", name: "Local Plugins", icon: "extension", onClick: toggleLocalPanel });
@@ -729,6 +745,7 @@
             }, 100);
         }
     }
+
     function waitForBody(callback) {
         if (document.body) callback();
         else new MutationObserver((obs) => {
