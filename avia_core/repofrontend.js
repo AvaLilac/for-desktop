@@ -314,10 +314,10 @@
         currentRepoData = data.plugins;
         repoContent.innerHTML = "";
 
-        const filtered = currentRepoData.filter(p =>
+        const filtered = [...currentRepoData].filter(p =>
             (p.name + " " + (p.author || "") + " " + (p.description || ""))
                 .toLowerCase().includes(filter.toLowerCase())
-        );
+        ).reverse();
 
         if (filtered.length === 0) {
             repoContent.innerHTML = `<div class="avia-repo-empty">No plugins found.</div>`;
