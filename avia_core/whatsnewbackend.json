@@ -34,8 +34,7 @@
         {
           "type": "ul",
           "items": [
-            "Trusted Plugins/Themes repo now has its order reversed, It will now show new plugins at top instead of old",
-            "Badges now inject correctly under different languages"
+            "It is now possible to Update Local plugins as long as the localplugin has support"
           ]
         },
         {
@@ -57,7 +56,8 @@
         {
           "type": "ul",
           "items": [
-            "It is now possible to Update Local plugins as long as the localplugin has support"
+            "Trusted Plugins/Themes repo now has its order reversed, It will now show new plugins at top instead of old",
+            "Badges now inject correctly under different languages"
           ]
         },
         {
