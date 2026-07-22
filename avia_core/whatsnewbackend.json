@@ -1,7 +1,7 @@
 {
   "entries": [
     {
-      "date": "July 17, 2026",
+      "date": "July 21, 2026",
       "content": [
         {
           "type": "image",
@@ -13,7 +13,29 @@
         },
         {
           "type": "h1",
-          "text": "AviaClient 1.8.0"
+          "text": "AviaClient 1.8.1"
+        },
+        {
+          "type": "spacer"
+        },
+        {
+          "type": "hr"
+        },
+        {
+          "type": "spacer"
+        },
+        {
+          "type": "h2",
+          "text": "Changes"
+        },
+        {
+          "type": "spacer"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "It is now possible to Update Local plugins as long as the localplugin has support"
+          ]
         },
         {
           "type": "spacer"
@@ -34,7 +56,8 @@
         {
           "type": "ul",
           "items": [
-            "Fixed AviaMenu where when the button reached its last button visible, It would cut the last button in the list in half. it now displays right"
+            "Trusted Plugins/Themes repo now has its order reversed, It will now show new plugins at top instead of old",
+            "Badges now inject correctly under different languages"
           ]
         },
         {
@@ -48,87 +71,11 @@
         },
         {
           "type": "h2",
-          "text": "New"
-        },
-        {
-          "type": "ul",
-          "items": [
-            "You now have the ability to export localPlugins into JS files",
-            "Added a indicator to AviaMenu when you have more then can be visible in AviaMenu so you know to scroll",
-            "Integrated ForceAppearance. Which Allows parts of AviaClient to still inject it's buttons no matter the language Set",
-            "Added a Refresh button in the Title Bar. That Reloads Stoat on click",
-            "Account Switcher, You now have full access to add accounts. And login to them with 1 click!",
-            "What's New Now reads from a local backend instead of from a Online URL"
-          ]
-        },
-        {
-          "type": "spacer"
-        },
-        {
-          "type": "hr"
-        },
-        {
-          "type": "spacer"
-        },
-        {
-          "type": "h2",
-          "text": "Changes"
-        },
-        {
-          "type": "spacer"
-        },
-        {
-          "type": "hr"
-        },
-        {
-          "type": "spacer"
-        },
-        {
-          "type": "ul",
-          "items": [
-            "Updated Dependencies",
-            "Added a 5 New api's to Avia Menu. below Explains what every api. including existing. does"
-          ]
-        },
-        {
-          "type": "h3",
-          "text": "Registers a button Via The API:"
+          "text": "How to make your plugin possible to update"
         },
         {
           "type": "paragraph",
-          "text": "`window.AviaMenu.register({ id: \"example\", name: \"example\", icon: \"example\", onClick: function });`"
-        },
-        {
-          "type": "h3",
-          "text": "Unregisters a button Via the API:"
-        },
-        {
-          "type": "paragraph",
-          "text": "`window.AviaMenu.unregister({ id: \"example\" });`"
-        },
-        {
-          "type": "h3",
-          "text": "Registers a button to the API that Acts as a submenu:"
-        },
-        {
-          "type": "paragraph",
-          "text": "`window.AviaMenu.submenuregister({ id: \"example\", name: \"example\", icon: \"example\" });`"
-        },
-        {
-          "type": "h3",
-          "text": "Adds a button to a submenu:"
-        },
-        {
-          "type": "paragraph",
-          "text": "`window.AviaMenu.submenu({ parent: \"example\", id: \"example\", name: \"example\", icon: \"example\", onClick: function });`"
-        },
-        {
-          "type": "h3",
-          "text": "Changes a SubMenu button to display other Text/Icon:"
-        },
-        {
-          "type": "paragraph",
-          "text": "`window.AviaMenu.updatesubmenu({ parent: \"example\", id: \"example\", text: \"example\", icon: \"example\" });` "
+          "text": "Please go to [1.8.1 Release](https://github.com/AvaLilac/for-desktop/releases/edit/1.8.1). Our whats new does not support the format needed to show here. Will show better on github"
         }
       ]
     }
