@@ -7,7 +7,6 @@ import started from "electron-squirrel-startup";
 
 import { aviaVersion } from "../package.json";
 
-import { autoLaunch } from "./native/autoLaunch";
 import { setBadgeCount } from "./native/badges";
 import { config } from "./native/config";
 import { initDiscordRpc } from "./native/discordRpc";
