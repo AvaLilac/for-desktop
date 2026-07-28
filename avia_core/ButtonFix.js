@@ -1,4 +1,4 @@
-(function () { //test
+(function () { 
     if (window.__BUTTON_FIX__) return;
     window.__BUTTON_FIX__ = true;
 
