@@ -49,10 +49,22 @@
     }
   }
 
+  function setUserCardBadgesLabel() {
+    const label = document.querySelector(
+      `#floating div:has(
+          > span:only-of-type + div:only-of-type > img[aria-label],
+          > span:only-of-type + div:only-of-type > span[aria-label] > img) > span:only-of-type`,
+    );
+    if (label && label.textContent !== "Badges") {
+      label.textContent = "Badges";
+    }
+  }
+
   new MutationObserver(() => {
     setAppearanceLabel();
     setUserSettingsLabel();
     setUserCardJoinedLabel();
+    setUserCardBadgesLabel();
   }).observe(document.body, {
     childList: true,
     subtree: true,
