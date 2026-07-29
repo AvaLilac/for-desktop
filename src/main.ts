@@ -54,7 +54,7 @@ const loadInject = () => {
       const plugins: string[] = [
         "TitlebarRefresh.js",
         "menu.js",
-        "forceapperance.js",
+        "ForceEnglish.js",
         "aviaclientcategory.js",
         "inject.js",
         "repofrontend.js",
