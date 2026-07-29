@@ -782,7 +782,20 @@ function styleLocalBtn(btn, bg) {
 
 function injectLocalButton() {
     if (document.getElementById("avia-local-plugins-btn")) return;
-    const appearanceBtn = [...document.querySelectorAll("a")].find(a => a.textContent.trim() === "Appearance");
+    const appearanceBtn = [...document.querySelectorAll(
+            `.settings_sidebar .content a.button:not(
+                [id^='avia-']
+            ):not(
+                [id^='stoat-fake-']
+            ):has(
+                > div
+                > svg
+                > path[d^='M12 22C6.49 22']
+            )`
+        )].find((a) => {
+            const label = a.querySelector('div > svg + div > div');
+            if (label.textContent === "Appearance") return a;
+        });
     if (!appearanceBtn) return;
     const aviaPluginsBtn = document.getElementById("stoat-fake-plugins");
     if (!aviaPluginsBtn) return;

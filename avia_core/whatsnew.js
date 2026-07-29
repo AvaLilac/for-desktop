@@ -345,8 +345,20 @@ async function fetchAndOpen() {
 function injectButton() {
     if (document.getElementById("avia-whatsnew-btn")) return;
 
-    const appearanceBtn = [...document.querySelectorAll("a")]
-        .find(a => a.textContent.trim() === "Appearance");
+    const appearanceBtn = [...document.querySelectorAll(
+            `.settings_sidebar .content a.button:not(
+                [id^='avia-']
+            ):not(
+                [id^='stoat-fake-']
+            ):has(
+                > div
+                > svg
+                > path[d^='M12 22C6.49 22']
+            )`
+        )].find((a) => {
+            const label = a.querySelector('div > svg + div > div');
+            if (label.textContent === "Appearance") return a;
+        });
     const referenceNode = document.getElementById("stoat-fake-quickcss");
     if (!appearanceBtn || !referenceNode) return;
 
