@@ -40,9 +40,9 @@
     if (
       header &&
       subheader &&
-      header.tagName === "span" &&
+      header.tagName.toLowerCase() === "span" &&
       header.textContent !== "Joined" &&
-      subheader.tagName === "div" &&
+      subheader.tagName.toLowerCase() === "div" &&
       subheader.textContent === "Stoat"
     ) {
       header.textContent = "Joined";
