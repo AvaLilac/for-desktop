@@ -162,7 +162,7 @@ export function createMainWindow() {
     ) {
       event.preventDefault();
       mainWindow.webContents.executeJavaScript(`(() => {
-        var escButton = document.querySelector("#floating .top_0 > button");
+        var escButton = document.querySelector("#floating .close > button");
         var settingsPanel = document.querySelector("#root div[aria-label='Settings'] > a");
 
         if (escButton) escButton.click();
