@@ -2,6 +2,8 @@
   if (window.__BUTTON_FIX__) return;
   window.__BUTTON_FIX__ = true;
 
+  const dontHideWithGif = ["avia-favorites-btn"];
+
   function getChatBarButtons(append) {
     return document.querySelectorAll(
       `.app_body main > div:last-child > div > div:last-child > div > div ${append ?? ""}`,
@@ -24,7 +26,10 @@
     const injectedButtons = [];
 
     getChatBarButtons().forEach((element) => {
-      if (element.id?.startsWith("avia-")) {
+      if (
+        element.id?.startsWith("avia-") &&
+        !dontHideWithGif.includes(element.id)
+      ) {
         injectedButtons.push(element);
       }
     });
