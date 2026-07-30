@@ -1,10 +1,11 @@
-(function () {
+(function() {
     if (window.__AVIA_PROFILE_BADGESV2__) return;
     window.__AVIA_PROFILE_BADGESV2__ = true;
 
     const BADGE_URL = "https://raw.githubusercontent.com/AvaLilac/AviaClientBadges/refs/heads/main/userbadgesbackend.js";
 
-    let badgeData = null, loadingPromise = null;
+    let badgeData = null,
+        loadingPromise = null;
 
     function loadBadges() {
         if (badgeData) return Promise.resolve();
@@ -15,7 +16,9 @@
                 new Function(code)();
                 badgeData = window.AVIA_USER_BADGES || [];
             })
-            .catch(() => { badgeData = []; });
+            .catch(() => {
+                badgeData = [];
+            });
         return loadingPromise;
     }
 
@@ -38,6 +41,20 @@
             if (el.children.length > 0) continue;
             if (el.textContent.trim() !== title) continue;
 
+            let candidate = el.parentElement;
+            while (candidate && candidate !== root) {
+                if (candidate.children.length >= 2) return candidate;
+                candidate = candidate.parentElement;
+            }
+        }
+        return null;
+    }
+
+    function findBioCard(root) {
+        const allEls = root.querySelectorAll("*");
+        for (const el of allEls) {
+            if (el.children.length > 0) continue;
+            if (el.textContent.trim() !== "Bio") continue;
             let candidate = el.parentElement;
             while (candidate && candidate !== root) {
                 if (candidate.children.length >= 2) return candidate;
@@ -120,7 +137,10 @@
             });
         });
         wrapper.addEventListener("mouseleave", () => {
-            if (tip) { tip.remove(); tip = null; }
+            if (tip) {
+                tip.remove();
+                tip = null;
+            }
         });
         return wrapper;
     }
@@ -169,11 +189,7 @@
         return hasSvgAvatar && hasUsername;
     }
 
-    async function processProfile(root) {
-        await loadBadges();
-        const username = getUsername(root);
-        if (!username) return;
-
+    function runInjectionFlow(root, username) {
         if (findOfficialBadgesCard(root)) {
             injectBadges(root, username);
             return;
@@ -189,8 +205,33 @@
             obs.disconnect();
             injectBadges(root, username);
         });
-        obs.observe(root, { childList: true, subtree: true });
+        obs.observe(root, {
+            childList: true,
+            subtree: true
+        });
         setTimeout(() => obs.disconnect(), 10000);
+    }
+
+    async function processProfile(root) {
+        await loadBadges();
+        const username = getUsername(root);
+        if (!username) return;
+
+        if (findBioCard(root)) {
+            runInjectionFlow(root, username);
+            return;
+        }
+
+        const bioObs = new MutationObserver(() => {
+            if (!findBioCard(root)) return;
+            bioObs.disconnect();
+            runInjectionFlow(root, username);
+        });
+        bioObs.observe(root, {
+            childList: true,
+            subtree: true
+        });
+        setTimeout(() => bioObs.disconnect(), 10000);
     }
 
     const seen = new WeakSet();
@@ -215,5 +256,8 @@
         }
     });
 
-    observer.observe(document.body, { childList: true, subtree: true });
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
 })();
