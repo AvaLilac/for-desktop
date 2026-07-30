@@ -463,7 +463,7 @@
                         > svg[viewBox='0 0 32 32']:has(
                             + div
                             > span
-                            + span
+                                + span
                         )
                         > g
                         > foreignObject[width='32'][height='32']
