@@ -49,7 +49,7 @@
 
         const backdrop = document.createElement("div");
         backdrop.id = "avia-update-modal";
-        backdrop.style.cssText = "position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999999; display: flex; align-items: center; justify-content: center; overflow-y: auto; padding: 80px; box-sizing: border-box; background: rgba(0, 0, 0, 0.6); pointer-events: all;";;
+        backdrop.style.cssText = "position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999954; display: flex; align-items: center; justify-content: center; overflow-y: auto; padding: 80px; box-sizing: border-box; background: rgba(0, 0, 0, 0.6); pointer-events: all;";;
         backdrop.addEventListener("click", (e) => {
             if (e.target === backdrop) backdrop.remove();
         });
