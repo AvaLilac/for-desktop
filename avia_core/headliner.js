@@ -28,8 +28,8 @@
 
   function buildCSS(s) {
     return `
-            #headliner-titlebar-target > div:has(div + div):first-child > div:has(svg):first-child {
-                display: none;
+            #headliner-titlebar-target > div:has(div + div):first-child > div:first-child > svg > *:not(:first-child):not(:nth-child(2)) {
+                visibility: hidden !important;
             }
             #headliner-titlebar-target {
                 position: relative !important;
