@@ -53,6 +53,7 @@ const loadInject = () => {
     try {
       const plugins: string[] = [
         "TitlebarRefresh.js",
+        "fixLoginBackground.js",
         "menu.js",
         "ForceEnglish.js",
         "aviaclientcategory.js",
