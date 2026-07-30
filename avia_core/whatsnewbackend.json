@@ -1,7 +1,7 @@
 {
   "entries": [
     {
-      "date": "July 21, 2026",
+      "date": "July 30, 2026",
       "content": [
         {
           "type": "image",
@@ -13,29 +13,11 @@
         },
         {
           "type": "h1",
-          "text": "AviaClient 1.8.1"
+          "text": "AviaClient 1.8.2"
         },
         {
-          "type": "spacer"
-        },
-        {
-          "type": "hr"
-        },
-        {
-          "type": "spacer"
-        },
-        {
-          "type": "h2",
-          "text": "Changes"
-        },
-        {
-          "type": "spacer"
-        },
-        {
-          "type": "ul",
-          "items": [
-            "It is now possible to Update Local plugins as long as the localplugin has support"
-          ]
+          "type": "h3",
+          "text": "The \"Please Don't Break Me\" update"
         },
         {
           "type": "spacer"
@@ -56,8 +38,8 @@
         {
           "type": "ul",
           "items": [
-            "Trusted Plugins/Themes repo now has its order reversed, It will now show new plugins at top instead of old",
-            "Badges now inject correctly under different languages"
+            "Fixed the entire client",
+            "Fixed a bug on the login page where stoat's background would not be applied"
           ]
         },
         {
@@ -71,11 +53,35 @@
         },
         {
           "type": "h2",
-          "text": "How to make your plugin possible to update"
+          "text": "Changes"
         },
         {
-          "type": "paragraph",
-          "text": "Please go to [1.8.1 Release](https://github.com/AvaLilac/for-desktop/releases/edit/1.8.1). Our whats new does not support the format needed to show here. Will show better on github"
+          "type": "spacer"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Favorites now are on the right side instead of left. ",
+            "Favorites will no longer hide when typing"
+          ]
+        },
+        {
+          "type": "spacer"
+        },
+        {
+          "type": "hr"
+        },
+        {
+          "type": "spacer"
+        },
+        {
+          "type": "h3",
+          "text": "Us:"
+        },
+        {
+          "type": "image",
+          "src": "https://github.com/user-attachments/assets/dd593f1b-96b1-41cf-b264-178a5171433c",
+          "alt": "Us when fixing avia client"
         }
       ]
     }
