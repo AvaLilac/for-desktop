@@ -28,6 +28,9 @@
 
   function buildCSS(s) {
     return `
+            #headliner-titlebar-target > div:has(div + div):first-child > div:has(svg):first-child {
+                display: none;
+            }
             #headliner-titlebar-target {
                 position: relative !important;
             }
