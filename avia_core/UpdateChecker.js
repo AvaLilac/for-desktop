@@ -49,8 +49,10 @@
 
         const backdrop = document.createElement("div");
         backdrop.id = "avia-update-modal";
-        backdrop.className = "top_0 left_0 right_0 bottom_0 pos_fixed z_100 max-h_100% d_grid us_none place-items_center pointer-events_all anim-n_scrimFadeIn anim-dur_0.1s anim-fm_forwards trs_var(--transitions-medium)_all p_80px ov-y_auto";
-        backdrop.style.cssText = "--background: rgba(0, 0, 0, 0.6); background: rgba(0, 0, 0, 0.6);";
+        backdrop.style.cssText = "position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999999; display: flex; align-items: center; justify-content: center; overflow-y: auto; padding: 80px; box-sizing: border-box; background: rgba(0, 0, 0, 0.6); pointer-events: all;";;
+        backdrop.addEventListener("click", (e) => {
+            if (e.target === backdrop) backdrop.remove();
+        });
 
         const motionWrap = document.createElement("div");
         motionWrap.style.cssText = "opacity: 1; --motion-translateY: 0px; transform: translateY(var(--motion-translateY));";
@@ -130,9 +132,7 @@
 
     function findSpellcheckerBtn() {
         const spans = [
-            ...document.querySelectorAll(
-                ".settings_cont span.material-symbols-outlined",
-            ),
+            ...document.querySelectorAll("span.material-symbols-outlined"),
         ];
         const icon = spans.find((s) => s.textContent.trim() === TARGET_ICON);
         if (!icon) return null;
