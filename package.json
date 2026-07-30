@@ -2,7 +2,7 @@
   "name": "aviaclient-desktop",
   "productName": "aviaclient-desktop",
   "version": "1.4.2",
-  "aviaVersion": "1.8.1",
+  "aviaVersion": "1.8.2",
   "main": ".vite/build/main.js",
   "repository": "stoatchat/desktop",
   "scripts": {
@@ -11,8 +11,11 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
-    "install:flatpak": "flatpak --user install out/make/flatpak/x86_64/chat.stoat.stoat-desktop_stable_x86_64.flatpak",
-    "run:flatpak": "flatpak run --socket=session-bus chat.stoat.stoat-desktop",
+    "lint:fix": "eslint --ext --fix .ts,.tsx .",
+    "fmt": "prettier --check 'src/**/*.{ts,tsx,json}'",
+    "fmt:fix": "prettier --write 'src/**/*.{ts,tsx,json}'",
+    "install:flatpak": "flatpak --user install out/make/flatpak/x86_64/chat.stoat.StoatDesktop_stable_x86_64.flatpak",
+    "run:flatpak": "flatpak run --socket=session-bus chat.stoat.StoatDesktop",
     "run:nix": "/usr/bin/env electron-nix ."
   },
   "keywords": [],
@@ -41,6 +44,7 @@
     "@typescript-eslint/parser": "^5.62.0",
     "electron": "^40.10.5",
     "electron-vite": "^5.0.0",
+    "electron-windows-store": "^2.1.0",
     "eslint": "^8.57.1",
     "eslint-plugin-import": "^2.32.0",
     "json-schema-typed": "^8.0.2",
@@ -58,5 +62,5 @@
     "update-electron-app": "^3.2.0",
     "utf-8-validate": "^6.0.6"
   },
-  "packageManager": "pnpm@10.33.0"
+  "packageManager": "pnpm@11.17.0+sha512.cca3cea332ad254bb84145f966d19f4879615210346fc92c79a047f23a0d7b3cca3c3792f0076ba1f1831d277efbcf0a9119b31a9a60eca7fb3d6231f331ef72"
 }

@@ -3,32 +3,39 @@
   window.__AVIA_VERSION_PATCH__ = true;
 
   function patchVersion() {
-    document
-      .querySelectorAll("span.lh_1rem.fs_0\\.75rem.ls_0\\.03125rem.fw_500")
-      .forEach((el) => {
-        if (el.dataset.aviaPatched) return;
+    const button = [
+      ...document.querySelectorAll(
+        ".settings_cont > div > span + div > div div > a",
+      ),
+    ].find((a) => {
+      const label = a.querySelector("div:last-child > div:first-child");
+      if (label?.textContent === "Stoat for Desktop") return a;
+    });
+    const buttonHeaderLabel = button?.querySelector(
+      "div:last-child > div:first-child",
+    );
+    const buttonSubheaderLabel = button?.querySelector(
+      "div:last-child > span:last-child",
+    );
 
-        if (!el.textContent.trim().startsWith("Stoat for Desktop")) return;
+    if (
+      !button ||
+      !buttonHeaderLabel ||
+      !buttonSubheaderLabel ||
+      buttonHeaderLabel.textContent !== "Stoat for Desktop"
+    )
+      return;
 
-        const stoatVersion = window.native.versions.desktop();
+    const stoatVersion = window.native.versions.desktop();
+    const aviaVersion = window.native.versions.aviaClient();
 
-        el.dataset.aviaPatched = "true";
-
-        el.innerHTML = `
-Avia Client Desktop<br>
-<span style="font-size:10px;opacity:0.7;">
-    Based on Stoat ${stoatVersion}
-</span>
-`;
-      });
+    buttonHeaderLabel.dataset.aviaPatched = "true";
+    buttonHeaderLabel.textContent = "Avia Client Desktop";
+    buttonSubheaderLabel.textContent = `Verison ${aviaVersion} (Based on Stoat ${stoatVersion})`;
   }
 
-  const observer = new MutationObserver(patchVersion);
-
-  observer.observe(document.body, {
+  new MutationObserver(() => patchVersion()).observe(document.body, {
     childList: true,
     subtree: true,
   });
-
-  patchVersion();
 })();

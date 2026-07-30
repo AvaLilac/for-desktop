@@ -7,7 +7,6 @@ import started from "electron-squirrel-startup";
 
 import { aviaVersion } from "../package.json";
 
-import { autoLaunch } from "./native/autoLaunch";
 import { setBadgeCount } from "./native/badges";
 import { config } from "./native/config";
 import { initDiscordRpc } from "./native/discordRpc";
@@ -54,8 +53,9 @@ const loadInject = () => {
     try {
       const plugins: string[] = [
         "TitlebarRefresh.js",
+        "fixLoginBackground.js",
         "menu.js",
-        "forceapperance.js",
+        "ForceEnglish.js",
         "aviaclientcategory.js",
         "inject.js",
         "repofrontend.js",

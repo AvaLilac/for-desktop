@@ -609,7 +609,10 @@
     function injectToolbarButton() {
         if (document.getElementById("avia-menu-toolbar-btn")) return;
 
-        const pinBtn = document.querySelector('button[aria-label="View pinned messages"]');
+        const pinBtn = document.querySelector(
+            `.app_body > div > div:first-child
+                > button[aria-label]:has(> svg > path[d^='m640-480 80 80v80H520v240l-40'])`
+        );
         if (!pinBtn) return;
 
         const btn = pinBtn.cloneNode(false);

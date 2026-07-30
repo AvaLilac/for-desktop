@@ -47,7 +47,7 @@ export async function setBadgeCount(count: number) {
         signature: "sa{sv}",
         body: [
           process.env.container === "1"
-            ? "application://chat.stoat.stoat-desktop.desktop" // flatpak handling
+            ? "application://chat.stoat.StoatDesktop.desktop" // flatpak handling
             : "application://stoat-desktop.desktop",
           [
             ["count", ["x", Math.min(count, 0)]],
@@ -58,7 +58,7 @@ export async function setBadgeCount(count: number) {
 
       break;
     case "darwin":
-      app.dock.setBadge(
+      app.dock?.setBadge(
         count === -1 ? "•" : count === 0 ? "" : count.toString(),
       );
 

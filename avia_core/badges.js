@@ -1,47 +1,106 @@
-(function () {
+(function() {
     if (window.__AVIA_PROFILE_BADGESV2__) return;
     window.__AVIA_PROFILE_BADGESV2__ = true;
 
     const BADGE_URL = "https://raw.githubusercontent.com/AvaLilac/AviaClientBadges/refs/heads/main/userbadgesbackend.js";
 
-    let badgeData = null, loadingPromise = null;
+    let badgeData = null,
+        loadingPromise = null;
 
     function loadBadges() {
         if (badgeData) return Promise.resolve();
         if (loadingPromise) return loadingPromise;
-
         loadingPromise = fetch(BADGE_URL + "?t=" + Date.now())
             .then(r => r.text())
             .then(code => {
                 new Function(code)();
                 badgeData = window.AVIA_USER_BADGES || [];
             })
-            .catch(() => { badgeData = []; });
-
+            .catch(() => {
+                badgeData = [];
+            });
         return loadingPromise;
     }
 
     function getUsername(root) {
-        const tag = root.querySelector("span.fw_200");
-        if (!tag) return null;
-        const span = tag.parentElement;
-        return span ? span.textContent.trim() : null;
+        const el = root.querySelector('[aria-label="Click to copy username"]');
+        if (!el) return null;
+
+        return el.textContent.trim();
     }
 
     function getUserBadges(username) {
         if (!badgeData) return [];
         const clean = username.trim().toLowerCase();
-        return badgeData.filter(b =>
-            b.users.some(u => u.toLowerCase() === clean)
-        );
+        return badgeData.filter(b => b.users.some(u => u.toLowerCase() === clean));
     }
 
     function findCardByTitle(root, title) {
-        return [...root.querySelectorAll("div.pos_relative")]
-            .find(c => {
-                const heading = c.querySelector("span.fw_550");
-                return heading && heading.textContent.trim() === title;
-            });
+        const allEls = root.querySelectorAll("*");
+        for (const el of allEls) {
+            if (el.children.length > 0) continue;
+            if (el.textContent.trim() !== title) continue;
+
+            let candidate = el.parentElement;
+            while (candidate && candidate !== root) {
+                if (candidate.children.length >= 2) return candidate;
+                candidate = candidate.parentElement;
+            }
+        }
+        return null;
+    }
+
+    function findBioCard(root) {
+        const allEls = root.querySelectorAll("*");
+        for (const el of allEls) {
+            if (el.children.length > 0) continue;
+            if (el.textContent.trim() !== "Bio") continue;
+            let candidate = el.parentElement;
+            while (candidate && candidate !== root) {
+                if (candidate.children.length >= 2) return candidate;
+                candidate = candidate.parentElement;
+            }
+        }
+        return null;
+    }
+
+    function findJoinedCard(root) {
+        const allEls = root.querySelectorAll("*");
+        for (const el of allEls) {
+            if (el.children.length > 0) continue;
+            if (el.textContent.trim() !== "Joined") continue;
+            let candidate = el.parentElement;
+            while (candidate && candidate !== root) {
+                if (candidate.children.length >= 2) {
+
+                    const hasStorat = [...candidate.querySelectorAll("*")]
+                        .some(e => e.children.length === 0 && e.textContent.trim() === "Stoat");
+                    if (hasStorat) return candidate;
+                    break;
+                }
+                candidate = candidate.parentElement;
+            }
+        }
+        return null;
+    }
+
+    function findOfficialBadgesCard(root) {
+        const allEls = root.querySelectorAll("*");
+        for (const el of allEls) {
+            if (el.children.length > 0) continue;
+            if (el.textContent.trim() !== "Badges") continue;
+            let candidate = el.parentElement;
+            while (candidate && candidate !== root) {
+                if (candidate.children.length >= 2) {
+                    if (candidate.querySelector("img[aria-label], span[aria-label]")) {
+                        return candidate;
+                    }
+                    break;
+                }
+                candidate = candidate.parentElement;
+            }
+        }
+        return null;
     }
 
     function makeBadgeSpan(b) {
@@ -51,15 +110,11 @@
         wrapper.textContent = b.icon;
 
         let tip = null;
-
         wrapper.addEventListener("mouseenter", () => {
             tip = document.createElement("div");
             tip.style.cssText = "position:fixed;z-index:99999;pointer-events:none;white-space:nowrap;";
-
             const inner = document.createElement("div");
-            inner.className = "c_white bg_black p_var(--gap-md) bdr_var(--borderRadius-md) lh_0.875rem fs_0.6875rem ls_0.03125rem fw_500";
-            inner.style.cssText = "";
-
+            inner.style.cssText = "background:black;color:white;padding:6px 10px;border-radius:6px;font-size:11px;font-weight:500;letter-spacing:0.03em;line-height:1;";
             const color = b.color || "";
             if (color.includes("gradient")) {
                 const textSpan = document.createElement("span");
@@ -70,10 +125,8 @@
                 inner.textContent = b.name;
                 inner.style.color = color || "white";
             }
-
             tip.appendChild(inner);
             document.body.appendChild(tip);
-
             requestAnimationFrame(() => {
                 const badgeRect = wrapper.getBoundingClientRect();
                 const tipRect = tip.getBoundingClientRect();
@@ -83,11 +136,12 @@
                 tip.style.top = Math.max(4, y) + "px";
             });
         });
-
         wrapper.addEventListener("mouseleave", () => {
-            if (tip) { tip.remove(); tip = null; }
+            if (tip) {
+                tip.remove();
+                tip = null;
+            }
         });
-
         return wrapper;
     }
 
@@ -97,81 +151,113 @@
         const badges = getUserBadges(username);
         if (!badges.length) return;
 
-        const nativeBadgesCard = findCardByTitle(root, "Badges");
-        if (nativeBadgesCard) {
-            const grid = nativeBadgesCard.querySelector("div.d_flex.flex-wrap_wrap");
+        const officialCard = findOfficialBadgesCard(root);
+        if (officialCard) {
+
+            const grid = officialCard.querySelector("img[aria-label], span[aria-label]")?.parentElement;
             if (!grid) return;
             badges.forEach(b => grid.appendChild(makeBadgeSpan(b)));
-            nativeBadgesCard.dataset.aviaBadgeInjected = "true";
+            officialCard.dataset.aviaBadgeInjected = "true";
             return;
         }
 
-        const joinedCard = findCardByTitle(root, "Joined");
+        const joinedCard = findJoinedCard(root);
         if (!joinedCard) return;
 
         const card = joinedCard.cloneNode(false);
-        card.removeAttribute("data-avia-badge-injected");
         card.dataset.aviaBadgeInjected = "true";
-        card.style.cssText = "overflow:hidden;";
-        if (!card.classList.contains("asp_1/1")) card.classList.add("asp_1/1");
+        card.style.overflow = "hidden";
 
-        const titleSpan = joinedCard.querySelector("span.fw_550");
-        const title = titleSpan ? titleSpan.cloneNode(false) : document.createElement("span");
+        const joinedHeading = [...joinedCard.querySelectorAll("*")]
+            .find(e => e.children.length === 0 && e.textContent.trim() === "Joined");
+        const title = joinedHeading ? joinedHeading.cloneNode(false) : document.createElement("span");
         title.textContent = "Badges";
         card.appendChild(title);
 
         const grid = document.createElement("div");
-        grid.className = "gap_var(--gap-md) d_flex flex-wrap_wrap [&_img,_&_svg]:w_24px [&_img,_&_svg]:h_24px [&_img,_&_svg]:asp_1/1";
-        grid.style.overflow = "hidden";
+        grid.style.cssText = "display:flex;flex-wrap:wrap;gap:8px;overflow:hidden;";
         badges.forEach(b => grid.appendChild(makeBadgeSpan(b)));
         card.appendChild(grid);
 
         joinedCard.insertAdjacentElement("afterend", card);
     }
 
-    async function processProfile(root) {
-        await loadBadges();
+    function isProfileRoot(el) {
+        if (!el || !el.querySelector) return false;
+        const hasSvgAvatar = !!el.querySelector('svg[viewBox="0 0 32 32"] foreignObject');
+        const hasUsername = !!el.querySelector('[aria-label="Click to copy username"]');
+        return hasSvgAvatar && hasUsername;
+    }
 
-        const username = getUsername(root);
-        if (!username) return;
+    function runInjectionFlow(root, username) {
+        if (findOfficialBadgesCard(root)) {
+            injectBadges(root, username);
+            return;
+        }
 
-        if (findCardByTitle(root, "Badges")) {
+        if (findJoinedCard(root)) {
             injectBadges(root, username);
             return;
         }
 
         const obs = new MutationObserver(() => {
-            if (!findCardByTitle(root, "Joined")) return;
-            if (!findCardByTitle(root, "Bio")) return;
+            if (!findJoinedCard(root)) return;
             obs.disconnect();
             injectBadges(root, username);
         });
-
-        obs.observe(root, { childList: true, subtree: true });
-
-        if (findCardByTitle(root, "Joined") && findCardByTitle(root, "Bio")) {
-            obs.disconnect();
-            injectBadges(root, username);
-        }
-
+        obs.observe(root, {
+            childList: true,
+            subtree: true
+        });
         setTimeout(() => obs.disconnect(), 10000);
     }
 
+    async function processProfile(root) {
+        await loadBadges();
+        const username = getUsername(root);
+        if (!username) return;
+
+        if (findBioCard(root)) {
+            runInjectionFlow(root, username);
+            return;
+        }
+
+        const bioObs = new MutationObserver(() => {
+            if (!findBioCard(root)) return;
+            bioObs.disconnect();
+            runInjectionFlow(root, username);
+        });
+        bioObs.observe(root, {
+            childList: true,
+            subtree: true
+        });
+        setTimeout(() => bioObs.disconnect(), 10000);
+    }
+
+    const seen = new WeakSet();
     const observer = new MutationObserver(muts => {
         for (const m of muts) {
             for (const n of m.addedNodes) {
                 if (!(n instanceof HTMLElement)) continue;
 
-                if (n.matches?.("div.will-change_transform")) processProfile(n);
-                if (n.matches?.("div.p_24px.min-w_280px.max-w_560px")) processProfile(n);
+                if (isProfileRoot(n) && !seen.has(n)) {
+                    seen.add(n);
+                    processProfile(n);
+                }
 
-                const small    = n.querySelector?.("div.will-change_transform");
-                const expanded = n.querySelector?.("div.p_24px.min-w_280px.max-w_560px");
-                if (small)    processProfile(small);
-                if (expanded) processProfile(expanded);
+                const children = n.querySelectorAll("*");
+                for (const child of children) {
+                    if (isProfileRoot(child) && !seen.has(child)) {
+                        seen.add(child);
+                        processProfile(child);
+                    }
+                }
             }
         }
     });
 
-    observer.observe(document.body, { childList: true, subtree: true });
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
 })();
