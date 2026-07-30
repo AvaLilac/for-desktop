@@ -1,4 +1,5 @@
 (function() {
+
     if (window.__AVIA_UPDATE_CHECKER__) return;
     window.__AVIA_UPDATE_CHECKER__ = true;
 
@@ -6,6 +7,8 @@
     const RELEASES_URL = "https://github.com/AvaLilac/for-desktop/releases";
     const STORAGE_KEY = "avia_update_checker_enabled";
     const TARGET_TEXT = "Spellchecker";
+    const TARGET_ICON = "spellcheck";
+    const TARGET_DESC = "Show corrections and suggestions as you type.";
 
     function isEnabled() {
         return localStorage.getItem(STORAGE_KEY) !== "false";
@@ -13,6 +16,18 @@
 
     function setEnabled(val) {
         localStorage.setItem(STORAGE_KEY, val ? "true" : "false");
+    }
+
+    function toggleCheckbox(elem, value) {
+        const checkbox = elem.querySelector("mdui-checkbox");
+        if (!checkbox) return;
+        if (value) {
+            checkbox.setAttribute("checked", "");
+            checkbox.setAttribute("value", "on");
+        } else {
+            checkbox.removeAttribute("checked");
+            checkbox.setAttribute("value", "off");
+        }
     }
 
     function getClientVersion() {
@@ -96,7 +111,6 @@
 
         btnRow.appendChild(closeBtn);
         btnRow.appendChild(updateBtn);
-
         card.appendChild(title);
         card.appendChild(body);
         card.appendChild(btnRow);
@@ -114,52 +128,59 @@
         showUpdateModal(clientVersion, latestVersion);
     }
 
-    function applyToggleStyle(entry) {
-        const desc = entry.querySelector("[data-update-desc]");
-        const checkbox = entry.querySelector("mdui-checkbox");
-        if (isEnabled()) {
-            if (desc) desc.textContent = "Get notified when a new AviaClient version is available";
-            if (checkbox) checkbox.setAttribute("checked", "");
-        } else {
-            if (desc) desc.textContent = "Get notified when a new AviaClient version is available";
-            if (checkbox) checkbox.removeAttribute("checked");
-        }
+    function findSpellcheckerBtn() {
+        const spans = [
+            ...document.querySelectorAll(
+                ".settings_cont span.material-symbols-outlined",
+            ),
+        ];
+        const icon = spans.find((s) => s.textContent.trim() === TARGET_ICON);
+        if (!icon) return null;
+        return icon.closest("a");
     }
 
     function tryInject() {
         if (document.querySelector("[data-update-checker-entry]")) return;
 
-        const target = [...document.querySelectorAll("a.pos_relative")]
-            .find(a => a.innerText.includes(TARGET_TEXT));
-        if (!target) return;
+        const btn = findSpellcheckerBtn();
+        if (!btn) return;
 
-        const entry = target.cloneNode(true);
-        entry.setAttribute("data-update-checker-entry", "true");
+        const clone = btn.cloneNode(true);
+        clone.setAttribute("data-update-checker-entry", "true");
 
-        const iconEl = entry.querySelector("span.material-symbols-outlined, md-icon");
-        if (iconEl) iconEl.textContent = "update";
+        const cloneLabel = [...clone.querySelectorAll("div, span")].find(
+            (el) => el.children.length === 0 && el.textContent.trim() === TARGET_TEXT,
+        );
+        if (cloneLabel) cloneLabel.textContent = "Update Checker";
 
-        const titleEl = entry.querySelector("div.d_flex.flex-g_1.flex-d_column > div");
-        if (titleEl) titleEl.textContent = "Update Checker";
+        const cloneDesc = [...clone.querySelectorAll("div, span")].find(
+            (el) => el.children.length === 0 && el.textContent.trim() === TARGET_DESC,
+        );
+        if (cloneDesc) cloneDesc.textContent = "Get notified when a new AviaClient version is available";
 
-        const descEl = entry.querySelector("div.d_flex.flex-g_1.flex-d_column > span");
-        if (descEl) descEl.setAttribute("data-update-desc", "true");
+        const cloneIcon = clone.querySelector("span.material-symbols-outlined");
+        if (cloneIcon) cloneIcon.textContent = "update";
 
-        applyToggleStyle(entry);
+        toggleCheckbox(clone, isEnabled());
 
-        entry.addEventListener("click", e => {
+        clone.addEventListener("click", (e) => {
             e.preventDefault();
             e.stopPropagation();
-            setEnabled(!isEnabled());
-            applyToggleStyle(entry);
+            const newVal = !isEnabled();
+            setEnabled(newVal);
+            toggleCheckbox(clone, newVal);
         });
 
-        target.parentNode.insertBefore(entry, target.nextSibling);
+        btn.parentNode.insertBefore(clone, btn.nextSibling);
     }
 
     check();
 
-    const observer = new MutationObserver(() => tryInject());
-    observer.observe(document.body, { childList: true, subtree: true });
-    tryInject();
+    new MutationObserver(() => {
+        tryInject();
+    }).observe(document.body, {
+        childList: true,
+        subtree: true,
+    });
+
 })();
