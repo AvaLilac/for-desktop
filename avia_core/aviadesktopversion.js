@@ -16,18 +16,17 @@
     if (!nameDiv || !versionSpan) return;
     if (!nameDiv.textContent.includes("Stoat for Desktop")) return;
 
-    if (!versionSpan.textContent.includes("Version:")) return;
+    if (!versionSpan.textContent.toLowerCase().startsWith("version: ")) return;
 
     const aviaVersion = window.native.versions.aviaClient();
-    const stoatVersion = window.native.versions.desktop();
 
     el.dataset.aviaPatched = "true";
 
-    nameDiv.textContent = "Avia Client Desktop";
-    versionSpan.textContent = `Version ${aviaVersion} (Based on Stoat ${stoatVersion})`;
+    nameDiv.style.cssText = versionSpan.style.cssText;
+    nameDiv.className = versionSpan.className;
 
-    textContainer.style.whiteSpace = "normal";
-    textContainer.style.overflow = "visible";
+    versionSpan.textContent = `Web: ${versionSpan.textContent.substring(9)}`;
+    nameDiv.textContent = `Avia Client Desktop: ${aviaVersion}`;
   }
 
   const observer = new MutationObserver(patchButton);
