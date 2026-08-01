@@ -20,7 +20,7 @@
                 ".settings_cont span.material-symbols-outlined",
             ),
         ];
-        const icon = spans.find((s) => s.textContent.trim() === "groups_2");
+        const icon = spans.find((s) => s.textContent.trim() === "speed");
         if (!icon) return null;
         return icon.closest("a");
     }
@@ -36,14 +36,14 @@
 
         const cloneLabel = [...clone.querySelectorAll("div, span")].find(
             (el) =>
-                el.children.length === 0 && el.textContent.trim() === "Discord RPC",
+                el.children.length === 0 && el.textContent.trim() === "Hardware Acceleration",
         );
         if (cloneLabel) cloneLabel.textContent = "Disable Tray Icon Click";
 
         const cloneDesc = [...clone.querySelectorAll("div, span")].find(
             (el) =>
                 el.children.length === 0 &&
-                el.textContent.trim() === "Rep Stoat using Discord rich presence.",
+                el.textContent.trim() === "Use the graphics card to improve performance.",
         );
         if (cloneDesc) cloneDesc.textContent = "Prevents tray icon from toggling the app window.";
 
