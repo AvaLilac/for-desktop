@@ -505,55 +505,66 @@
     }
 
     function injectButtons() {
-        const appearanceBtn = Array.from(document.querySelectorAll('a')).find(a => a.textContent.trim() === 'Appearance');
+
+        const appearanceBtn = [...document.querySelectorAll(
+            `.settings_sidebar .content a.button:not(
+                [id^='avia-']
+            ):not(
+                [id^='stoat-fake-']
+            ):has(
+                > div
+                > svg
+                > path[d^='M12 22C6.49 22']
+            )`
+        )].find((a) => {
+            const label = a.querySelector('div > svg + div > div');
+            if (label.textContent === "Appearance") return a;
+        });
+
         if (!appearanceBtn) return;
 
-        const aviaHeader = [...document.querySelectorAll('span')]
-            .find(s => s.textContent.trim() === "AVIA CLIENT SETTINGS");
+        const aviaHeader = document.getElementById('avia-cloned-settings');
         if (!aviaHeader) return;
 
-        const aviaContainer = aviaHeader.closest('.d_flex.flex-d_column');
+        const aviaContainer = aviaHeader.lastElementChild
         if (!aviaContainer) return;
-
-        const targetParent = aviaContainer.querySelector('.d_flex.flex-d_column.gap_var\\(--gap-s\\)');
-        if (!targetParent) return;
 
         if (!document.getElementById('stoat-fake-linktree')) {
             const linktreeBtn = appearanceBtn.cloneNode(true);
             linktreeBtn.id = 'stoat-fake-linktree';
-            const textNode = Array.from(linktreeBtn.querySelectorAll('div')).find(d => d.children.length === 0 && d.textContent.trim() === 'Appearance');
+            const textNode = linktreeBtn.querySelector('div > svg + div > div');
             if (textNode) textNode.textContent = "(Avia) Ava's Linktree";
             setIcon(linktreeBtn, "monitor");
             linktreeBtn.addEventListener('click', () => window.open(LINKTREE_URL, "_blank"));
-            targetParent.appendChild(linktreeBtn);
+            aviaContainer.appendChild(linktreeBtn);
 
             const stoatBtn = appearanceBtn.cloneNode(true);
             stoatBtn.id = 'stoat-fake-stoatserver';
-            const stoatTextNode = Array.from(stoatBtn.querySelectorAll('div')).find(d => d.children.length === 0 && d.textContent.trim() === 'Appearance');
+            const stoatTextNode = stoatBtn.querySelector('div > svg + div > div');
             if (stoatTextNode) stoatTextNode.textContent = "(Avia) Stoat Server";
             setIcon(stoatBtn, "monitor");
             stoatBtn.addEventListener('click', () => window.open(STOAT_SERVER_URL, "_blank"));
-            targetParent.appendChild(stoatBtn);
+            aviaContainer.appendChild(stoatBtn);
         }
 
         if (!document.getElementById('stoat-fake-loadfont')) {
             const newBtn = appearanceBtn.cloneNode(true);
             newBtn.id = 'stoat-fake-loadfont';
-            const textNode = Array.from(newBtn.querySelectorAll('div')).find(d => d.children.length === 0);
+            const textNode = newBtn.querySelector('div > svg + div > div');
             if (textNode) textNode.textContent = "(Avia) Font Loader";
             setIcon(newBtn, "upload");
             newBtn.addEventListener('click', showFontLoaderModal);
-            targetParent.appendChild(newBtn);
+            aviaContainer.appendChild(newBtn);
         }
 
         if (!document.getElementById('stoat-fake-quickcss')) {
             const quickCssBtn = appearanceBtn.cloneNode(true);
             quickCssBtn.id = 'stoat-fake-quickcss';
-            const quickCssTextNode = Array.from(quickCssBtn.querySelectorAll('div')).find(d => d.children.length === 0);
+            const quickCssTextNode = quickCssBtn.querySelector('div > svg + div > div');
             if (quickCssTextNode) quickCssTextNode.textContent = "(Avia) QuickCSS";
             setIcon(quickCssBtn, "code");
             quickCssBtn.addEventListener('click', toggleQuickCSSPanel);
-            targetParent.appendChild(quickCssBtn);
+            aviaContainer.appendChild(quickCssBtn);
         }
     }
 

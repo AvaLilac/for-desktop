@@ -1,3 +1,13 @@
+allowBuilds:
+  bufferutil: true
+  electron: true
+  electron-winstaller: true
+  esbuild: true
+  fs-xattr: true
+  macos-alias: true
+  register-scheme@https://codeload.github.com/devsnek/node-register-scheme/tar.gz/e7cc9a63a1f512565da44cb57316d9fb10750e17: true
+  utf-8-validate: true
+
 nodeLinker: hoisted
 
 onlyBuiltDependencies:
@@ -9,3 +19,4 @@ onlyBuiltDependencies:
   - macos-alias
   - register-scheme
   - utf-8-validate
+blockExoticSubdeps: false # required to make discord-rpc work

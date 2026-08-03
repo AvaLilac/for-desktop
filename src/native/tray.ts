@@ -9,7 +9,7 @@ import { config } from "./config";
 import { mainWindow, quitApp } from "./window";
 
 // internal tray state
-let tray: Tray = null;
+let tray: Tray | null = null;
 
 // Create and resize tray icon for macOS
 function createTrayIcon() {
@@ -44,7 +44,7 @@ export function initTray() {
 }
 
 export function updateTrayMenu() {
-  tray.setContextMenu(
+  tray?.setContextMenu(
     Menu.buildFromTemplate([
       { label: "AviaClient for Desktop", type: "normal", enabled: false },
       {

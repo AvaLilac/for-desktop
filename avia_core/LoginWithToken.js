@@ -34,23 +34,39 @@
 
   function openTokenDialog() {
     const backdrop = document.createElement('div');
-    backdrop.className = 'top_0 left_0 right_0 bottom_0 pos_fixed z_100 max-h_100% d_grid us_none place-items_center pointer-events_all anim-n_scrimFadeIn anim-dur_0.1s anim-fm_forwards trs_var(--transitions-medium)_all p_80px ov-y_auto';
-    backdrop.style.cssText = '--background: rgba(0, 0, 0, 0.6);';
+    backdrop.style.cssText = `
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        position: fixed;
+        z-index: 100;
+        max-height: 100%;
+        display: grid;
+        user-select: none;
+        place-items: center;
+        pointer-events: all;
+        animation-name: scrimFadeIn;
+        animation-duration: 0.1s;
+        anim-fill-mode: forwards;
+        padding: 80px;
+        overflow-y: auto;
+        background: rgba(0, 0, 0, 0.6);`;
 
     backdrop.innerHTML = `
       <div style="opacity: 1; --motion-translateY: 0px; transform: translateY(var(--motion-translateY));">
-        <div class="p_24px min-w_280px max-w_560px bdr_28px d_flex flex-d_column c_var(--md-sys-color-on-surface) bg_var(--md-sys-color-surface-container-high)">
-          <span class="lh_2rem fs_1.5rem ls_0 fw_400 mbe_16px">Login With Token</span>
-          <div class="c_var(--md-sys-color-on-surface-variant) lh_1.25rem fs_0.875rem ls_0.015625rem fw_400">
-            <div class="d_flex flex-d_column flex-g_initial m_0 ai_initial jc_initial gap_var(--gap-md)">
+        <div style="padding: 24px; min-width: 280px max-width: 560px; border-radius: 28px; display: flex; flex-direction: column; color: var(--md-sys-color-on-surface); background: var(--md-sys-color-surface-container-high);">
+          <span style="line-height: 2rem; font-size: 1.5rem; letter-spacing: 0; font-weight: 400; margin-block-end: 16px;">Login With Token</span>
+          <div style="color: var(--md-sys-color-on-surface-variant) line-height: 1.25rem; font-size: 0.875rem; letter-spacing: 0.015625rem; font-weight: 400;">
+            <div style="display: flex; flex-direction:: column; flex-grow: initial; margin:0; align-items: center; justify-content: initial; gap: var(--gap-md);">
               <mdui-text-field id="lwt-token-input" variant="filled" type="password" name="token" required label="Session Token"></mdui-text-field>
             </div>
           </div>
-          <div class="gap_8px d_flex jc_end mbs_24px">
-            <button id="lwt-close-btn" type="button" class="lh_1.25rem fs_0.875rem ls_0.015625rem fw_400 pos_relative px_16px flex-sh_0 d_flex ai_center jc_center ff_inherit cursor_pointer bd_none trs_var(--transitions-medium)_all c_var(--color) fill_var(--color) h_40px bdr_var(--borderRadius-full) --color_var(--md-sys-color-primary)">
+          <div style="gap: 8px; display: flex; justify-content: end; margin-block-start: 24px;">
+            <button id="lwt-close-btn" type="button" style="line-height: 1.25rem; font-size: 0.875rem; letter-spacing: 0.015625rem; font-weight: 400; position: relative; padding-inline: 16px 16px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; flex-flow: inherit; cursor: pointer; border: none; transition: var(--transitions-medium) all; color: var(--color); fill: var(--color); height: 40px; border-radius: var(--borderRadius-full); color: var(--md-sys-color-primary);">
               <md-ripple aria-hidden="true"></md-ripple>Close
             </button>
-            <button id="lwt-login-btn" type="button" class="lh_1.25rem fs_0.875rem ls_0.015625rem fw_400 pos_relative px_16px flex-sh_0 d_flex ai_center jc_center ff_inherit cursor_pointer bd_none trs_var(--transitions-medium)_all c_var(--color) fill_var(--color) h_40px bdr_var(--borderRadius-full) --color_var(--md-sys-color-on-primary) bg_var(--md-sys-color-primary)">
+            <button id="lwt-login-btn" type="button" style="line-height: 1.25rem; font-size: 0.875rem; letter-spacing: 0.015625rem; font-weight: 400; position: relative; padding-inline: 16px 16px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; flex-flow: inherit; cursor: pointer; border: none; transition: var(--transitions-medium) all; color: var(--color); fill: var(--color); height: 40px; border-radius: var(--borderRadius-full); color: var(--md-sys-color-on-primary); background-color: var(--md-sys-color-primary)">
               <md-ripple aria-hidden="true"></md-ripple>Login
             </button>
           </div>

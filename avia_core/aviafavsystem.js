@@ -415,9 +415,11 @@
     function injectButton() {
         if (document.getElementById("avia-favorites-btn")) return;
         const gifSpan = [...document.querySelectorAll("span.material-symbols-outlined")]
-            .find(s => s.textContent.trim() === "gif");
+            .find(s => s.textContent.trim() === "emoticon");
         if (!gifSpan) return;
-        const wrapper = gifSpan.closest("div.flex-sh_0");
+        const gifBtn = gifSpan.closest("button");
+        if (!gifBtn) return;
+        const wrapper = gifBtn.parentElement;
         if (!wrapper) return;
         const clone = wrapper.cloneNode(true);
         clone.id = "avia-favorites-btn";
@@ -425,7 +427,6 @@
 
         const btn = clone.querySelector("button");
         btn.onclick = toggleFavoritesPanel;
-
         btn.style.position = "relative";
 
         clone.querySelector("span.material-symbols-outlined").textContent = "star";

@@ -699,8 +699,20 @@
 
     function injectButtons() {
         if (document.getElementById('stoat-fake-plugins')) return;
-        const appearanceBtn = [...document.querySelectorAll('a')]
-            .find(a => a.textContent.trim() === 'Appearance');
+        const appearanceBtn = [...document.querySelectorAll(
+            `.settings_sidebar .content a.button:not(
+                [id^='avia-']
+            ):not(
+                [id^='stoat-fake-']
+            ):has(
+                > div
+                > svg
+                > path[d^='M12 22C6.49 22']
+            )`
+        )].find((a) => {
+            const label = a.querySelector('div > svg + div > div');
+            if (label.textContent === "Appearance") return a;
+        });
         if (!appearanceBtn) return;
         const referenceNode = document.getElementById('stoat-fake-quickcss');
         if (!referenceNode) return;

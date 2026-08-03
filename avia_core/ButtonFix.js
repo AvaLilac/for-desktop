@@ -1,29 +1,46 @@
 (function () {
-    if (window.__BUTTON_FIX__) return;
-    window.__BUTTON_FIX__ = true;
+  if (window.__BUTTON_FIX__) return;
+  window.__BUTTON_FIX__ = true;
 
-    function uninjectButton(button){
-        if(button){
-            button.parentElement.removeChild(button)
-        }
+  const dontHideWithGif = ["avia-favorites-btn"];
+
+  function getChatBarButtons(append) {
+    return document.querySelectorAll(
+      `.app_body main > div:last-child > div > div:last-child > div > div ${append ?? ""}`,
+    );
+  }
+
+  function uninjectButton(button) {
+    if (button?.parentElement) {
+      button.parentElement.removeChild(button);
     }
-    
-    const observer = new MutationObserver(()=>{
-        let balls = [];
-        document.querySelectorAll('div[class=\'flex-sh_0 d_flex ai_end jc_center w_42px\']').forEach(element=>{
-        if(element.id?.includes('avia')){
-            balls.push(element)
-        }
-        })
-        
-        const gifSpan = [...document.querySelectorAll("span.material-symbols-outlined")]
-        .find(s => s.textContent.trim() === "gif");
+  }
 
-        if(!gifSpan){
-            balls.forEach(element=>{
-                uninjectButton(element)
-            })
-        }
+  function hasGifButton() {
+    return [
+      ...getChatBarButtons("button > span.material-symbols-outlined"),
+    ].some((button) => button?.textContent.trim() === "gif");
+  }
+
+  const observer = new MutationObserver(() => {
+    const injectedButtons = [];
+
+    getChatBarButtons().forEach((element) => {
+      if (
+        element.id?.startsWith("avia-") &&
+        !dontHideWithGif.includes(element.id)
+      ) {
+        injectedButtons.push(element);
+      }
     });
-    observer.observe(document.documentElement, {childList: true, subtree: true })
+
+    if (!hasGifButton()) {
+      injectedButtons.forEach(uninjectButton);
+    }
+  });
+
+  observer.observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+  });
 })();
