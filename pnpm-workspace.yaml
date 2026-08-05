@@ -10,6 +10,12 @@ allowBuilds:
 
 nodeLinker: hoisted
 
+blockExoticSubdeps: false # required to make discord-rpc work
+
+# Override for node 26 bug
+overrides:
+  yauzl: ^3.3.1
+
 onlyBuiltDependencies:
   - bufferutil
   - electron
@@ -19,4 +25,3 @@ onlyBuiltDependencies:
   - macos-alias
   - register-scheme
   - utf-8-validate
-blockExoticSubdeps: false # required to make discord-rpc work
