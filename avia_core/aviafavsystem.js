@@ -415,7 +415,7 @@
     function injectButton() {
         if (document.getElementById("avia-favorites-btn")) return;
         const gifSpan = [...document.querySelectorAll("span.material-symbols-outlined")]
-            .find(s => s.textContent.trim() === "emoticon");
+            .find(s => s.textContent.trim() === "mood");
         if (!gifSpan) return;
         const gifBtn = gifSpan.closest("button");
         if (!gifBtn) return;
