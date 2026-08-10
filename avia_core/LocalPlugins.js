@@ -787,7 +787,7 @@ function registerWithAviaMenu() {
 }
 
 function registerWithAviaCategory() {
-    const reg = () => window.AviaCategory && window.AviaCategory.register({ id: "avia_plugins_local", name: "Local Plugins", icon: "extension", onClick: toggleLocalPanel });
+    const reg = () => window.AviaCategory && window.AviaCategory.register({ id: "avia_plugins_local", name: "Local Plugins", icon: "extension_fill", onClick: toggleLocalPanel });
     if (window.AviaCategory) reg();
     else { const iv = setInterval(() => { if (window.AviaCategory) { clearInterval(iv); reg(); } }, 100); }
 }
