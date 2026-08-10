@@ -712,12 +712,12 @@
 
     function registerWithAviaCategory() {
         if (window.AviaCategory) {
-            window.AviaCategory.register({ id: "avia_plugins_online", name: "Plugins", icon: "extension", onClick: togglePluginsPanel });
+            window.AviaCategory.register({ id: "avia_plugins_online", name: "Plugins", icon: "extension_fill", onClick: togglePluginsPanel });
         } else {
             const interval = setInterval(() => {
                 if (window.AviaCategory) {
                     clearInterval(interval);
-                    window.AviaCategory.register({ id: "avia_plugins_online", name: "Plugins", icon: "extension", onClick: togglePluginsPanel });
+                    window.AviaCategory.register({ id: "avia_plugins_online", name: "Plugins", icon: "extension_fill", onClick: togglePluginsPanel });
                 }
             }, 100);
         }
