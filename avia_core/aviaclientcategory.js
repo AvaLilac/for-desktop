@@ -63,8 +63,10 @@
         if(item.icon){
             const iconSpan = document.createElement("span");
             iconSpan.className = "material-symbols-outlined";
-            iconSpan.textContent = item.icon;
-            iconSpan.style.cssText = "margin-right:8px;flex-shrink:0;display:block;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0;font-size:20px;";
+            const filled = item.icon.endsWith("_fill");
+            const iconName = filled ? item.icon.slice(0, -5) : item.icon;
+            iconSpan.textContent = iconName;
+            iconSpan.style.cssText = "margin-right:8px;flex-shrink:0;display:block;font-variation-settings:'FILL' " + (filled ? "1" : "0") + ",'wght' 400,'GRAD' 0;font-size:20px;";
             const firstChild = btn.firstChild;
             btn.insertBefore(iconSpan, firstChild);
         }
