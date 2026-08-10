@@ -120,32 +120,6 @@
         });
     }
 
-    function setIcon(button, type) {
-        const oldSvg = button.querySelector('svg');
-        if (oldSvg) oldSvg.remove();
-
-        const icons = {
-            monitor: "M3 4h18v12H3V4zm2 2v8h14V6H5zm3 12h8v2H8v-2z",
-            upload: "M5 20h14v-2H5v2zm7-18L5.33 9h3.84v4h4.66V9h3.84L12 2z",
-            refresh: "M17.65 6.35A7.95 7.95 0 0012 4V1L7 6l5 5V7a5 5 0 11-5 5H5a7 7 0 107.75-6.65z",
-            code: "M8.7 16.3L4.4 12l4.3-4.3 1.4 1.4L7.2 12l2.9 2.9-1.4 1.4zm6.6 0l-1.4-1.4L16.8 12l-2.9-2.9 1.4-1.4L19.6 12l-4.3 4.3z"
-        };
-
-        const svgNS = "http://www.w3.org/2000/svg";
-        const svg = document.createElementNS(svgNS, "svg");
-        svg.setAttribute("viewBox", "0 0 24 24");
-        svg.setAttribute("width", "20");
-        svg.setAttribute("height", "20");
-        svg.setAttribute("fill", "currentColor");
-        svg.style.marginRight = "8px";
-
-        const path = document.createElementNS(svgNS, "path");
-        path.setAttribute("d", icons[type]);
-        svg.appendChild(path);
-
-        button.insertBefore(svg, button.firstChild);
-    }
-
     function applyFont(src, name) {
         const fontName = "CustomFont" + Date.now();
         let styleTag = document.getElementById('custom-font-style');
@@ -264,7 +238,7 @@
         Object.assign(scrim.style, {
             position: 'fixed',
             top: '0', left: '0', right: '0', bottom: '0',
-            zIndex: '999999',
+            zIndex: '999983',
             display: 'grid',
             placeItems: 'center',
             background: 'rgba(0,0,0,0.6)',
@@ -504,70 +478,6 @@
         renderTab();
     }
 
-    function injectButtons() {
-
-        const appearanceBtn = [...document.querySelectorAll(
-            `.settings_sidebar .content a.button:not(
-                [id^='avia-']
-            ):not(
-                [id^='stoat-fake-']
-            ):has(
-                > div
-                > svg
-                > path[d^='M12 22C6.49 22']
-            )`
-        )].find((a) => {
-            const label = a.querySelector('div > svg + div > div');
-            if (label.textContent === "Appearance") return a;
-        });
-
-        if (!appearanceBtn) return;
-
-        const aviaHeader = document.getElementById('avia-cloned-settings');
-        if (!aviaHeader) return;
-
-        const aviaContainer = aviaHeader.lastElementChild
-        if (!aviaContainer) return;
-
-        if (!document.getElementById('stoat-fake-linktree')) {
-            const linktreeBtn = appearanceBtn.cloneNode(true);
-            linktreeBtn.id = 'stoat-fake-linktree';
-            const textNode = linktreeBtn.querySelector('div > svg + div > div');
-            if (textNode) textNode.textContent = "(Avia) Ava's Linktree";
-            setIcon(linktreeBtn, "monitor");
-            linktreeBtn.addEventListener('click', () => window.open(LINKTREE_URL, "_blank"));
-            aviaContainer.appendChild(linktreeBtn);
-
-            const stoatBtn = appearanceBtn.cloneNode(true);
-            stoatBtn.id = 'stoat-fake-stoatserver';
-            const stoatTextNode = stoatBtn.querySelector('div > svg + div > div');
-            if (stoatTextNode) stoatTextNode.textContent = "(Avia) Stoat Server";
-            setIcon(stoatBtn, "monitor");
-            stoatBtn.addEventListener('click', () => window.open(STOAT_SERVER_URL, "_blank"));
-            aviaContainer.appendChild(stoatBtn);
-        }
-
-        if (!document.getElementById('stoat-fake-loadfont')) {
-            const newBtn = appearanceBtn.cloneNode(true);
-            newBtn.id = 'stoat-fake-loadfont';
-            const textNode = newBtn.querySelector('div > svg + div > div');
-            if (textNode) textNode.textContent = "(Avia) Font Loader";
-            setIcon(newBtn, "upload");
-            newBtn.addEventListener('click', showFontLoaderModal);
-            aviaContainer.appendChild(newBtn);
-        }
-
-        if (!document.getElementById('stoat-fake-quickcss')) {
-            const quickCssBtn = appearanceBtn.cloneNode(true);
-            quickCssBtn.id = 'stoat-fake-quickcss';
-            const quickCssTextNode = quickCssBtn.querySelector('div > svg + div > div');
-            if (quickCssTextNode) quickCssTextNode.textContent = "(Avia) QuickCSS";
-            setIcon(quickCssBtn, "code");
-            quickCssBtn.addEventListener('click', toggleQuickCSSPanel);
-            aviaContainer.appendChild(quickCssBtn);
-        }
-    }
-
     function applyQuickCSS(css) {
         let styleTag = document.getElementById('avia-quickcss-style');
         if (!styleTag) {
@@ -583,14 +493,10 @@
         if (savedCSS) applyQuickCSS(savedCSS);
     })();
 
-    function waitForBody(callback) {
-        if (document.body) callback();
-        else new MutationObserver((obs) => {
-            if (document.body) {
-                obs.disconnect();
-                callback();
-            }
-        }).observe(document.documentElement, { childList: true });
+    function openLink(url) {
+        return function () {
+            window.open(url, "_blank");
+        };
     }
 
     function registerWithAviaMenu() {
@@ -608,13 +514,27 @@
         }
     }
 
-    waitForBody(() => {
-        const observer = new MutationObserver(() => injectButtons());
-        observer.observe(document.body, { childList: true, subtree: true });
-        injectButtons();
-    });
+    function registerWithAviaCategory() {
+        if (window.AviaCategory) {
+            window.AviaCategory.register({ id: "avia_linktree", name: "Ava's Linktree", icon: "desktop_windows", onClick: openLink(LINKTREE_URL) });
+            window.AviaCategory.register({ id: "avia_stoatserver", name: "Stoat Server", icon: "desktop_windows", onClick: openLink(STOAT_SERVER_URL) });
+            window.AviaCategory.register({ id: "avia_fontloader", name: "Font Loader", icon: "upload", onClick: showFontLoaderModal });
+            window.AviaCategory.register({ id: "avia_quickcss", name: "QuickCSS", icon: "code", onClick: toggleQuickCSSPanel });
+        } else {
+            const interval = setInterval(() => {
+                if (window.AviaCategory) {
+                    clearInterval(interval);
+                    window.AviaCategory.register({ id: "avia_linktree", name: "Ava's Linktree", icon: "desktop_windows", onClick: openLink(LINKTREE_URL) });
+                    window.AviaCategory.register({ id: "avia_stoatserver", name: "Stoat Server", icon: "desktop_windows", onClick: openLink(STOAT_SERVER_URL) });
+                    window.AviaCategory.register({ id: "avia_fontloader", name: "Font Loader", icon: "upload", onClick: showFontLoaderModal });
+                    window.AviaCategory.register({ id: "avia_quickcss", name: "QuickCSS", icon: "code", onClick: toggleQuickCSSPanel });
+                }
+            }, 100);
+        }
+    }
 
     preloadMonaco();
     registerWithAviaMenu();
+    registerWithAviaCategory();
 
 })();
