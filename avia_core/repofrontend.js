@@ -715,40 +715,17 @@
         refetchPlugins();
     }
 
-    function injectSettingsButton() {
-        if (document.getElementById("avia-official-repo-btn-settings")) return;
-
-        const appearanceBtn = [...document.querySelectorAll(
-            `.settings_sidebar .content a.button:not(
-                [id^='avia-']
-            ):not(
-                [id^='stoat-fake-']
-            ):has(
-                > div
-                > svg
-                > path[d^='M12 22C6.49 22']
-            )`
-        )].find((a) => {
-            const label = a.querySelector('div > svg + div > div');
-            if (label.textContent === "Appearance") return a;
-        });
-        const referenceNode = document.getElementById("stoat-fake-quickcss");
-        if (!appearanceBtn || !referenceNode) return;
-
-        const clone = appearanceBtn.cloneNode(true);
-        clone.id = "avia-official-repo-btn-settings";
-
-        const label = [...clone.querySelectorAll("div")].find(d => d.children.length === 0);
-        if (label) label.textContent = "(Avia)  Plugins/Themes Repo";
-
-        const iconSpan = clone.querySelector("span.material-symbols-outlined");
-        if (iconSpan) {
-            iconSpan.textContent = "extension";
-            iconSpan.style.fontVariationSettings = "'FILL' 0,'wght' 400,'GRAD' 0";
+    function registerWithAviaCategory() {
+        if (window.AviaCategory) {
+            window.AviaCategory.register({ id: "avia_official_repo", name: "Plugins & Themes Repo", icon: "palette", onClick: openWindow });
+        } else {
+            const interval = setInterval(() => {
+                if (window.AviaCategory) {
+                    clearInterval(interval);
+                    window.AviaCategory.register({ id: "avia_official_repo", name: "Plugins & Themes Repo", icon: "palette", onClick: openWindow });
+                }
+            }, 100);
         }
-
-        clone.onclick = openWindow;
-        referenceNode.parentElement.insertBefore(clone, referenceNode.nextSibling);
     }
 
     function registerWithAviaMenu() {
@@ -772,10 +749,9 @@
         if (document.getElementById("avia-official-repo-window")) updateInstallStates();
     });
 
-    new MutationObserver(() => injectSettingsButton())
-        .observe(document.body, { childList: true, subtree: true });
 
-    injectSettingsButton();
+    registerWithAviaCategory();
     registerWithAviaMenu();
+
 
 })();
