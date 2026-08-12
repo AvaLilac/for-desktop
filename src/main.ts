@@ -58,7 +58,7 @@ const loadInject = () => {
         "ForceEnglish.js",
         "aviaclientcategory.js",
         "inject.js",
-		    "whatsnew.js",
+		"whatsnew.js",
         "pluginsupport.js",
         "LocalPlugins.js",
         "themes.js",
