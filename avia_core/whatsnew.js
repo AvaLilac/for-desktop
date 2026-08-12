@@ -348,66 +348,20 @@
         }
     }
 
-    function injectButton() {
-        if (document.getElementById("avia-whatsnew-btn")) return;
-
-        const appearanceBtn = [...document.querySelectorAll(
-            `.settings_sidebar .content a.button:not(
-                [id^='avia-']
-            ):not(
-                [id^='stoat-fake-']
-            ):has(
-                > div
-                > svg
-                > path[d^='M12 22C6.49 22']
-            )`
-        )].find((a) => {
-            const label = a.querySelector('div > svg + div > div');
-            if (label.textContent === "Appearance") return a;
-        });
-        const referenceNode = document.getElementById("stoat-fake-quickcss");
-        if (!appearanceBtn || !referenceNode) return;
-
-        const btn = appearanceBtn.cloneNode(true);
-        btn.id = "avia-whatsnew-btn";
-
-        const label = [...btn.querySelectorAll("div")].find(d => d.children.length === 0);
-        if (label) label.textContent = "(Avia) What's New";
-
-        const iconSpan = btn.querySelector("span.material-symbols-outlined");
-        if (iconSpan) iconSpan.remove();
-
-        const oldSvg = btn.querySelector("svg");
-        if (oldSvg) oldSvg.remove();
-
-        const svgNS = "http://www.w3.org/2000/svg";
-        const svg = document.createElementNS(svgNS, "svg");
-        svg.setAttribute("viewBox", "0 0 24 24");
-        svg.setAttribute("width", "20");
-        svg.setAttribute("height", "20");
-        svg.setAttribute("fill", "currentColor");
-        svg.style.cssText = "margin-right:8px;flex-shrink:0;";
-        const path = document.createElementNS(svgNS, "path");
-        path.setAttribute("d", "M18 11v2h4v-2zm-2 6.61c.96.71 2.21 1.65 3.2 2.39.4-.53.8-1.07 1.2-1.6-.99-.74-2.24-1.68-3.2-2.4-.4.54-.8 1.08-1.2 1.61M20.4 5.6c-.4-.53-.8-1.07-1.2-1.6-.99.74-2.24 1.68-3.2 2.4.4.53.8 1.07 1.2 1.6.96-.72 2.21-1.65 3.2-2.4M4 9c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v4h2v-4h1l5 3V6L8 9zm5.03 1.71L11 9.53v4.94l-1.97-1.18-.48-.29H4v-2h4.55zM15.5 12c0-1.33-.58-2.53-1.5-3.35v6.69c.92-.81 1.5-2.01 1.5-3.34");
-        svg.appendChild(path);
-
-        const firstChild = btn.firstChild;
-        btn.insertBefore(svg, firstChild);
-
-        btn.onclick = (e) => {
-            e.preventDefault();
-            fetchAndOpen();
-        };
-
-        referenceNode.parentElement.insertBefore(btn, referenceNode.nextSibling);
+    function registerWithAviaCategory() {
+        if (window.AviaCategory) {
+            window.AviaCategory.register({ id: "avia_whatsnew", name: "What's New", icon: "rss_feed", onClick: fetchAndOpen });
+        } else {
+            const interval = setInterval(() => {
+                if (window.AviaCategory) {
+                    clearInterval(interval);
+                    window.AviaCategory.register({ id: "avia_whatsnew", name: "What's New", icon: "rss_feed", onClick: fetchAndOpen });
+                }
+            }, 100);
+        }
     }
 
     injectStyles();
-    new MutationObserver(() => injectButton())
-        .observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-    injectButton();
+    registerWithAviaCategory();
 
 })();

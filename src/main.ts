@@ -58,12 +58,13 @@ const loadInject = () => {
         "ForceEnglish.js",
         "aviaclientcategory.js",
         "inject.js",
-        "repofrontend.js",
-        "themes.js",
-        "aviafavsystem.js",
-        "aviaversion.js",
+		    "whatsnew.js",
         "pluginsupport.js",
         "LocalPlugins.js",
+        "themes.js",
+        "repofrontend.js",
+        "aviafavsystem.js",
+        "aviaversion.js",
         "ButtonFix.js",
         "headliner.js",
         "aviadesktopversion.js",
@@ -73,7 +74,6 @@ const loadInject = () => {
         "LoginWithToken.js",
         "UpdateChecker.js",
         "badges.js",
-        "whatsnew.js",
       ];
 
       for (const plugin of plugins) {

@@ -527,32 +527,6 @@
         render();
     }
 
-    function injectButton() {
-        if (document.getElementById("avia-themes-btn")) return;
-        const appearanceBtn = [...document.querySelectorAll(
-            `.settings_sidebar .content a.button:not(
-                [id^='avia-']
-            ):not(
-                [id^='stoat-fake-']
-            ):has(
-                > div
-                > svg
-                > path[d^='M12 22C6.49 22']
-            )`
-        )].find((a) => {
-            const label = a.querySelector('div > svg + div > div');
-            if (label.textContent === "Appearance") return a;
-        });
-        const quickCSS = document.getElementById("stoat-fake-quickcss");
-        if (!appearanceBtn || !quickCSS) return;
-        const clone = appearanceBtn.cloneNode(true);
-        clone.id = "avia-themes-btn";
-        const text = [...clone.querySelectorAll("div")].find(d => d.children.length === 0);
-        if (text) text.textContent = "(Avia) Themes";
-        clone.onclick = toggleThemesPanel;
-        quickCSS.parentElement.insertBefore(clone, quickCSS.nextSibling);
-    }
-
     function registerWithAviaMenu() {
         if (window.AviaMenu) {
             window.AviaMenu.register({ id: "avia_themes", name: "Themes", icon: "palette", onClick: toggleThemesPanel });
@@ -566,10 +540,22 @@
         }
     }
 
-    new MutationObserver(injectButton).observe(document.body, { childList: true, subtree: true });
-    injectButton();
+    function registerWithAviaCategory() {
+        if (window.AviaCategory) {
+            window.AviaCategory.register({ id: "avia_themes", name: "Themes", icon: "palette", onClick: toggleThemesPanel });
+        } else {
+            const interval = setInterval(() => {
+                if (window.AviaCategory) {
+                    clearInterval(interval);
+                    window.AviaCategory.register({ id: "avia_themes", name: "Themes", icon: "palette", onClick: toggleThemesPanel });
+                }
+            }, 100);
+        }
+    }
+
     applyThemes();
     preloadMonaco();
     registerWithAviaMenu();
+    registerWithAviaCategory();
 
 })();
