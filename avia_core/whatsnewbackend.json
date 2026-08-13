@@ -1,7 +1,7 @@
 {
   "entries": [
     {
-      "date": "July 30, 2026",
+      "date": "August 12, 2026",
       "content": [
         {
           "type": "image",
@@ -13,11 +13,7 @@
         },
         {
           "type": "h1",
-          "text": "AviaClient 1.8.2"
-        },
-        {
-          "type": "h3",
-          "text": "The \"Please Don't Break Me\" update"
+          "text": "AviaClient 1.8.3"
         },
         {
           "type": "spacer"
@@ -29,18 +25,22 @@
           "type": "spacer"
         },
         {
-          "type": "h2",
+          "type": "h3",
           "text": "Fixes"
         },
         {
+          "type": "ul",
+          "items": [
+            "The Disable Tray Icon button in Desktop Settings now injects where it was supposed to.",
+            "Fixed Favorites breaking due to Stoat changing the icon of the Emoji button"
+          ]
+        },
+        {
           "type": "spacer"
         },
         {
-          "type": "ul",
-          "items": [
-            "Fixed the entire client",
-            "Fixed a bug on the login page where stoat's background would not be applied"
-          ]
+          "type": "h3",
+          "text": "C-Ch-Changes!!"
         },
         {
           "type": "spacer"
@@ -52,17 +52,9 @@
           "type": "spacer"
         },
         {
-          "type": "h2",
-          "text": "Changes"
-        },
-        {
-          "type": "spacer"
-        },
-        {
           "type": "ul",
           "items": [
-            "Favorites now are on the right side instead of left. ",
-            "Favorites will no longer hide when typing"
+            "Revamped Categories to inject using an API instead of requiring plugins to have button injection code. Categories now handle all button injection. All plugins have to do is run one API."
           ]
         },
         {
@@ -76,12 +68,23 @@
         },
         {
           "type": "h3",
-          "text": "Us:"
+          "text": "API"
         },
         {
-          "type": "image",
-          "src": "https://github.com/user-attachments/assets/dd593f1b-96b1-41cf-b264-178a5171433c",
-          "alt": "Us when fixing avia client"
+          "type": "blockquote",
+          "text": "window.AviaCategory.register({ id: \"IDHERE\", name: \"NAMEHERE\", icon: \"MATERIAL3ICONHERE\", onClick: FUNCTIONHERE });"
+        },
+        {
+          "type": "blockquote",
+          "text": "window.AviaCategory.unregister({ id: \"IDHERE\" });"
+        },
+        {
+          "type": "paragraph",
+          "text": "The API also supports filling in Material 3 icons via the fill function. Add _fill to the end of \"icon\", like"
+        },
+        {
+          "type": "blockquote",
+          "text": "window.AviaCategory.register({ id: \"IDHERE\", name: \"NAMEHERE\", icon: \"MATERIAL3ICONHERE_fill\", onClick: FUNCTIONHERE });"
         }
       ]
     }

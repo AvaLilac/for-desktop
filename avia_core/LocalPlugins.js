@@ -780,68 +780,21 @@ function styleLocalBtn(btn, bg) {
     btn.onmouseleave = () => btn.style.opacity = "1";
 }
 
-function injectLocalButton() {
-    if (document.getElementById("avia-local-plugins-btn")) return;
-    const appearanceBtn = [...document.querySelectorAll(
-            `.settings_sidebar .content a.button:not(
-                [id^='avia-']
-            ):not(
-                [id^='stoat-fake-']
-            ):has(
-                > div
-                > svg
-                > path[d^='M12 22C6.49 22']
-            )`
-        )].find((a) => {
-            const label = a.querySelector('div > svg + div > div');
-            if (label.textContent === "Appearance") return a;
-        });
-    if (!appearanceBtn) return;
-    const aviaPluginsBtn = document.getElementById("stoat-fake-plugins");
-    if (!aviaPluginsBtn) return;
-
-    const localBtn = appearanceBtn.cloneNode(true);
-    localBtn.id = "avia-local-plugins-btn";
-    const textNode = [...localBtn.querySelectorAll("div")].find(d => d.children.length === 0 && d.textContent.trim() === "Appearance");
-    if (textNode) textNode.textContent = "(Avia) Local Plugins";
-
-    const oldSvg = localBtn.querySelector("svg");
-    if (oldSvg) oldSvg.remove();
-
-    const svgNS = "http://www.w3.org/2000/svg";
-    const svg = document.createElementNS(svgNS, "svg");
-    svg.setAttribute("viewBox", "0 0 24 24");
-    svg.setAttribute("width", "20");
-    svg.setAttribute("height", "20");
-    svg.setAttribute("fill", "currentColor");
-    svg.style.marginRight = "8px";
-    const path = document.createElementNS(svgNS, "path");
-    path.setAttribute("d", "M20.5 11H19V7a2 2 0 00-2-2h-4V3.5a2.5 2.5 0 00-5 0V5H4a2 2 0 00-2 2v3.8h1.5c1.5 0 2.7 1.2 2.7 2.7S5 16.2 3.5 16.2H2V20a2 2 0 002 2h3.8v-1.5c0-1.5 1.2-2.7 2.7-2.7s2.7 1.2 2.7 2.7V22H17a2 2 0 002-2v-4h1.5a2.5 2.5 0 000-5z");
-    svg.appendChild(path);
-    localBtn.insertBefore(svg, localBtn.firstChild);
-    localBtn.addEventListener("click", toggleLocalPanel);
-    aviaPluginsBtn.parentElement.insertBefore(localBtn, aviaPluginsBtn.nextSibling);
-}
-
 function registerWithAviaMenu() {
     const reg = () => window.AviaMenu && window.AviaMenu.register({ id: "avia_plugins_local", name: "Local Plugins", icon: "extension", onClick: toggleLocalPanel });
     if (window.AviaMenu) reg();
     else { const iv = setInterval(() => { if (window.AviaMenu) { clearInterval(iv); reg(); } }, 100); }
 }
 
-function waitForBody(callback) {
-    if (document.body) callback();
-    else new MutationObserver((obs) => { if (document.body) { obs.disconnect(); callback(); } }).observe(document.documentElement, { childList: true });
+function registerWithAviaCategory() {
+    const reg = () => window.AviaCategory && window.AviaCategory.register({ id: "avia_plugins_local", name: "Local Plugins", icon: "extension_fill", onClick: toggleLocalPanel });
+    if (window.AviaCategory) reg();
+    else { const iv = setInterval(() => { if (window.AviaCategory) { clearInterval(iv); reg(); } }, 100); }
 }
-
-waitForBody(() => {
-    const observer = new MutationObserver(() => injectLocalButton());
-    observer.observe(document.body, { childList: true, subtree: true });
-    injectLocalButton();
-});
 
 getLocalPlugins().forEach(plugin => { if (plugin.enabled) runLocalPlugin(plugin); });
 preloadMonaco();
 registerWithAviaMenu();
+registerWithAviaCategory();
 
 })();
