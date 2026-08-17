@@ -23,7 +23,11 @@ export default defineConfig({
     namedExports: true,
   },
   build: {
+    commonjsOptions: {
+      include: [/node-pipewire/, /node_modules/],
+    },
     rollupOptions: {
+      external: ["node-pipewire"],
       output: {
         exports: "none", // We are building an app, not a library
       },

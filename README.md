@@ -28,9 +28,10 @@ _Contribution guidelines for Desktop app TBA!_
 
 Before getting started, you'll want to install:
 
-- Git
+- [Git](https://git-scm.com/install/)
 - Node.js
 - pnpm (run `corepack enable`)
+- rust (only needed for a production build on linux to enable node-pipewire)
 
 Then proceed to setup:
 

@@ -1,3 +1,6 @@
+packages:
+  - 'node-pipewire'
+
 allowBuilds:
   bufferutil: true
   electron: true
