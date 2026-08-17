@@ -33,4 +33,6 @@ contextBridge.exposeInMainWorld("native", {
   },
   screenPickerCallback: (idx: number, audio: boolean) =>
     ipcRenderer.send("screenPickerCallback", idx, audio),
+
+  isWayland: () => ipcRenderer.invoke("getIsWayland"),
 });

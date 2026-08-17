@@ -13,7 +13,7 @@
         },
         {
           "type": "h1",
-          "text": "AviaClient 1.8.3"
+          "text": "AviaClient 1.8.4"
         },
         {
           "type": "spacer"
@@ -25,28 +25,8 @@
           "type": "spacer"
         },
         {
-          "type": "h3",
-          "text": "Fixes"
-        },
-        {
-          "type": "ul",
-          "items": [
-            "The Disable Tray Icon button in Desktop Settings now injects where it was supposed to.",
-            "Fixed Favorites breaking due to Stoat changing the icon of the Emoji button"
-          ]
-        },
-        {
-          "type": "spacer"
-        },
-        {
-          "type": "h3",
-          "text": "C-Ch-Changes!!"
-        },
-        {
-          "type": "spacer"
-        },
-        {
-          "type": "hr"
+          "type": "h2",
+          "text": "Changes"
         },
         {
           "type": "spacer"
@@ -54,37 +34,8 @@
         {
           "type": "ul",
           "items": [
-            "Revamped Categories to inject using an API instead of requiring plugins to have button injection code. Categories now handle all button injection. All plugins have to do is run one API."
+            "Updated to the latest for-desktop"
           ]
-        },
-        {
-          "type": "spacer"
-        },
-        {
-          "type": "hr"
-        },
-        {
-          "type": "spacer"
-        },
-        {
-          "type": "h3",
-          "text": "API"
-        },
-        {
-          "type": "blockquote",
-          "text": "window.AviaCategory.register({ id: \"IDHERE\", name: \"NAMEHERE\", icon: \"MATERIAL3ICONHERE\", onClick: FUNCTIONHERE });"
-        },
-        {
-          "type": "blockquote",
-          "text": "window.AviaCategory.unregister({ id: \"IDHERE\" });"
-        },
-        {
-          "type": "paragraph",
-          "text": "The API also supports filling in Material 3 icons via the fill function. Add _fill to the end of \"icon\", like"
-        },
-        {
-          "type": "blockquote",
-          "text": "window.AviaCategory.register({ id: \"IDHERE\", name: \"NAMEHERE\", icon: \"MATERIAL3ICONHERE_fill\", onClick: FUNCTIONHERE });"
         }
       ]
     }

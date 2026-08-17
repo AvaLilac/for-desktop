@@ -57,9 +57,6 @@ importers:
       '@electron-forge/maker-zip':
         specifier: ^7.11.2
         version: 7.11.2(bluebird@3.7.2)(supports-color@8.1.1)
-      '@electron-forge/plugin-auto-unpack-natives':
-        specifier: ^7.11.2
-        version: 7.11.2(bluebird@3.7.2)(supports-color@8.1.1)
       '@electron-forge/plugin-fuses':
         specifier: ^7.11.2
         version: 7.11.2(@electron/fuses@1.8.0)(bluebird@3.7.2)(supports-color@8.1.1)
@@ -91,8 +88,8 @@ importers:
         specifier: ^5.62.0
         version: 5.62.0(eslint@8.57.1(supports-color@8.1.1))(supports-color@8.1.1)(typescript@4.5.5)
       electron:
-        specifier: ^40.10.5
-        version: 40.10.5(supports-color@8.1.1)
+        specifier: ^43.4.0
+        version: 43.4.0(supports-color@8.1.1)
       electron-vite:
         specifier: ^5.0.0
         version: 5.0.0(supports-color@8.1.1)(vite@5.4.21(@types/node@26.0.1)(terser@5.48.0))
@@ -120,6 +117,10 @@ importers:
       vite:
         specifier: ^5.4.21
         version: 5.4.21(@types/node@26.0.1)(terser@5.48.0)
+    optionalDependencies:
+      node-pipewire:
+        specifier: workspace:^
+        version: link:node-pipewire
 
 packages:
 
@@ -239,10 +240,6 @@ packages:
 
   '@electron-forge/maker-zip@7.11.2':
     resolution: {integrity: sha512-FWnOm2MORX/nt8psnEtID3Vnt8Blby1NkzjU3KjXBPF9kave71C3lI8KbBbCeKKyTQ/S00i2FiglKdRWQ1WNTw==}
-    engines: {node: '>= 16.4.0'}
-
-  '@electron-forge/plugin-auto-unpack-natives@7.11.2':
-    resolution: {integrity: sha512-ktMQxO80vGjqVXVSFha+kWJscBmJaWud4Kqu7rKkbrCphr1zqaG+8EDNbkpGzV/+mhKOLuA5qII1hJ69gFNpdA==}
     engines: {node: '>= 16.4.0'}
 
   '@electron-forge/plugin-base@7.11.2':
@@ -1758,8 +1755,8 @@ packages:
     resolution: {integrity: sha512-bO3y10YikuUwUuDUQRM4KfwNkKhnpVO7IPdbsrejwN9/AABJzzTQ4GeHwyzNSrVO+tEH3/Np255a3sVZpZDjvg==}
     engines: {node: '>=8.0.0'}
 
-  electron@40.10.5:
-    resolution: {integrity: sha512-VzTIvwOYXZZufT9B83GDQogR1TFqREygRYhm0LE++QhGPjvBeg+W7siOP9K5+9rHMUnRuCX4YU/0ivLekN/UZQ==}
+  electron@43.4.0:
+    resolution: {integrity: sha512-3qxGF0CeQbiox5oWV1JlbWGQ1VerbmDhTFqW4sJ8h7uqTHniFYPObXJcDna0DMh32et0fFyKzz0YY8lJv3t5jg==}
     engines: {node: '>= 22.12.0'}
     hasBin: true
 
@@ -4114,14 +4111,6 @@ snapshots:
       - bluebird
       - supports-color
 
-  '@electron-forge/plugin-auto-unpack-natives@7.11.2(bluebird@3.7.2)(supports-color@8.1.1)':
-    dependencies:
-      '@electron-forge/plugin-base': 7.11.2(bluebird@3.7.2)(supports-color@8.1.1)
-      '@electron-forge/shared-types': 7.11.2(bluebird@3.7.2)(supports-color@8.1.1)
-    transitivePeerDependencies:
-      - bluebird
-      - supports-color
-
   '@electron-forge/plugin-base@7.11.2(bluebird@3.7.2)(supports-color@8.1.1)':
     dependencies:
       '@electron-forge/shared-types': 7.11.2(bluebird@3.7.2)(supports-color@8.1.1)
@@ -4986,7 +4975,7 @@ snapshots:
 
   '@types/mute-stream@0.0.4':
     dependencies:
-      '@types/node': 22.20.0
+      '@types/node': 26.0.1
 
   '@types/node@22.20.0':
     dependencies:
@@ -5824,7 +5813,7 @@ snapshots:
       - supports-color
     optional: true
 
-  electron@40.10.5(supports-color@8.1.1):
+  electron@43.4.0(supports-color@8.1.1):
     dependencies:
       '@electron-internal/extract-zip': 1.0.4
       '@electron/get': 5.0.0(supports-color@8.1.1)
