@@ -11,7 +11,10 @@ import { VitePluginBuildConfig } from "@electron-forge/plugin-vite/dist/Config";
 import { PublisherGithub } from "@electron-forge/publisher-github";
 import type { ForgeConfig } from "@electron-forge/shared-types";
 import { FuseV1Options, FuseVersion } from "@electron/fuses";
-import * as fs from "fs";
+import fs from "node:fs";
+import path from "node:path";
+
+// import { globSync } from "node:fs";
 
 const STRINGS = {
   author: "Revolt Platforms LTD",
@@ -168,7 +171,34 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   makers,
+  hooks: {
+    // Copy the node-pipewire dist to the app on linux
+    packageAfterCopy: async (_config, buildPath, _version, platform) => {
+      if (platform === "linux") {
+        // Copy only the files we need to run the code, which is dist, LICENSE, and package.json
+        fs.cpSync(
+          "node_modules/node-pipewire/dist",
+          path.join(buildPath, "node_modules/node-pipewire/dist"),
+          { recursive: true },
+        );
+        fs.cpSync(
+          "node_modules/node-pipewire/LICENSE",
+          path.join(buildPath, "node_modules/node-pipewire/LICENSE"),
+          { recursive: true },
+        );
+        fs.cpSync(
+          "node_modules/node-pipewire/package.json",
+          path.join(buildPath, "node_modules/node-pipewire/package.json"),
+          { recursive: true },
+        );
+      }
+    },
+  },
   plugins: [
+    {
+      name: "@electron-forge/plugin-auto-unpack-natives",
+      config: {},
+    },
     new VitePlugin({
       build: customVitePluginBuild,
       renderer: [],
