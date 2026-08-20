@@ -1,0 +1,84 @@
+name: Build AppImage
+
+on:
+  pull_request:
+    types: [ labeled, reopened, synchronize, opened ]
+
+jobs:
+  build:
+    if: contains(github.event.pull_request.labels.*.name, 'appimage')
+    name: Build App for AppImage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Mise
+        uses: immich-app/devtools/actions/use-mise@7b8610a904d57da241e4ddba17fa62b62b15aed4 # use-mise-action-v2.0.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout assets
+        run: mise assets
+
+      - name: Install dependencies
+        run: mise install:frozen
+
+      - name: Build
+        run: mise build
+      
+      - name: Tar gz
+        run : |
+          cd ./out/Stoat-linux-x64
+          tar -zcvf ../../Stoat.tar.gz .
+          cd ../..
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: stoat-linux-package-x64
+          path: ./Stoat.tar.gz
+
+  build-appimage:
+    needs: [build]
+    runs-on: ubuntu-latest
+    container: ghcr.io/pkgforge-dev/archlinux:v2026.05.15
+
+    steps:
+      - name: Preparing Container
+        uses: pkgforge-dev/anylinux-setup-action@0964f2258d6c93d1391359978dde081fd8b3c6af # v2
+
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Checkout assets
+        run: |
+          git config --global --add safe.directory $(pwd)
+          git -c submodule."assets".update=checkout submodule update --init assets
+
+      - name: Install Dependencies
+        run: /bin/sh ./.github/build/appimage/get-dependencies.sh
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: stoat-linux-package-x64
+          path: /tmp/stoat
+
+      - name: Extract Artifact
+        run: /bin/sh ./.github/build/appimage/extract-artifact.sh
+        env:
+          BUILD_ARCH: x64
+          BUILD_VERSION: nightly
+
+      - name: Make & Test AppImage
+        run: /bin/sh ./.github/build/appimage/make-appimage.sh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: AppImage-x64
+          path: dist
