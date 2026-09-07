@@ -7,13 +7,14 @@ import started from "electron-squirrel-startup";
 
 import { aviaVersion } from "../package.json";
 
+import { initAutoLaunch } from "./native/autoLaunch";
 import { setBadgeCount } from "./native/badges";
 import { config } from "./native/config";
 import { initDiscordRpc } from "./native/discordRpc";
+import "./native/jsonReader";
 import { initTray } from "./native/tray";
 import { initVirtualMic } from "./native/virtualMic";
 import { BUILD_URL, createMainWindow, mainWindow } from "./native/window";
-import "./native/jsonReader";
 
 const applyAppName = () => {
   try {
@@ -59,7 +60,7 @@ const loadInject = () => {
         "ForceEnglish.js",
         "aviaclientcategory.js",
         "inject.js",
-		"whatsnew.js",
+        "whatsnew.js",
         "pluginsupport.js",
         "LocalPlugins.js",
         "themes.js",
@@ -114,6 +115,7 @@ if (acquiredLock) {
     initDiscordRpc();
     setBadgeCount(0);
     initVirtualMic();
+    initAutoLaunch();
 
     if (process.platform === "win32") {
       app.setAppUserModelId("AviaClient");
