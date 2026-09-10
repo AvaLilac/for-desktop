@@ -54,11 +54,12 @@ const loadInject = () => {
   mainWindow.webContents.on("dom-ready", async () => {
     try {
       const plugins: string[] = [
+        "badgeAPI.js",
+        "MenuAPI.js",
+        "CategoryAPI.js",
         "TitlebarRefresh.js",
         "fixLoginBackground.js",
-        "MenuAPI.js",
         "ForceEnglish.js",
-        "CategoryAPI.js",
         "inject.js",
         "whatsnew.js",
         "pluginsupport.js",
@@ -75,7 +76,6 @@ const loadInject = () => {
         "AccountSwitcher.js",
         "LoginWithToken.js",
         "UpdateChecker.js",
-        "badgeAPI.js",
       ];
 
       for (const plugin of plugins) {
