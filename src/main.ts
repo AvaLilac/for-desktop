@@ -56,9 +56,9 @@ const loadInject = () => {
       const plugins: string[] = [
         "TitlebarRefresh.js",
         "fixLoginBackground.js",
-        "menu.js",
+        "MenuAPI.js",
         "ForceEnglish.js",
-        "aviaclientcategory.js",
+        "CategoryAPI.js",
         "inject.js",
         "whatsnew.js",
         "pluginsupport.js",
@@ -75,7 +75,7 @@ const loadInject = () => {
         "AccountSwitcher.js",
         "LoginWithToken.js",
         "UpdateChecker.js",
-        "badges.js",
+        "badgeAPI.js",
       ];
 
       for (const plugin of plugins) {
